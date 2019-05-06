@@ -5,13 +5,6 @@ Created on Thu Mar 21 19:30:56 2019
 @author: ADMIN
 """
 
-import datetime
-import pandas
-import matplotlib.pyplot as plt
-
-from matplotlib import dates as mdates
-from matplotlib.finance import candlestick_ohlc
-
 import constant
 import draw
 import financial
