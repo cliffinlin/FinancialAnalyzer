@@ -14,6 +14,8 @@ if __name__ == "__main__":
     # financial.download()
     # financial.analyze()
     draw.draw("favorite=1", "bvpsr", "DESC")#where=None, order=None, sort=None #"DESC""ASC"
-    # draw.draw("rating > 0 ", "bvpsr", "DESC")#where=None, order=None, sort=None #"DESC""ASC"
-    # draw.draw("rating=7 AND bvpsr>0", "bvpsr", "DESC")#where=None, order=None, sort=None #"DESC""ASC"
+    # draw.draw("rating > 0 AND frechet < 2", "bvpsr", "DESC")#where=None, order=None, sort=None #"DESC""ASC"
     # draw.draw("rating > 0 AND bvpsr > 100", "bvpsr", "DESC")  # where=None, order=None, sort=None #"DESC""ASC"
+    # draw.draw("rating=7 AND bvpsr>0", "bvpsr", "DESC")#where=None, order=None, sort=None #"DESC""ASC"
+    # draw.draw("rating=5", "bvpsr", "DESC")#where=None, order=None, sort=None #"DESC""ASC"
+    # draw.draw("rating > 0", "bvpsr", "DESC")#where=None, order=None, sort=None #"DESC""ASC"

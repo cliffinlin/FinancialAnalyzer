@@ -14,7 +14,7 @@ import favorite
 
 from datetime import datetime
 
-favorite_only = False
+favorite_only = True
 
 
 def setup_database():
@@ -1160,6 +1160,8 @@ class Stock(StockBasic):
                 return False
             elif self.is_time_to_market_too_short():
                 return False
+            # elif self.rating < 1:
+            #     return False
             else:
                 result = True
 
