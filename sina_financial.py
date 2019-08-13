@@ -333,3 +333,66 @@ class SinaFinancial:
     #                 return self.parse_tr(tbody)
     #         else:
     #             return self.parse_tr(table)
+
+    def download_share_bonus(self, code):
+        share_bonus = dict()
+        share_bonus_list = []
+
+        url = 'http://money.finance.sina.com.cn/corp/go.php/vISSUE_ShareBonus/stockid/'\
+              + code + '.phtml'
+
+        print(url)
+
+        content = self.get_content(url)
+
+        if content is None:
+            return None
+
+        html = BeautifulSoup(content, 'html.parser')
+        if html is None:
+            return None
+
+        tbodys = html.select("tbody")
+        if tbodys is None:
+            return None
+
+        for tbody in tbodys:
+            if tbody is None:
+                return None
+
+            trs = tbody.select("tr")
+            if trs is None:
+                return None
+
+            for tr in trs:
+                if tr is None:
+                    return None
+
+                tds = tr.select("td")
+                if tds is None:
+                    return None
+
+                if len(tds) < 9:
+                    continue
+
+                share_bonus = dict()
+
+                date_string = tds[0].text
+                if date_string is None:
+                    continue
+                share_bonus["date"] = date_string
+
+                dividend_string = tds[3].text
+                if dividend_string is None:
+                    continue
+                if not dividend_string.strip():
+                    dividend_string = "0.0"
+                dividend = float(dividend_string)
+                share_bonus["dividend"] = dividend
+
+                dividend_date_string = tds[5].text
+                share_bonus["dividend_date"] = dividend_date_string
+
+                share_bonus_list.append(share_bonus)
+
+        return share_bonus_list[::-1]

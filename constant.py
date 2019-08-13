@@ -28,6 +28,7 @@ MONTH = "month"
 
 DATA_PATH = "./data/"
 DATA_FINANCIAL_PATH = DATA_PATH + "financial" + "/"
+DATA_SHARE_BONUS_PATH = DATA_PATH + "share_bonus" + "/"
 DATA_STOCK_PATH = DATA_PATH + "stock" + "/"
 DATA_STOCK_DAY_PATH = DATA_STOCK_PATH + DAY + "/"
 DATA_STOCK_WEEK_PATH = DATA_STOCK_PATH + WEEK + "/"
@@ -60,8 +61,8 @@ SQL_SETUP_TABLE_STOCK = """ CREATE TABLE IF NOT EXISTS stock (
                                     gpr DOUBLE,
                                     npr DOUBLE,
                                     holders DOUBLE,
-                                    bvpsr DOUBLE,
-                                    frechet DOUBLE,
+                                    dividend_yield DOUBLE,
+                                    dividend DOUBLE,
                                     rating INTEGER,
                                     favorite INTEGER,
                                     created TEXT,
@@ -98,6 +99,16 @@ SQL_SETUP_TABLE_FINANCIAL_DATA = """ CREATE TABLE IF NOT EXISTS financial_data (
                                     net_profit DOUBLE,
                                     roe DOUBLE,
                                     book_value_per_share_rate DOUBLE,
+                                    created TEXT,
+                                    modified TEXT
+                                ); """
+
+SQL_SETUP_TABLE_SHARE_BONUS = """ CREATE TABLE IF NOT EXISTS share_bonus (
+                                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                                    stock_code TEXT NOT NULL,
+                                    date TEXT NOT NULL,
+                                    dividend DOUBLE,
+                                    dividend_date TEXT,
                                     created TEXT,
                                     modified TEXT
                                 ); """

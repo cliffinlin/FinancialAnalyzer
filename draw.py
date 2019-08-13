@@ -104,7 +104,7 @@ def draw_stock_data(stock, period=constant.MONTH):
     plt.rcParams['font.serif'] = ['KaiTi']
 
     title = stock.name + " " + stock.code + " " \
-            + str(round(stock.bvpsr, 2)) + " " + str(round(stock.frechet, 2))\
+            + str(round(stock.dividend_yield, 2)) + " " + str(round(stock.dividend, 2))\
             + " " + str(stock.rating) + " " + str(stock.favorite)
     plt.title(title)
 
@@ -152,16 +152,7 @@ def draw(where=None, order=None, sort=None):
         if not stock.check_out():
             continue
 
-        # if stock.bvps < 1:
-        #     continue
-        #
-        # if stock.bvpsr < 0:
-        #     continue
-        #
-        # if stock.frechet > 1:
-        #     continue
-
-        print(index, stock.code, stock.name, round(stock.bvpsr, 2), round(stock.frechet, 2), " ", stock.rating, stock.favorite)
+        print(index, stock.code, stock.name, round(stock.dividend_yield, 2), round(stock.dividend, 2), " ", stock.rating, stock.favorite)
 
         stock_data_tuple_list = financial.read_stock_data_from_database(stock)
         financial.write_stock_data_to_file(stock, stock_data_tuple_list)
