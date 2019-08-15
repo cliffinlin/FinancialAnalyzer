@@ -58,6 +58,13 @@ def draw_stock_data(stock, period=constant.MONTH):
     net_profit = financial_data_dict['net_profit']
     roe = financial_data_dict['roe']
 
+    share_bonus_dict = pandas.read_csv(financial.get_share_bonus_file_name(stock), parse_dates=True, index_col=0)
+    share_bonus_dict.reset_index(inplace=True)
+    share_bonus_dict['date'] = mdates.date2num(share_bonus_dict['date'].astype(datetime.date))
+
+    x2 = share_bonus_dict['date']
+    dividend = share_bonus_dict['dividend']
+
     # plot
 
     fig, (ax1, ax3) = plt.subplots(2, sharex=True, figsize=(10, 12))
@@ -68,10 +75,10 @@ def draw_stock_data(stock, period=constant.MONTH):
     # p2 = ax.plot(x, EMA_2, label='EMA(' + str(EMA_2_span) + ')')
     # p3 = ax.plot(x, SMA_2, label='SMA(' + str(SMA_2_span) + ')')
 
-    ax1.plot(x1, earnings_per_share, label='EarningsPerShare')
-    ax1.plot(x1, cash_flow_per_share, label='CashFlowPerShare')
-    ax1.plot(x1, book_value_per_share, label='BookValuePerShare')
-    ax1.plot(x1, book_value_per_share_rate, label='BookValuePerShareRate')
+    ax1.step(x1, cash_flow_per_share, label='CashFlowPerShare')
+    ax1.step(x1, earnings_per_share * 10.0, label='EarningsPerShare')
+    ax1.step(x1, book_value_per_share, label='BookValuePerShare')
+    ax1.step(x2, dividend, label='Dividend')
 
     ax1.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d'))
     ax1.xaxis.set_major_locator(mdates.MonthLocator([1, 4, 7, 10]))
@@ -103,8 +110,10 @@ def draw_stock_data(stock, period=constant.MONTH):
     plt.rcParams['font.sans-serif'] = ['KaiTi']
     plt.rcParams['font.serif'] = ['KaiTi']
 
-    title = stock.name + " " + stock.code + " " \
-            + str(round(stock.dividend_yield, 2)) + " " + str(round(stock.dividend, 2))\
+    title = stock.name + " " + stock.code\
+            + " pe " + str(stock.pe) + " pb " + str(stock.pb)\
+            + " yield " + str(round(stock.dividend_yield, 2))\
+            + " dividend " + str(round(stock.dividend, 2))\
             + " " + str(stock.rating) + " " + str(stock.favorite)
     plt.title(title)
 
@@ -159,5 +168,8 @@ def draw(where=None, order=None, sort=None):
 
         financial_data_tuple_list = financial.read_financial_data_from_database(stock)
         financial.write_financial_data_to_file(stock, financial_data_tuple_list)
+
+        share_bonus_tuple_list = financial.read_share_bonus_from_database(stock)
+        financial.write_share_bonus_to_file(stock, share_bonus_tuple_list)
 
         draw_stock_data(stock)

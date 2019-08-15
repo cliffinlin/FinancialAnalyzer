@@ -372,7 +372,7 @@ class SinaFinancial:
                 if tds is None:
                     return None
 
-                if len(tds) < 9:
+                if len(tds) != 9:
                     continue
 
                 share_bonus = dict()

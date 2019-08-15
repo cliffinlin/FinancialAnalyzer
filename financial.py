@@ -13,7 +13,7 @@ import favorite
 
 from datetime import datetime
 
-favorite_only = True
+favorite_only = False
 
 
 def setup_database():
