@@ -144,34 +144,17 @@ def draw_stock_data(stock, period=constant.MONTH):
 
 
 def draw(where=None, order=None, sort=None):
-    financial.make_data_directory()
-
-    stock_tuple_list = financial.read_stock_tuple_list_from_database(where, order, sort)
-    financial.write_stock_to_file(stock_tuple_list)
+    stock_tuple_list = financial.select(where, order, sort)
 
     index = -1
     for stock_tuple in stock_tuple_list:
         index = index + 1
-        if index < 0:
-            continue
 
         stock = financial.Stock(stock_tuple)
         if stock is None:
             continue
 
-        if not stock.check_out():
-            continue
-
-        print(index, stock.code, stock.name, round(stock.dividend_yield, 2), round(stock.dividend, 2), " ", stock.rating, stock.favorite)
-
-        stock_data_tuple_list = financial.read_stock_data_from_database(stock)
-        financial.write_stock_data_to_file(stock, stock_data_tuple_list)
-
-        financial_data_tuple_list = financial.read_financial_data_from_database(stock)
-        financial.write_financial_data_to_file(stock, financial_data_tuple_list)
-
-        share_bonus_tuple_list = financial.read_share_bonus_from_database(stock)
-        financial.write_share_bonus_to_file(stock, share_bonus_tuple_list)
+        financial.write_to_file(stock)
 
         draw_stock_data(stock)
 
