@@ -967,6 +967,34 @@ def analyze():
     print("analyze done, count=", count)
 
 
+def select(where=None, order=None, sort=None):
+    make_data_directory()
+
+    stock_tuple_list = read_stock_tuple_list_from_database(where, order, sort)
+    write_stock_to_file(stock_tuple_list)
+
+    print("select done, count=", len(stock_tuple_list))
+
+    return stock_tuple_list
+
+
+def write_to_file(stock):
+    if stock is None:
+        return
+
+    print(stock.code, stock.name, round(stock.dividend_yield, 2), round(stock.dividend, 2), " ", stock.rating,
+          stock.favorite)
+
+    stock_data_tuple_list = read_stock_data_from_database(stock)
+    write_stock_data_to_file(stock, stock_data_tuple_list)
+
+    financial_data_tuple_list = read_financial_data_from_database(stock)
+    write_financial_data_to_file(stock, financial_data_tuple_list)
+
+    share_bonus_tuple_list = read_share_bonus_from_database(stock)
+    write_share_bonus_to_file(stock, share_bonus_tuple_list)
+
+
 class StockBasic:
     def __init__(self, stock_basic=None):
         if stock_basic is None:

@@ -18,6 +18,7 @@ import financial
 
 
 def draw_stock_data(stock, period=constant.MONTH):
+
     # read and reformat data
 
     stock_data_dict = pandas.read_csv(financial.get_stock_data_file_name(stock), parse_dates=True, index_col=0)
@@ -173,3 +174,4 @@ def draw(where=None, order=None, sort=None):
         financial.write_share_bonus_to_file(stock, share_bonus_tuple_list)
 
         draw_stock_data(stock)
+
