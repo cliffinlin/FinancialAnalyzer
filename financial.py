@@ -7,7 +7,8 @@ import csv
 import os
 import sina_financial
 import sqlite3
-import tushare
+import time
+import random
 
 import favorite
 
@@ -52,34 +53,22 @@ def make_data_directory():
     setup_directory(constant.DATA_STOCK_MONTH_PATH)
 
 
-def get_stock_basics_from_tushare():
-    stock_basics = tushare.get_stock_basics()
-    if stock_basics is None:
-        print("stock_basics is None, return None")
-        return None
-
-    stock_basics.reset_index(level=0, inplace=True)
-    stock_basics = stock_basics.sort_values(by='code').reset_index(drop=True)
-
-    return stock_basics
-
-
-def get_not_before(stock_data_list):
-    not_before = None
+def get_time_to_market(stock_data_list):
+    time_to_market = None
 
     if stock_data_list is None:
-        return not_before
+        return time_to_market
 
     if stock_data_list is not None:
-        not_before = stock_data_list[0]["date"]
+        time_to_market = stock_data_list[0]["date"]
 
-    return not_before
+    return time_to_market
 
 
 def download():
-    not_before = None
+    time_to_market = None
 
-    download_stock_basic()
+    # download_stock_list()
 
     stock_tuple_list = read_stock_tuple_list_from_database()
 
@@ -103,18 +92,36 @@ def download():
 
         stock_data_list = download_stock_data(stock)
 
-        not_before = get_not_before(stock_data_list)
+        time_to_market = get_time_to_market(stock_data_list)
 
-        financial_data_list = download_financial_data(stock, not_before)
+        stock.set_time_to_market(time_to_market)
+        stock.update_to_database()
 
+        if stock.is_time_to_market_too_short():
+            time.sleep(random.random())
+            continue
+
+        download_financial_data(stock, time_to_market)
         download_share_bonus(stock)
 
     print("download done, count=", count)
 
 
-def download_stock_basic():
-    stock_basics = get_stock_basics_from_tushare()
-    write_stock_basics_to_database(stock_basics)
+def download_stock_list():
+    page = 1
+    stock_list = list()
+
+    sina = sina_financial.SinaFinancial()
+
+    while page:
+        result = sina.download_stock_list(page)
+        if result is None:
+            break
+        stock_list += result
+        page += 1
+        time.sleep(random.random())
+
+    write_stock_list_to_database(stock_list)
 
 
 def download_stock_data(stock):
@@ -141,7 +148,7 @@ def download_stock_data(stock):
     return stock_data_month_list
 
 
-def download_financial_data(stock, not_before=None):
+def download_financial_data(stock, time_to_market=None):
     time_to_market_len_min = constant.TIME_TO_MARKET_YEAR_MIN * constant.SEASONS_IN_A_YEAR
 
     # book_value_per_share = {}
@@ -160,8 +167,8 @@ def download_financial_data(stock, not_before=None):
     if stock is None:
         return None
 
-    if not_before is not None:
-        not_before = datetime.strptime(not_before, constant.DATE_FORMAT)
+    if time_to_market is not None:
+        time_to_market = datetime.strptime(time_to_market, constant.DATE_FORMAT)
 
     sina = sina_financial.SinaFinancial()
 
@@ -207,7 +214,7 @@ def download_financial_data(stock, not_before=None):
     #
     #     financial_data_list.append(financial_data)
 
-    financial_data_list = sina.download_financial_data(stock.code, not_before)
+    financial_data_list = sina.download_financial_data(stock.code, time_to_market)
 
     # list_len = len(financial_data_list)
     # if list_len > time_to_market_len_min:
@@ -248,41 +255,19 @@ def download_share_bonus(stock):
     return share_bonus_list
 
 
-def write_stock_basics_to_database(stock_basics):
+def write_stock_list_to_database(stock_list):
     connect = None
     executemany = False
     favorite_stock = 0
     insert_tuple_list = []
 
-    sql_query = Stock.get_sql_query()
-    sql_insert = "INSERT INTO stock (" \
-                 "code, name, industry, area, pe," \
-                 "outstanding, totals, total_assets, liquid_assets, fixed_assets," \
-                 "reserved, rps, eps, bvps, pb," \
-                 "time_to_market, undp, perundp, rev, profit," \
-                 "gpr, npr, holders, dividend_yield, dividend," \
-                 "rating, favorite, created, modified" \
-                 ") VALUES(" \
-                 "?,?,?,?,?," \
-                 "?,?,?,?,?," \
-                 "?,?,?,?,?," \
-                 "?,?,?,?,?," \
-                 "?,?,?,?,?," \
-                 "?,?,?,?)"
-    sql_update = "UPDATE stock SET " \
-                 "name=?, industry=?, area=?, pe=?," \
-                 "outstanding=?, totals=?, total_assets=?, liquid_assets=?, fixed_assets=?," \
-                 "reserved=?, rps=?, eps=?, bvps=?, pb=?," \
-                 "time_to_market=?, undp=?, perundp=?, rev=?, profit=?," \
-                 "gpr=?, npr=?, holders=?, dividend_yield=?, dividend=?," \
-                 "rating=?, favorite=?, modified=?" \
-                 " WHERE " \
-                 "id=?"
+    query_sql = Stock.get_query_sql()
+    insert_sql = Stock.get_insert_sql()
 
-    print("write_stock_basics_to_database")
+    print("write_stock_list_to_database")
 
-    if stock_basics is None:
-        print("stock_basics is None, return")
+    if stock_list is None:
+        print("stock_list is None, return")
         return
 
     stock_favorite_list = favorite.get_stock_favorite_list()
@@ -293,12 +278,11 @@ def write_stock_basics_to_database(stock_basics):
         connect = sqlite3.connect(constant.DATABASE_NAME)
         cursor = connect.cursor()
 
-        cursor.execute(sql_query)
+        cursor.execute(query_sql)
         if cursor.fetchone() is None:
             executemany = True
 
-        stock_basic_list = stock_basics.to_dict('records')
-        for stock_basic in stock_basic_list:
+        for stock_basic in stock_list:
             stock = Stock()
             stock.set_stock_basic(stock_basic)
 
@@ -317,7 +301,7 @@ def write_stock_basics_to_database(stock_basics):
                 insert_tuple = stock.get_insert_tuple()
                 insert_tuple_list.append(insert_tuple)
             else:
-                sql_check_record_exist = "SELECT * FROM stock WHERE code=?"
+                sql_check_record_exist = Stock.get_query_sql("code=?")
                 cursor.execute(sql_check_record_exist, (stock.code,))
                 stock_tuple = cursor.fetchone()
                 if stock_tuple is None:
@@ -327,19 +311,22 @@ def write_stock_basics_to_database(stock_basics):
 
                     insert_tuple = stock.get_insert_tuple()
 
-                    cursor.execute(sql_insert, insert_tuple)
+                    cursor.execute(insert_sql, insert_tuple)
                     connect.commit()
                     print("insert stock:", insert_tuple)
                 else:
                     stock.set_favorite(favorite_stock)
                     stock.set_modified(now)
+
+                    update_sql = Stock.get_update_sql()
                     update_tuple = stock.get_update_tuple()
-                    cursor.execute(sql_update, update_tuple)
+
+                    cursor.execute(update_sql, update_tuple)
                     connect.commit()
                     print("update stock:", update_tuple)
         if executemany:
             print("insert: executemany")
-            cursor.executemany(sql_insert, insert_tuple_list)
+            cursor.executemany(insert_sql, insert_tuple_list)
             connect.commit()
     except sqlite3.Error as e:
         print('e:', e)
@@ -413,6 +400,7 @@ def write_financial_data_to_database(code, financial_data_list):
                  "?,?)"
 
     if financial_data_list is None:
+        time.sleep(random.random())
         print("financial_data_list is None, return")
         return
 
@@ -562,9 +550,10 @@ def write_stock_to_file(stock_tuple_list):
     file_name = get_stock_file_name()
 
     field_name_tuple = tuple(("id", "code", "name",
-                              "industry", "area",
-                              "time_to_market", "holders",
-                              "favorite", "pe", "pb", "roe",
+                              "price", "net", "volume", "amount",
+                              "pe", "pb",
+                              "dividend", "dividend_yield",
+                              "rating", "favorite",
                               "created", "modified"))
 
     with open(file_name, 'w', newline='') as csv_file:
@@ -577,9 +566,10 @@ def write_stock_to_file(stock_tuple_list):
                 continue
 
             stock_dict = {"id": stock.id, "code": stock.code, "name": stock.name,
-                          "industry": stock.industry, "area": stock.area,
-                          "time_to_market": stock.time_to_market, "holders": stock.holders,
-                          "favorite": stock.favorite, "pe": stock.pe, "pb": stock.pb,
+                          "price": stock.price, "net": stock.net, "volume": stock.volume, "amount": stock.amount,
+                          "pe": stock.pe, "pb": stock.pb,
+                          "dividend": stock.dividend, "dividend_yield": stock.dividend_yield,
+                          "rating": stock.rating, "favorite": stock.favorite,
                           "created": stock.created, "modified": stock.modified}
             writer.writerow(stock_dict)
 
@@ -718,7 +708,7 @@ def read_stock_tuple_list_from_database(where=None, order=None, sort=None):
     connect = None
     stock_tuple_list = tuple()
 
-    sql_query = Stock.get_sql_query(where, order, sort)
+    sql_query = Stock.get_query_sql(where, order, sort)
 
     try:
         connect = sqlite3.connect(constant.DATABASE_NAME)
@@ -794,9 +784,9 @@ def analyze_stock_data(stock, stock_data_tuple_list, financial_data_tuple_list, 
     if share_bonus is None:
         return stock
 
-    if stock_data.close > 0:
-        stock.dividend_yield = 100.0 * share_bonus.dividend / 10 / stock_data.close
+    if stock.price > 0:
         stock.dividend = share_bonus.dividend
+        stock.dividend_yield = round(100.0 * share_bonus.dividend / 10 / stock.price, 2)
 
     # if financial_data.earnings_per_share != 0:
     #     stock.pe = stock_data.close / financial_data.earnings_per_share
@@ -911,12 +901,6 @@ def analyze_financial_data(stock, financial_data_tuple_list):
         if financial_data is None:
             break
 
-        # if index == 0:
-        #     if not financial_data.check_out():
-        #         stock.rating = constant.POOR_TYPE
-        #         print("stock.rating = constant.POOR_TYPE")
-        #         return stock
-
         if "03-31" in financial_data.date:
             main_business_income_q1.append(financial_data.main_business_income)
             net_profit_q1.append(financial_data.net_profit)
@@ -961,7 +945,7 @@ def analyze():
         share_bonus_tuple_list = read_share_bonus_from_database(stock)
 
         stock = analyze_stock_data(stock, stock_data_tuple_list, financial_data_tuple_list, share_bonus_tuple_list)
-        stock = analyze_financial_data(stock, financial_data_tuple_list)
+        # stock = analyze_financial_data(stock, financial_data_tuple_list)
         stock.update_to_database()
 
     print("analyze done, count=", count)
@@ -982,9 +966,6 @@ def write_to_file(stock):
     if stock is None:
         return
 
-    print(stock.code, stock.name, round(stock.dividend_yield, 2), round(stock.dividend, 2), " ", stock.rating,
-          stock.favorite)
-
     stock_data_tuple_list = read_stock_data_from_database(stock)
     write_stock_data_to_file(stock, stock_data_tuple_list)
 
@@ -1002,103 +983,29 @@ class StockBasic:
 
         self.set(stock_basic)
 
-        # self.code = stock_basic['code'] # code, 代码
-        # self.name = stock_basic['name']  # name, 名称
-        # self.industry = stock_basic['industry']  # industry, 所属行业
-        # self.area = stock_basic['area']  # area, 地区
-        # self.pe = stock_basic['pe']  # pe, 市盈率
-        # self.outstanding = stock_basic['outstanding']  # outstanding, 流通股本(亿)
-        # self.totals = stock_basic['totals']  # totals, 总股本(亿)
-        # self.total_assets = stock_basic['totalAssets']  # totalAssets, 总资产(万)
-        # self.liquid_assets = stock_basic['liquidAssets']  # liquidAssets, 流动资产
-        # self.fixed_assets = stock_basic['fixedAssets']  # fixedAssets, 固定资产
-        # self.reserved = stock_basic['reserved']  # reserved, 公积金
-        # self.rps = stock_basic['reservedPerShare']  # reservedPerShare, 每股公积金
-        # self.eps = stock_basic['esp']  # esp, 每股收益
-        # self.bvps = stock_basic['bvps']  # bvps, 每股净资
-        # self.pb = stock_basic['pb']  # pb, 市净率
-        # self.time_to_market = str(stock_basic['timeToMarket'])  # timeToMarket, 上市日期
-        # self.undp = stock_basic['undp']  # undp, 未分利润
-        # self.perundp = stock_basic['perundp']  # perundp, 每股未分配
-        # self.rev = stock_basic['rev']  # rev, 收入同比( %)
-        # self.profit = stock_basic['profit']  # profit, 利润同比( %)
-        # self.gpr = stock_basic['gpr']  # gpr, 毛利率( %)
-        # self.npr = stock_basic['npr']  # npr, 净利润率( %)
-        # self.holders = stock_basic['holders']  # holders, 股东人数
-
     def set_code(self, code):
         self.code = code
 
     def set_name(self, name):
         self.name = name
 
-    def set_industry(self, industry):
-        self.industry = industry
+    def set_price(self, price):
+        self.price = price
 
-    def set_area(self, area):
-        self.area = area
+    def set_net(self, net):
+        self.net = net
+
+    def set_volume(self, volume):
+        self.volume = volume
+
+    def set_amount(self, amount):
+        self.amount = amount
 
     def set_pe(self, pe):
         self.pe = pe
 
-    def set_outstanding(self, outstanding):
-        self.outstanding = outstanding
-
-    def set_totals(self, totals):
-        self.totals = totals
-
-    def set_total_assets(self, total_assets):
-        self.total_assets = total_assets
-
-    def set_liquid_assets(self, liquid_assets):
-        self.liquid_assets = liquid_assets
-
-    def set_fixed_assets(self, fixed_assets):
-        self.fixed_assets = fixed_assets
-
-    def set_reserved(self, reserved):
-        self.reserved = reserved
-
-    def set_rps(self, rps):
-        self.rps = rps
-
-    def set_eps(self, eps):
-        self.eps = eps
-
-    def set_bvps(self, bvps):
-        self.bvps = bvps
-
     def set_pb(self, pb):
         self.pb = pb
-
-    def set_time_to_market(self, time_to_market):
-        time_to_market = str(time_to_market)
-
-        if len(time_to_market) == 8:
-            time_to_market = time_to_market[:4] + "-" + time_to_market[4:6] + "-" + time_to_market[6:]
-
-        self.time_to_market = time_to_market
-
-    def set_undp(self, undp):
-        self.undp = undp
-
-    def set_perundp(self, perundp):
-        self.perundp = perundp
-
-    def set_rev(self, rev):
-        self.rev = rev
-
-    def set_profit(self, profit):
-        self.profit = profit
-
-    def set_gpr(self, gpr):
-        self.gpr = gpr
-
-    def set_npr(self, npr):
-        self.npr = npr
-
-    def set_holders(self, holders):
-        self.holders = holders
 
     def set(self, stock_basic):
         if stock_basic is None:
@@ -1106,84 +1013,59 @@ class StockBasic:
         if isinstance(stock_basic, dict):
             self.set_code(stock_basic['code'])
             self.set_name(stock_basic['name'])
-            self.set_industry(stock_basic['industry'])  # industry, 所属行业
-            self.set_area(stock_basic['area'])  # area, 地区
-            self.set_pe(stock_basic['pe'])  # pe, 市盈率
-            self.set_outstanding(stock_basic['outstanding'])  # outstanding, 流通股本(亿)
-            self.set_totals(stock_basic['totals'])  # totals, 总股本(亿)
-            self.set_total_assets(stock_basic['totalAssets'])  # totalAssets, 总资产(万)
-            self.set_liquid_assets(stock_basic['liquidAssets'])  # liquidAssets, 流动资产
-            self.set_fixed_assets(stock_basic['fixedAssets'])  # fixedAssets, 固定资产
-            self.set_reserved(stock_basic['reserved'])  # reserved, 公积金
-            self.set_rps(stock_basic['reservedPerShare'])  # reservedPerShare, 每股公积金
-            self.set_eps(stock_basic['esp'])  # esp, 每股收益
-            self.set_bvps(stock_basic['bvps'])  # bvps, 每股净资
-            self.set_pb(stock_basic['pb'])  # pb, 市净率
-            self.set_time_to_market(stock_basic['timeToMarket'])  # timeToMarket, 上市日期
-            self.set_undp(stock_basic['undp'])  # undp, 未分利润
-            self.set_perundp(stock_basic['perundp'])  # perundp, 每股未分配
-            self.set_rev(stock_basic['rev'])  # rev, 收入同比( %)
-            self.set_profit(stock_basic['profit'])  # profit, 利润同比( %)
-            self.set_gpr(stock_basic['gpr'])  # gpr, 毛利率( %)
-            self.set_npr(stock_basic['npr'])  # npr, 净利润率( %)
-            self.set_holders(stock_basic['holders'])  # holders, 股东人数
+            self.set_price(stock_basic['price'])
+            self.set_net(stock_basic['net'])
+            self.set_volume(stock_basic['volume'])
+            self.set_amount(stock_basic['amount'])
+            self.set_pe(stock_basic['pe'])
+            self.set_pb(stock_basic['pb'])
         else:
             self.set_code(stock_basic[1])
             self.set_name(stock_basic[2])
-            self.set_industry(stock_basic[3])  # industry, 所属行业
-            self.set_area(stock_basic[4])  # area, 地区
-            self.set_pe(stock_basic[5])  # pe, 市盈率
-            self.set_outstanding(stock_basic[6])  # outstanding, 流通股本(亿)
-            self.set_totals(stock_basic[7])  # totals, 总股本(亿)
-            self.set_total_assets(stock_basic[8])  # totalAssets, 总资产(万)
-            self.set_liquid_assets(stock_basic[9])  # liquidAssets, 流动资产
-            self.set_fixed_assets(stock_basic[10])  # fixedAssets, 固定资产
-            self.set_reserved(stock_basic[11])  # reserved, 公积金
-            self.set_rps(stock_basic[12])  # reservedPerShare, 每股公积金
-            self.set_eps(stock_basic[13])  # esp, 每股收益
-            self.set_bvps(stock_basic[14])  # bvps, 每股净资
-            self.set_pb(stock_basic[15])  # pb, 市净率
-            self.set_time_to_market(stock_basic[16])  # timeToMarket, 上市日期
-            self.set_undp(stock_basic[17])  # undp, 未分利润
-            self.set_perundp(stock_basic[18])  # perundp, 每股未分配
-            self.set_rev(stock_basic[19])  # rev, 收入同比( %)
-            self.set_profit(stock_basic[20])  # profit, 利润同比( %)
-            self.set_gpr(stock_basic[21])  # gpr, 毛利率( %)
-            self.set_npr(stock_basic[22])  # npr, 净利润率( %)
-            self.set_holders(stock_basic[23])  # holders, 股东人数
+            self.set_price(stock_basic[3])
+            self.set_net(stock_basic[4])
+            self.set_volume(stock_basic[5])
+            self.set_amount(stock_basic[6])
+            self.set_pe(stock_basic[7])
+            self.set_pb(stock_basic[8])
 
 
 class Stock(StockBasic):
     def __init__(self, stock_tuple=None):
         if stock_tuple is None:
             self.id = 0
-            self.dividend_yield = 0
             self.dividend = 0
+            self.dividend_yield = 0
             self.rating = 0
             self.favorite = 0
-            self.created = 0
-            self.modified = 0
+            self.time_to_market = ""
+            self.created = ""
+            self.modified = ""
         else:
             self.id = stock_tuple[0]
             super().__init__(stock_tuple)
-            self.dividend_yield = stock_tuple[24]
-            self.dividend = stock_tuple[25]
-            self.rating = stock_tuple[26]
-            self.favorite = stock_tuple[27]
-            self.created = stock_tuple[28]
-            self.modified = stock_tuple[29]
-
-    def set_dividend_yield(self, dividend_yield):
-        self.dividend_yield = dividend_yield
+            self.dividend = stock_tuple[9]
+            self.dividend_yield = stock_tuple[10]
+            self.rating = stock_tuple[11]
+            self.favorite = stock_tuple[12]
+            self.time_to_market = stock_tuple[13]
+            self.created = stock_tuple[14]
+            self.modified = stock_tuple[15]
 
     def set_dividend(self, dividend):
         self.dividend = dividend
+
+    def set_dividend_yield(self, dividend_yield):
+        self.dividend_yield = dividend_yield
 
     def set_rating(self, rating):
         self.rating = rating
 
     def set_favorite(self, favorite):
         self.favorite = favorite
+
+    def set_time_to_market(self, time_to_market):
+        self.time_to_market = time_to_market
 
     def set_created(self, created):
         self.created = created
@@ -1195,25 +1077,30 @@ class Stock(StockBasic):
         super().set(stock_basic)
 
     def get_insert_tuple(self):
-        return tuple((self.code, self.name, self.industry, self.area, self.pe,
-                      self.outstanding, self.totals, self.total_assets, self.liquid_assets, self.fixed_assets,
-                      self.reserved, self.rps, self.eps, self.bvps, self.pb,
-                      self.time_to_market, self.undp, self.perundp, self.rev, self.profit,
-                      self.gpr, self.npr, self.holders, self.dividend_yield, self.dividend,
-                      self.rating, self.favorite, self.created, self.modified))
+        return tuple((self.code, self.name,
+                      self.price, self.net,
+                      self.volume, self.amount,
+                      self.pe, self.pb,
+                      self.dividend, self.dividend_yield,
+                      self.rating, self.favorite, self.time_to_market,
+                      self.created, self.modified))
 
     def get_update_tuple(self):
-        return tuple((self.name, self.industry, self.area, self.pe,
-                      self.outstanding, self.totals, self.total_assets, self.liquid_assets, self.fixed_assets,
-                      self.reserved, self.rps, self.eps, self.bvps, self.pb,
-                      self.time_to_market, self.undp, self.perundp, self.rev, self.profit,
-                      self.gpr, self.npr, self.holders, self.dividend_yield, self.dividend,
-                      self.rating, self.favorite, self.modified, self.id))
+        return tuple((self.code, self.name,
+                      self.price, self.net,
+                      self.volume, self.amount,
+                      self.pe, self.pb,
+                      self.dividend, self.dividend_yield,
+                      self.rating, self.favorite, self.time_to_market,
+                      self.modified,
+                      self.id))
 
     def dump(self):
         print(self.id, self.code, self.name,
-              self.industry, self.area, self.time_to_market, self.holders,
-              self.dividend_yield, self.dividend, self.rating, self.favorite, self.pe, self.pb,
+              self.price, self.net, self.volume, self.amount,
+              self.pe, self.pb,
+              self.dividend, self.dividend_yield,
+              self.rating, self.favorite,
               self.created, self.modified)
 
     def is_favorite(self):
@@ -1277,20 +1164,13 @@ class Stock(StockBasic):
 
     def update_to_database(self):
         connect = None
-        sql_update = "UPDATE stock SET dividend_yield=?, dividend=?, rating=?, favorite=? WHERE code=?"
-
-        print("update_to_database",
-              " code:", self.code,
-              " name:", self.name,
-              " dividend_yield=", self.dividend_yield,
-              " dividend=", self.dividend,
-              " rating=", self.rating,
-              " favorite=", self.favorite)
+        sql_update = "UPDATE stock SET dividend=?, dividend_yield=?, " \
+                     "rating=?, favorite=?, time_to_market=? WHERE code=?"
 
         try:
             connect = sqlite3.connect(constant.DATABASE_NAME)
             cursor = connect.cursor()
-            cursor.execute(sql_update, (self.dividend_yield, self.dividend, self.rating, self.favorite, self.code))
+            cursor.execute(sql_update, (self.dividend, self.dividend_yield, self.rating, self.favorite, self.time_to_market, self.code))
             connect.commit()
         except sqlite3.Error as e:
             print('e:', e)
@@ -1299,20 +1179,47 @@ class Stock(StockBasic):
                 connect.close()
 
     @staticmethod
-    def get_sql_query(where=None, order=None, sort=None):
-        sql_query = "SELECT * FROM stock"
+    def get_query_sql(where=None, order=None, sort=None):
+        query_sql = "SELECT * FROM stock"
 
         if where is not None:
-            sql_query += " WHERE " + where
+            query_sql += " WHERE " + where
 
         if order is not None:
-            sql_query += " ORDER BY " + order
+            query_sql += " ORDER BY " + order
 
         if sort is not None:
-            sql_query += " " + sort
+            query_sql += " " + sort
 
-        return sql_query
+        return query_sql
 
+    @staticmethod
+    def get_insert_sql():
+        insert_sql = "INSERT INTO stock (" \
+                 "code, name, price, net," \
+                 "volume, amount, pe, pb," \
+                 "dividend, dividend_yield, rating, favorite," \
+                 "time_to_market, created, modified" \
+                 ") VALUES(" \
+                 "?,?,?,?," \
+                 "?,?,?,?," \
+                 "?,?,?,?," \
+                 "?,?,?)"
+        return insert_sql
+
+    @staticmethod
+    def get_update_sql():
+        update_sql = "UPDATE stock SET " \
+                     "code=?, name=?, " \
+                     "price=?, net=?, " \
+                     "volume=?, amount=?, " \
+                     "pe=?, pb=?, " \
+                     "dividend=?, dividend_yield=?, " \
+                     "rating=?, favorite=?, " \
+                     "time_to_market=?, modified=? " \
+                     " WHERE " \
+                     "id=?"
+        return update_sql
 
 class StockData:
     def __init__(self, stock_data_tuple=None):
@@ -1354,19 +1261,6 @@ class FinancialData:
         self.book_value_per_share_rate = financial_data_tuple[13]
         self.created = financial_data_tuple[14]
         self.modified = financial_data_tuple[15]
-
-    def check_out(self):
-        result = False
-
-        if self.book_value_per_share < 1 \
-                or self.earnings_per_share < 0 \
-                or self.cash_flow_per_share < 0 \
-                or self.main_business_income < 0 \
-                or self.net_profit < 0 \
-                or self.main_business_income < self.total_long_term_liabilities:
-            result = True
-
-        return result
 
 
 class ShareBonus:

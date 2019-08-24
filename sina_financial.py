@@ -13,6 +13,7 @@ from requests.exceptions import RequestException
 
 class SinaFinancial:
 
+
     def get_content(self, url):
         """
         Attempts to get the content at `url` by making an HTTP GET request.
@@ -48,7 +49,8 @@ class SinaFinancial:
         make it do anything.
         """
         print(e)
-    #
+
+
     # def parse_tr(self, parent):
     #     value = 0
     #     result = {}
@@ -95,51 +97,53 @@ class SinaFinancial:
     #
     #     return result
 
-    def parse_tr(self, parent):
-        value = 0
-        result = {}
 
-        if parent is None:
+    def download_stock_list(self, page):
+        url = 'http://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQNodeData?'
+
+        url += 'page=' + str(page)
+        url += '&num=100'
+        url += '&sort=symbol&asc=1&node=hs_a&symbol=&_s_r_a=init'
+
+        print(url)
+
+        content = None
+
+        try:
+            content = urllib.request.urlopen(url).read().decode('gbk')
+        except Exception:
+            print("urllib.request.urlopen(url).read().decode() error")
+
+        if content is None:
+            print("content is None, return")
             return None
 
-        trs = parent.select("tr")
-        if trs is None:
-            return None
+        content = content.replace('symbol', '"symbol"')#标记
+        content = content.replace('code', '"code"')#code代码
+        content = content.replace('name', '"name"')#name名称
+        content = content.replace('trade', '"price"')#trade现价
+        content = content.replace('pricechange', '"change"')
 
-        for tr in trs:
-            if tr is None:
-                return None
+        content = content.replace('changepercent', '"net"')#changepercent涨跌幅
+        content = content.replace('buy', '"buy"')#buy买入价
+        content = content.replace('sell', '"sell"')#卖出价
+        content = content.replace('settlement', '"settlement"')#settlement昨日收盘价
+        content = content.replace('open', '"open"')#open开盘价
+        content = content.replace('high', '"high"')#high最高价
 
-            tds = tr.select("td")
-            if tds is None:
-                return None
+        content = content.replace('low', '"low"')#low最低价
+        content = content.replace('volume', '"volume"')#volume成交量
+        content = content.replace('amount', '"amount"')#amount成交金额
+        content = content.replace('ticktime', '"ticktime"')
+        content = content.replace('per', '"pe"')#per市盈率
+        content = content.replace('pb', '"pb"')#pb市净率
 
-            if len(tds) < 2:
-                continue
+        content = content.replace('mktcap', '"mktcap"')#mktcap总市值
+        content = content.replace('nmc', '"nmc"')#nmc流通市值
+        content = content.replace('turnoverratio', '"turnoverratio"')#turnoverratio换手率
 
-            key_string = tds[0].text
-            if key_string is None:
-                continue
+        return json.loads(content)
 
-            # key = datetime.strptime(key_string, constant.DATE_FORMAT)
-
-            value_string = tds[1].text
-            if value_string is None:
-                continue
-
-            if not value_string.strip():
-                value_string = "0.0"
-
-            if ',' in value_string:
-                value_string = value_string.replace(',', '')
-                value = float(value_string)
-                value = value / 100000000.0
-            else:
-                value = float(value_string)
-
-            result[key_string] = value
-
-        return result
 
     def download_stock_data(self, code, length, period=constant.MONTH):
         url = "http://money.finance.sina.com.cn/quotes_service/api/json_v2.php/CN_MarketData.getKLineData?"
@@ -187,7 +191,7 @@ class SinaFinancial:
 
         return json.loads(content)
 
-    def download_financial_data(self, code, not_before=None):
+    def download_financial_data(self, code, time_to_market=None):
         value = 0
         financial_data = dict()
         financial_data_list = []
@@ -241,8 +245,8 @@ class SinaFinancial:
                     if value_string is None:
                         continue
 
-                    if not_before is not None:
-                        if datetime.strptime(value_string, constant.DATE_FORMAT) < not_before:
+                    if time_to_market is not None:
+                        if datetime.strptime(value_string, constant.DATE_FORMAT) < time_to_market:
                             return financial_data_list[::-1]
 
                     financial_data = dict()
@@ -294,45 +298,6 @@ class SinaFinancial:
 
         return financial_data_list[::-1]
 
-
-    # def download_financial_data(self, code):
-    #     url = 'http://money.finance.sina.com.cn/corp/view/vFD_FinanceSummaryHistory.php?stockid='\
-    #           + code + '&type=' + type
-    #
-    #     print(url)
-    #
-    #     content = self.get_content(url)
-    #
-    #     if content is None:
-    #         return None
-    #
-    #     html = BeautifulSoup(content, 'html.parser')
-    #     if html is None:
-    #         return None
-    #
-    #     tables = html.select('table#Table1')
-    #     if tables is None:
-    #         return None
-    #
-    #     for table in tables:
-    #         if table is None:
-    #             return None
-    #
-    #         thead = table.select("thead")
-    #         if thead is None:
-    #             return None
-    #
-    #         tbodys = table.select("tbody")
-    #         if tbodys is None:
-    #             return None
-    #
-    #         if len(tbodys) > 0:
-    #             for tbody in tbodys:
-    #                 if tbody is None:
-    #                     return None
-    #                 return self.parse_tr(tbody)
-    #         else:
-    #             return self.parse_tr(table)
 
     def download_share_bonus(self, code):
         share_bonus = dict()

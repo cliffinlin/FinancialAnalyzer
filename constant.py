@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+SLEEP_TIME_OUT = 0.5
 # Rating Type:
 POOR_TYPE = -1
 PRICE_TYPE = 1 << 0
@@ -40,31 +41,17 @@ SQL_SETUP_TABLE_STOCK = """ CREATE TABLE IF NOT EXISTS stock (
                                     id INTEGER PRIMARY KEY AUTOINCREMENT,
                                     code TEXT NOT NULL,
                                     name TEXT NOT NULL,
-                                    industry TEXT,
-                                    area TEXT,
+                                    price DOUBLE,
+                                    net DOUBLE,
+                                    volume INTEGER,
+                                    amount INTEGER,
                                     pe DOUBLE,
-                                    outstanding DOUBLE,
-                                    totals DOUBLE,
-                                    total_assets DOUBLE,
-                                    liquid_assets DOUBLE,
-                                    fixed_assets DOUBLE,                   
-                                    reserved DOUBLE,
-                                    rps DOUBLE,
-                                    eps DOUBLE,
-                                    bvps DOUBLE,
                                     pb DOUBLE,
-                                    time_to_market TEXT,
-                                    undp DOUBLE,
-                                    perundp DOUBLE,
-                                    rev DOUBLE,
-                                    profit DOUBLE,
-                                    gpr DOUBLE,
-                                    npr DOUBLE,
-                                    holders DOUBLE,
-                                    dividend_yield DOUBLE,
                                     dividend DOUBLE,
+                                    dividend_yield DOUBLE,                                    
                                     rating INTEGER,
                                     favorite INTEGER,
+                                    time_to_market TEXT,
                                     created TEXT,
                                     modified TEXT
                                 ); """

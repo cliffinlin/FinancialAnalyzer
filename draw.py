@@ -16,9 +16,16 @@ import constant
 import favorite
 import financial
 
+import numpy as np
+
+stock_index = 0
+stock_tuple_list = None
+
+data = np.linspace(1, 100)
+power = 0
+
 
 def draw_stock_data(stock, period=constant.MONTH):
-
     # read and reformat data
 
     stock_data_dict = pandas.read_csv(financial.get_stock_data_file_name(stock), parse_dates=True, index_col=0)
@@ -111,11 +118,13 @@ def draw_stock_data(stock, period=constant.MONTH):
     plt.rcParams['font.sans-serif'] = ['KaiTi']
     plt.rcParams['font.serif'] = ['KaiTi']
 
-    title = stock.name + " " + stock.code\
-            + " pe " + str(stock.pe) + " pb " + str(stock.pb)\
-            + " yield " + str(round(stock.dividend_yield, 2))\
-            + " dividend " + str(round(stock.dividend, 2))\
-            + " " + str(stock.rating) + " " + str(stock.favorite)
+    title = stock.name + " " + stock.code \
+            + " pe " + str(stock.pe)\
+            + " pb " + str(stock.pb) \
+            + " dividend " + str(stock.dividend) \
+            + " yield " + str(round(stock.dividend_yield, 2)) \
+            + " rating " + str(stock.rating)\
+            + " favorite " + str(stock.favorite)
     plt.title(title)
 
     plt.show()
@@ -144,6 +153,9 @@ def draw_stock_data(stock, period=constant.MONTH):
 
 
 def draw(where=None, order=None, sort=None):
+    global stock_index
+    global stock_tuple_list
+
     stock_tuple_list = financial.select(where, order, sort)
 
     index = -1
@@ -154,7 +166,69 @@ def draw(where=None, order=None, sort=None):
         if stock is None:
             continue
 
+        print(stock.code, stock.name, "price:" + str(stock.price), "net:" + str(stock.net), "dividend:" + str(stock.dividend),
+              "yield:" + str(stock.dividend_yield), "rating:" + str(stock.rating), "favorite:" + str(stock.favorite))
+
         financial.write_to_file(stock)
 
         draw_stock_data(stock)
 
+
+def on_keyboard(event):
+    global data
+    global power
+
+    global stock_index
+    global stock_tuple_list
+
+    if event.key == 'right':
+        power += 1
+        if power > len(stock_tuple_list) - 1:
+            power = len(stock_tuple_list) - 1
+
+        stock_index += 1
+        if stock_index > len(stock_tuple_list) - 1:
+            stock_index = len(stock_tuple_list) - 1
+            return
+    elif event.key == 'left':
+        power -= 1
+        if power < 0:
+            power = 0
+
+        stock_index -= 1
+        if stock_index < 0:
+            stock_index = 0
+            return
+
+    plt.clf()
+
+    plt.plot(data ** power)
+
+    stock = financial.Stock(stock_tuple_list[stock_index])
+    financial.write_to_file(stock)
+
+    plt.draw()
+
+
+def test(where=None, order=None, sort=None):
+    global data
+    global power
+    global stock_index
+    global stock_tuple_list
+
+    stock_index = 0
+    stock_tuple_list = financial.select(where, order, sort)
+
+    if stock_tuple_list is None:
+        return
+
+    stock = financial.Stock(stock_tuple_list[stock_index])
+    financial.write_to_file(stock)
+
+    data = np.linspace(1, 100)
+    power = 0
+    plt.plot(data ** power)
+
+    plt.gcf().canvas.mpl_connect('key_press_event', on_keyboard)
+
+    plt.show()
