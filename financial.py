@@ -270,7 +270,7 @@ def write_stock_list_to_database(stock_list):
         print("stock_list is None, return")
         return
 
-    stock_favorite_list = favorite.get_stock_favorite_list()
+    favorite_stock_list = favorite.get_favorite_stock_list()
 
     setup_database()
 
@@ -286,9 +286,9 @@ def write_stock_list_to_database(stock_list):
             stock = Stock()
             stock.set_stock_basic(stock_basic)
 
-            if stock_favorite_list is not None:
+            if favorite_stock_list is not None:
                 favorite_stock = 0
-                if stock.code in stock_favorite_list:
+                if stock.code in favorite_stock_list:
                     favorite_stock = 1
 
             now = datetime.now().strftime(constant.DATE_TIME_FORMAT)
@@ -957,6 +957,13 @@ def select(where=None, order=None, sort=None):
     stock_tuple_list = read_stock_tuple_list_from_database(where, order, sort)
     write_stock_to_file(stock_tuple_list)
 
+    for stock_tuple in stock_tuple_list:
+        stock = Stock(stock_tuple)
+        print("\"" + stock.code + "\"" + " #" + stock.name + " "
+              + "pe " + str(stock.pe) + " pb " + str(stock.pb) + " "
+              + "dividend " + str(stock.dividend) + " " + str(stock.dividend_yield) + "% "
+              )
+
     print("select done, count=", len(stock_tuple_list))
 
     return stock_tuple_list
@@ -1106,12 +1113,12 @@ class Stock(StockBasic):
     def is_favorite(self):
         result = False
 
-        stock_favorite_list = favorite.get_stock_favorite_list()
+        favorite_stock_list = favorite.getfavorite__stock_list()
 
-        if stock_favorite_list is None:
+        if favorite_stock_list is None:
             return result
 
-        if self.code in stock_favorite_list:
+        if self.code in favorite_stock_list:
             self.set_favorite(1)
             result = True
 

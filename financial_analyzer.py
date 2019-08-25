@@ -13,7 +13,7 @@ import financial
 if __name__ == "__main__":
     # financial.download()
     # financial.analyze()
-    draw.draw("dividend > 1", "dividend", "DESC")#where=None, order=None, sort=None #"DESC""ASC"
+    draw.draw("dividend >= 1 AND dividend_yield >= 4", "dividend", "ASC")#where=None, order=None, sort=None #"DESC""ASC"
     # draw.test("dividend_yield > 3 and dividend > 1", "dividend_yield", "DESC")
     # draw.draw("favorite=1", "dividend_yield", "DESC")#where=None, order=None, sort=None #"DESC""ASC"
     # draw.draw("rating=7", "dividend_yield", "DESC")#where=None, order=None, sort=None #"DESC""ASC"
