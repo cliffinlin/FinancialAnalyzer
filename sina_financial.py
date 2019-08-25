@@ -343,19 +343,25 @@ class SinaFinancial:
                 share_bonus = dict()
 
                 date_string = tds[0].text
-                if date_string is None:
+                if date_string is None or "--" in date_string:
                     continue
-                share_bonus["date"] = date_string
 
                 dividend_string = tds[3].text
-                if dividend_string is None:
+                if dividend_string is None or "--" in dividend_string:
                     continue
+
+                dividend_date_string = tds[5].text
+                if dividend_date_string is None or "--" in dividend_date_string:
+                    continue
+
+                share_bonus["date"] = date_string
+
                 if not dividend_string.strip():
                     dividend_string = "0.0"
+
                 dividend = float(dividend_string)
                 share_bonus["dividend"] = dividend
 
-                dividend_date_string = tds[5].text
                 share_bonus["dividend_date"] = dividend_date_string
 
                 share_bonus_list.append(share_bonus)

@@ -11,8 +11,8 @@ import financial
 
 
 if __name__ == "__main__":
-    # financial.download()
-    # financial.analyze()
+    financial.download()
+    financial.analyze()
     financial.update_stock_favorite_to_database()
     draw.draw("favorite = 1", "dividend_yield", "DESC")#where=None, order=None, sort=None #"DESC""ASC"
     # draw.test("dividend_yield > 3 and dividend > 1", "dividend_yield", "DESC")

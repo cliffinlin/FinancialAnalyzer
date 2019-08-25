@@ -1145,7 +1145,7 @@ class Stock(StockBasic):
     def is_favorite(self):
         result = False
 
-        favorite_stock_list = favorite.getfavorite__stock_list()
+        favorite_stock_list = favorite.get_favorite_stock_list()
 
         if favorite_stock_list is None:
             return result
