@@ -14,7 +14,7 @@ import favorite
 
 from datetime import datetime
 
-favorite_only = False
+favorite_only = True
 
 
 def setup_database():
@@ -945,7 +945,7 @@ def analyze():
         share_bonus_tuple_list = read_share_bonus_from_database(stock)
 
         stock = analyze_stock_data(stock, stock_data_tuple_list, financial_data_tuple_list, share_bonus_tuple_list)
-        # stock = analyze_financial_data(stock, financial_data_tuple_list)
+        stock = analyze_financial_data(stock, financial_data_tuple_list)
         stock.update_to_database()
 
     print("analyze done, count=", count)
@@ -959,7 +959,8 @@ def select(where=None, order=None, sort=None):
 
     for stock_tuple in stock_tuple_list:
         stock = Stock(stock_tuple)
-        print("\"" + stock.code + "\"" + " #" + stock.name + " "
+
+        print("\"" + stock.code + "\"" + ", #" + stock.name + " "
               + "pe " + str(stock.pe) + " pb " + str(stock.pb) + " "
               + "dividend " + str(stock.dividend) + " " + str(stock.dividend_yield) + "% "
               )
@@ -981,6 +982,37 @@ def write_to_file(stock):
 
     share_bonus_tuple_list = read_share_bonus_from_database(stock)
     write_share_bonus_to_file(stock, share_bonus_tuple_list)
+
+
+def update_stock_favorite_to_database():
+    stock_tuple_list = read_stock_tuple_list_from_database()
+    favorite_stock_list = favorite.get_favorite_stock_list()
+
+    if favorite_stock_list is None:
+        return
+
+    count = 0
+    index = -1
+    for stock_tuple in stock_tuple_list:
+        index = index + 1
+        if index < 0:
+            continue
+
+        stock = Stock(stock_tuple)
+        if stock is None:
+            continue
+
+        if stock.code in favorite_stock_list:
+            stock.set_favorite(1)
+        else:
+            stock.set_favorite(0)
+
+        stock.update_to_database()
+        count += 1
+
+        print(index, stock.code, stock.name, stock.rating, stock.favorite)
+
+    print("update_stock_favorite_to_database done, count=", count)
 
 
 class StockBasic:
