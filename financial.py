@@ -68,7 +68,7 @@ def get_time_to_market(stock_data_list):
 def download():
     time_to_market = None
 
-    # download_stock_list()
+    download_stock_list()
 
     stock_tuple_list = read_stock_tuple_list_from_database()
 
@@ -637,18 +637,18 @@ def write_financial_data_to_file(stock, financial_data_tuple_list):
                 continue
 
             financial_data_dict = {"date": financial_data.date,
-                               "book_value_per_share": financial_data.book_value_per_share,
-                               "earnings_per_share": financial_data.earnings_per_share,
-                               "cash_flow_per_share": financial_data.cash_flow_per_share,
-                               "total_current_assets": financial_data.total_current_assets,
-                               "total_assets": financial_data.total_assets,
-                               "total_long_term_liabilities": financial_data.total_long_term_liabilities,
-                               "main_business_income": financial_data.main_business_income,
-                               "financial_expenses": financial_data.financial_expenses,
-                               "net_profit": financial_data.net_profit,
-                               "roe": financial_data.roe,
-                               "book_value_per_share_rate": financial_data.book_value_per_share_rate,
-                               }
+                                   "book_value_per_share": financial_data.book_value_per_share,
+                                   "earnings_per_share": financial_data.earnings_per_share,
+                                   "cash_flow_per_share": financial_data.cash_flow_per_share,
+                                   "total_current_assets": financial_data.total_current_assets,
+                                   "total_assets": financial_data.total_assets,
+                                   "total_long_term_liabilities": financial_data.total_long_term_liabilities,
+                                   "main_business_income": financial_data.main_business_income,
+                                   "financial_expenses": financial_data.financial_expenses,
+                                   "net_profit": financial_data.net_profit,
+                                   "roe": financial_data.roe,
+                                   "book_value_per_share_rate": financial_data.book_value_per_share_rate,
+                                   }
             writer.writerow(financial_data_dict)
 
 
@@ -678,10 +678,11 @@ def write_share_bonus_to_file(stock, share_bonus_tuple_list):
                 continue
 
             share_bonus_dict = {"date": share_bonus.date,
-                               "dividend": share_bonus.dividend,
-                               "dividend_date": share_bonus.dividend_date,
-                               }
+                                "dividend": share_bonus.dividend,
+                                "dividend_date": share_bonus.dividend_date,
+                                }
             writer.writerow(share_bonus_dict)
+
 
 #
 # def read_stock_tuple_from_database(code):
@@ -746,7 +747,7 @@ def read_stock_data_from_database(stock, period=constant.MONTH):
     return stock_data_tuple_list
 
 
-def analyze_stock_data(stock, stock_data_tuple_list, financial_data_tuple_list, share_bonus_tuple_list):
+def analyze_stock_data(stock, stock_data_tuple_list, financial_data_tuple_list):
     if stock is None:
         return stock
 
@@ -762,15 +763,8 @@ def analyze_stock_data(stock, stock_data_tuple_list, financial_data_tuple_list, 
     if len(financial_data_tuple_list) < 1:
         return stock
 
-    if share_bonus_tuple_list is None:
-        return stock
-
-    if len(share_bonus_tuple_list) < 1:
-        return stock
-
     stock_data_tuple = stock_data_tuple_list[0]
     financial_data_tuple = financial_data_tuple_list[0]
-    share_bonus_tuple = share_bonus_tuple_list[0]
 
     stock_data = StockData(stock_data_tuple)
     if stock_data is None:
@@ -779,14 +773,6 @@ def analyze_stock_data(stock, stock_data_tuple_list, financial_data_tuple_list, 
     financial_data = FinancialData(financial_data_tuple)
     if financial_data is None:
         return stock
-
-    share_bonus = ShareBonus(share_bonus_tuple)
-    if share_bonus is None:
-        return stock
-
-    if stock.price > 0:
-        stock.dividend = share_bonus.dividend
-        stock.dividend_yield = round(100.0 * share_bonus.dividend / 10 / stock.price, 2)
 
     # if financial_data.earnings_per_share != 0:
     #     stock.pe = stock_data.close / financial_data.earnings_per_share
@@ -919,6 +905,53 @@ def analyze_financial_data(stock, financial_data_tuple_list):
     return stock
 
 
+def analyze_share_bonus(stock, share_bonus_tuple_list):
+    total_divident = 0
+    year = None
+    prev_year = None
+
+    if stock is None:
+        return stock
+
+    if share_bonus_tuple_list is None:
+        return stock
+
+    index = -1
+    for share_bonus_tuple in share_bonus_tuple_list:
+        index = index + 1
+
+        if share_bonus_tuple is None:
+            break
+
+        share_bonus = ShareBonus(share_bonus_tuple)
+        if share_bonus is None:
+            break
+
+        if share_bonus.dividend_date is None:
+            break
+
+        strings = share_bonus.dividend_date.split("-")
+
+        if strings is None or len(strings) == 0:
+            break
+
+        year = strings[0]
+
+        if prev_year is not None:
+            if prev_year != year:
+                break
+
+        total_divident += share_bonus.dividend
+        stock.set_dividend(total_divident)
+
+        if stock.price > 0:
+            stock.set_dividend_yield(round(100.0 * stock.dividend / 10 / stock.price, 2))
+
+        prev_year = year;
+
+    return stock
+
+
 def analyze():
     stock_tuple_list = read_stock_tuple_list_from_database()
 
@@ -944,8 +977,10 @@ def analyze():
         financial_data_tuple_list = read_financial_data_from_database(stock)
         share_bonus_tuple_list = read_share_bonus_from_database(stock)
 
-        stock = analyze_stock_data(stock, stock_data_tuple_list, financial_data_tuple_list, share_bonus_tuple_list)
+        stock = analyze_stock_data(stock, stock_data_tuple_list, financial_data_tuple_list)
         stock = analyze_financial_data(stock, financial_data_tuple_list)
+        stock = analyze_share_bonus(stock, share_bonus_tuple_list)
+
         stock.update_to_database()
 
     print("analyze done, count=", count)
@@ -1209,7 +1244,8 @@ class Stock(StockBasic):
         try:
             connect = sqlite3.connect(constant.DATABASE_NAME)
             cursor = connect.cursor()
-            cursor.execute(sql_update, (self.dividend, self.dividend_yield, self.rating, self.favorite, self.time_to_market, self.code))
+            cursor.execute(sql_update, (
+            self.dividend, self.dividend_yield, self.rating, self.favorite, self.time_to_market, self.code))
             connect.commit()
         except sqlite3.Error as e:
             print('e:', e)
@@ -1235,15 +1271,15 @@ class Stock(StockBasic):
     @staticmethod
     def get_insert_sql():
         insert_sql = "INSERT INTO stock (" \
-                 "code, name, price, net," \
-                 "volume, amount, pe, pb," \
-                 "dividend, dividend_yield, rating, favorite," \
-                 "time_to_market, created, modified" \
-                 ") VALUES(" \
-                 "?,?,?,?," \
-                 "?,?,?,?," \
-                 "?,?,?,?," \
-                 "?,?,?)"
+                     "code, name, price, net," \
+                     "volume, amount, pe, pb," \
+                     "dividend, dividend_yield, rating, favorite," \
+                     "time_to_market, created, modified" \
+                     ") VALUES(" \
+                     "?,?,?,?," \
+                     "?,?,?,?," \
+                     "?,?,?,?," \
+                     "?,?,?)"
         return insert_sql
 
     @staticmethod
@@ -1259,6 +1295,7 @@ class Stock(StockBasic):
                      " WHERE " \
                      "id=?"
         return update_sql
+
 
 class StockData:
     def __init__(self, stock_data_tuple=None):
