@@ -6,16 +6,16 @@ Created on Thu Mar 21 19:30:56 2019
 """
 
 import constant
+import os
 import draw
 import financial
 
-
 if __name__ == "__main__":
     # financial.download()
-    financial.analyze()
-    financial.update_stock_favorite_to_database()
-    draw.draw("favorite = 1", "dividend_yield", "DESC")#where=None, order=None, sort=None #"DESC""ASC"
-    # draw.test("dividend_yield > 3 and dividend > 1", "dividend_yield", "DESC")
+    # financial.analyze()
+    # financial.update_stock_favorite_to_database()
+    # draw.draw("favorite != 1", "dividend_yield", "DESC")#where=None, order=None, sort=None #"DESC""ASC"
+    draw.test("favorite = 1", "dividend_yield", "DESC")
     # draw.draw("favorite=1", "dividend_yield", "DESC")#where=None, order=None, sort=None #"DESC""ASC"
     # draw.draw("rating=7", "dividend_yield", "DESC")#where=None, order=None, sort=None #"DESC""ASC"
     # draw.draw("rating > 0 AND frechet < 2", "bvpsr", "DESC")#where=None, order=None, sort=None #"DESC""ASC"

@@ -129,28 +129,6 @@ def draw_stock_data(stock, period=constant.MONTH):
 
     plt.show()
 
-    # ax1 = plt.subplot2grid((6,1), (0,0), rowspan=5, colspan=1)
-    #
-    # for label in ax1.xaxis.get_ticklabels():
-    #     label.set_rotation(45)
-    #
-    # ax1.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d'))
-    # ax1.xaxis.set_major_locator(mticker.MaxNLocator(10))
-    # ax1.grid(True)
-    #
-    # candlestick_ohlc(ax1, df.values, width=5, colorup='r', colordown='g')
-    #
-    # # Pandas 无法显示中文问题 解决方案##
-    # plt.rcParams['font.sans-serif'] = ['KaiTi']
-    # plt.rcParams['font.serif'] = ['KaiTi']
-    #
-    # title = name + " " + code
-    # plt.title(title)
-    # plt.xlabel('date')
-    # plt.ylabel('Price')
-    #
-    # plt.show()
-
 
 def draw(where=None, order=None, sort=None):
     global stock_index
@@ -172,6 +150,36 @@ def draw(where=None, order=None, sort=None):
         financial.write_to_file(stock)
 
         draw_stock_data(stock)
+
+
+def draw_line():
+    global stock_index
+    global stock_tuple_list
+
+    if stock_tuple_list is None:
+        return
+
+    stock = financial.Stock(stock_tuple_list[stock_index])
+    financial.write_to_file(stock)
+
+    plt.clf()
+
+    # # Pandas 无法显示中文问题 解决方案##
+    plt.rcParams['font.sans-serif'] = ['KaiTi']
+    plt.rcParams['font.serif'] = ['KaiTi']
+
+    title = stock.name + " " + stock.code \
+            + " pe " + str(stock.pe)\
+            + " pb " + str(stock.pb) \
+            + " dividend " + str(stock.dividend) \
+            + " yield " + str(round(stock.dividend_yield, 2)) \
+            + " rating " + str(stock.rating)\
+            + " favorite " + str(stock.favorite)
+    plt.title(title)
+
+    print(title)
+
+    plt.plot(data ** power)
 
 
 def on_keyboard(event):
@@ -200,12 +208,7 @@ def on_keyboard(event):
             stock_index = 0
             return
 
-    plt.clf()
-
-    plt.plot(data ** power)
-
-    stock = financial.Stock(stock_tuple_list[stock_index])
-    financial.write_to_file(stock)
+    draw_line()
 
     plt.draw()
 
@@ -216,19 +219,17 @@ def test(where=None, order=None, sort=None):
     global stock_index
     global stock_tuple_list
 
+    data = np.linspace(1, 100)
+    power = 0
+
+    plt.gcf().canvas.mpl_connect('key_press_event', on_keyboard)
+
     stock_index = 0
     stock_tuple_list = financial.select(where, order, sort)
 
     if stock_tuple_list is None:
         return
 
-    stock = financial.Stock(stock_tuple_list[stock_index])
-    financial.write_to_file(stock)
-
-    data = np.linspace(1, 100)
-    power = 0
-    plt.plot(data ** power)
-
-    plt.gcf().canvas.mpl_connect('key_press_event', on_keyboard)
+    draw_line()
 
     plt.show()
