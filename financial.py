@@ -259,7 +259,6 @@ def download_share_bonus(stock):
 def write_stock_list_to_database(stock_list):
     connect = None
     executemany = False
-    favorite_stock = 0
     insert_tuple_list = []
 
     query_sql = Stock.get_query_sql()
@@ -270,8 +269,6 @@ def write_stock_list_to_database(stock_list):
     if stock_list is None:
         print("stock_list is None, return")
         return
-
-    favorite_stock_list = favorite.get_stock_list()
 
     setup_database()
 
@@ -287,15 +284,12 @@ def write_stock_list_to_database(stock_list):
             stock = Stock()
             stock.set_stock_basic(stock_basic)
 
-            if favorite_stock_list is not None:
-                favorite_stock = 0
-                if stock.code in favorite_stock_list:
-                    favorite_stock = 1
+            if not stock.check_out():
+                continue
 
             now = datetime.now().strftime(constant.DATE_TIME_FORMAT)
 
             if executemany:
-                stock.set_favorite(favorite_stock)
                 stock.set_created(now)
                 stock.set_modified(now)
 
@@ -306,7 +300,6 @@ def write_stock_list_to_database(stock_list):
                 cursor.execute(sql_check_record_exist, (stock.code,))
                 stock_tuple = cursor.fetchone()
                 if stock_tuple is None:
-                    stock.set_favorite(favorite_stock)
                     stock.set_created(now)
                     stock.set_modified(now)
 
@@ -316,7 +309,6 @@ def write_stock_list_to_database(stock_list):
                     connect.commit()
                     print("insert stock:", insert_tuple)
                 else:
-                    stock.set_favorite(favorite_stock)
                     stock.set_modified(now)
 
                     update_sql = Stock.get_update_sql()
@@ -1172,10 +1164,8 @@ class Stock(StockBasic):
                       self.price, self.net,
                       self.volume, self.amount,
                       self.pe, self.pb,
-                      self.dividend, self.dividend_yield,
-                      self.rating, self.favorite, self.time_to_market,
                       self.modified,
-                      self.id))
+                      self.code))
 
     def dump(self):
         print(self.id, self.code, self.name,
@@ -1194,7 +1184,6 @@ class Stock(StockBasic):
             return result
 
         if self.code in favorite_stock_list:
-            self.set_favorite(1)
             result = True
 
         return result
@@ -1297,11 +1286,9 @@ class Stock(StockBasic):
                      "price=?, net=?, " \
                      "volume=?, amount=?, " \
                      "pe=?, pb=?, " \
-                     "dividend=?, dividend_yield=?, " \
-                     "rating=?, favorite=?, " \
-                     "time_to_market=?, modified=? " \
+                     "modified=? " \
                      " WHERE " \
-                     "id=?"
+                     "code=?"
         return update_sql
 
 
