@@ -1,10 +1,14 @@
 # -*- coding: utf-8 -*-
 
-def get_favorite_stock_list():
-    return favorite_stock_list
+
+def get_stock_list():
+    return stock_list
 
 
-favorite_stock_list = {
+stock_list = {
+    # hold
+    "000895",  # 双汇发展 pe 14.684 pb 5.325 dividend 5.5 0.0%
+
     # draw.draw("dividend > 4 AND dividend_yield < 1", "dividend", "ASC")
     "600600",  # 青岛啤酒 pe 50.047 pb 3.757 dividend 4.8 0.91%
     "601888",  # 中国国旅 pe 60.114 pb 10.057 dividend 5.5 0.58%
@@ -75,17 +79,44 @@ favorite_stock_list = {
     # other
     "000028",  # 国药一致 pe 16.219 pb 1.649 dividend 4.0 0.87%
     "600196",  # 复星医药 pe 25.701 pb 2.454 dividend 3.2 1.16%
+    "600566",  # 济川药业 pe 13.846 pb 3.998 dividend 12.3 4.27%
+    "000513",  # 丽珠集团 pe 18.987 pb 1.957 dividend 12.0 4.19%
+
     "000828",  # 东莞控股 pe 8.335 pb 1.304 dividend 2.7 3.21%
-    "600650",  # 锦江投资 pe 21.694 pb 1.642 dividend 2.5 2.38%
     "600195",  # 中牧股份 pe 22.18 pb 2.216 dividend 2.42 1.58%
     "601800",  # 中国交建 pe 8.748 pb 0.907 dividend 2.3077 2.29%
     "600276",  # 恒瑞医药 pe 69.636 pb 16.588 dividend 2.2 0.29%
     "601186",  # 中国铁建 pe 7.23 pb 0.805 dividend 2.1 2.31%
-    "000026",  # 飞亚达Ａ pe 18.616 pb 1.288 dividend 2.00813 2.57%
     "600068",  # 葛洲坝 pe 6.178 pb 0.916 dividend 1.8 3.28%
     "600004",  # 白云机场 pe 33.836 pb 2.429 dividend 1.7 0.91%
     "601668",  # 中国建筑 pe 6.391 pb 1.011 dividend 1.68 3.02%
     "601628",  # 中国人寿 pe 75.41 pb 2.305 dividend 1.6 0.54%
     "600018",  # 上港集团 pe 13.351 pb 1.767 dividend 1.54 2.6%
     "601390",  # 中国中铁 pe 8.357 pb 0.837 dividend 1.28 2.13%
+
+    "600668",  # 尖峰集团 pe 6.923 pb 1.242 dividend 3.0 2.53%
+    "002233",  # 塔牌集团 pe 7.014 pb 1.316 dividend 4.3 4.24%
+
+    "600033",  # 福建高速 pe 11.597 pb 0.904 dividend 1.5 4.84%
+
+    "600987",  # 航民股份 pe 6.385 pb 1.503 dividend 2.8 4.57%
+
+    "600398",  # 海澜之家 pe 11.169 pb 2.864 dividend 3.8 4.42%
+
+    "600340",  # 华夏幸福 pe 7.23 pb 2.115 dividend 12.0 4.38%
+    "002146",  # 荣盛发展 pe 4.851 pb 1.056 dividend 4.5 5.33%
+
+    "002101",  # 广东鸿图 pe 10.81 pb 0.801 dividend 3.15 4.63%
+
+    "600563",  # 法拉电子 pe 19.881 pb 3.789 dividend 13.0 3.25%
+
+    "600970",  # 中材国际 pe 7.641 pb 1.12 dividend 2.65 4.45%
+    "600755",  # 厦门国贸 pe 9.205 pb 1.078 dividend 2.7 3.53%
+
+    "600697",  # 欧亚集团 pe 10.674 pb 1.085 dividend 3.9 2.24%
+
+    "600674",  # 川投能源 pe 11.874 pb 1.719 dividend 3.0 3.12%
+    "600236",  # 桂冠电力 pe 12.103 pb 1.968 dividend 2.5 5.25%
+
+    "600612",  # 老凤祥 pe 21.341 pb 3.917 dividend 11.0 2.24%
 }

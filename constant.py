@@ -1,6 +1,12 @@
 # -*- coding: utf-8 -*-
 
 SLEEP_TIME_OUT = 0.5
+
+#Stock Type
+STOCK_TYPE_BLACK = -1
+STOCK_TYPE_NONE = 0
+STOCK_TYPE_FAVORITE = 1
+
 # Rating Type:
 POOR_TYPE = -1
 PRICE_TYPE = 1 << 0

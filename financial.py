@@ -11,10 +11,11 @@ import time
 import random
 
 import favorite
+import black
 
 from datetime import datetime
 
-favorite_only = False
+favorite_only = True
 
 
 def setup_database():
@@ -270,7 +271,7 @@ def write_stock_list_to_database(stock_list):
         print("stock_list is None, return")
         return
 
-    favorite_stock_list = favorite.get_favorite_stock_list()
+    favorite_stock_list = favorite.get_stock_list()
 
     setup_database()
 
@@ -1019,10 +1020,14 @@ def write_to_file(stock):
     write_share_bonus_to_file(stock, share_bonus_tuple_list)
 
 
-def update_stock_favorite_to_database():
+def update():
     stock_tuple_list = read_stock_tuple_list_from_database()
-    favorite_stock_list = favorite.get_favorite_stock_list()
 
+    black_stock_list = black.get_stock_list()
+    if black_stock_list is None:
+        return
+
+    favorite_stock_list = favorite.get_stock_list()
     if favorite_stock_list is None:
         return
 
@@ -1037,17 +1042,20 @@ def update_stock_favorite_to_database():
         if stock is None:
             continue
 
+        stock.set_favorite(constant.STOCK_TYPE_NONE)
+
         if stock.code in favorite_stock_list:
-            stock.set_favorite(1)
-        else:
-            stock.set_favorite(0)
+            stock.set_favorite(constant.STOCK_TYPE_FAVORITE)
+
+        if stock.code in black_stock_list:
+            stock.set_favorite(constant.STOCK_TYPE_BLACK)
 
         stock.update_to_database()
         count += 1
 
         print(index, stock.code, stock.name, stock.rating, stock.favorite)
 
-    print("update_stock_favorite_to_database done, count=", count)
+    print("update done, count=", count)
 
 
 class StockBasic:
@@ -1180,7 +1188,7 @@ class Stock(StockBasic):
     def is_favorite(self):
         result = False
 
-        favorite_stock_list = favorite.get_favorite_stock_list()
+        favorite_stock_list = favorite.get_stock_list()
 
         if favorite_stock_list is None:
             return result

@@ -144,8 +144,12 @@ def draw(where=None, order=None, sort=None):
         if stock is None:
             continue
 
-        print(stock.code, stock.name, "price:" + str(stock.price), "net:" + str(stock.net), "dividend:" + str(stock.dividend),
-              "yield:" + str(stock.dividend_yield), "rating:" + str(stock.rating), "favorite:" + str(stock.favorite))
+        print("\"" + stock.code + "\"" + ", #" + stock.name + " "
+              + "pe " + str(stock.pe) + " pb " + str(stock.pb) + " "
+              + "dividend " + str(stock.dividend) + " " + str(stock.dividend_yield) + "% "
+              )
+        # print(stock.code, stock.name, "price:" + str(stock.price), "net:" + str(stock.net), "dividend:" + str(stock.dividend),
+        #       "yield:" + str(stock.dividend_yield), "rating:" + str(stock.rating), "favorite:" + str(stock.favorite))
 
         financial.write_to_file(stock)
 
