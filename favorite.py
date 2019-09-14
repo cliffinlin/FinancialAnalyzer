@@ -8,6 +8,8 @@ def get_stock_list():
 stock_list = {
     # hold
     "000895",  # 双汇发展 pe 14.684 pb 5.325 dividend 5.5 0.0%
+    "001979",  # 招商蛇口
+    "002160",  # 常铝股份
 
     # draw.draw("dividend > 4 AND dividend_yield < 1", "dividend", "ASC")
     "600600",  # 青岛啤酒 pe 50.047 pb 3.757 dividend 4.8 0.91%
@@ -99,4 +101,5 @@ stock_list = {
 
     "600674",  # 川投能源 pe 11.874 pb 1.719 dividend 3.0 3.12%
     "600025",  # 华能水电
+    "004965",  # 招商公路
 }
