@@ -15,7 +15,7 @@ import black
 
 from datetime import datetime
 
-favorite_only = True
+favorite_only = False
 
 
 def setup_database():
@@ -100,7 +100,7 @@ def download():
 
         if stock.is_time_to_market_too_short():
             time.sleep(random.random())
-            continue
+            print("stock.is_time_to_market_too_short()")
 
         download_financial_data(stock, time_to_market)
         download_share_bonus(stock)

@@ -14,7 +14,7 @@ if __name__ == "__main__":
     financial.download()
     financial.analyze()
     financial.update()
-    draw.draw("favorite = 1", "dividend_yield", "DESC")#where=None, order=None, sort=None #"DESC""ASC"
+    # draw.draw("favorite = 1", "dividend_yield", "DESC")#where=None, order=None, sort=None #"DESC""ASC"
     # draw.test("favorite = 1", "dividend_yield", "DESC")
     # draw.draw("favorite=1", "dividend_yield", "DESC")#where=None, order=None, sort=None #"DESC""ASC"
     # draw.draw("rating=7", "dividend_yield", "DESC")#where=None, order=None, sort=None #"DESC""ASC"
