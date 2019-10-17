@@ -15,7 +15,7 @@ import black
 
 from datetime import datetime
 
-favorite_only = False
+favorite_only = True
 
 
 def setup_database():
