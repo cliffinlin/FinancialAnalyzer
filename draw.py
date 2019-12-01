@@ -122,9 +122,8 @@ def draw_stock_data(stock, period=constant.MONTH):
             + " pe " + str(stock.pe)\
             + " pb " + str(stock.pb) \
             + " dividend " + str(stock.dividend) \
-            + " yield " + str(round(stock.dividend_yield, 2)) \
-            + " rating " + str(stock.rating)\
-            + " favorite " + str(stock.favorite)
+            + " yield " + str(round(stock.dividend_yield, 2)) + "% " \
+            + " rating " + str(stock.rating)
     plt.title(title)
 
     plt.show()
@@ -147,7 +146,7 @@ def draw(where=None, order=None, sort=None):
         print("\"" + stock.code + "\"" + ", #" + stock.name + " "
               + "pe " + str(stock.pe) + " pb " + str(stock.pb) + " "
               + "dividend " + str(stock.dividend) + " " + str(stock.dividend_yield) + "% "
-              )
+              + " rating " + str(stock.rating))
         # print(stock.code, stock.name, "price:" + str(stock.price), "net:" + str(stock.net), "dividend:" + str(stock.dividend),
         #       "yield:" + str(stock.dividend_yield), "rating:" + str(stock.rating), "favorite:" + str(stock.favorite))
 
@@ -176,9 +175,8 @@ def draw_line():
             + " pe " + str(stock.pe)\
             + " pb " + str(stock.pb) \
             + " dividend " + str(stock.dividend) \
-            + " yield " + str(round(stock.dividend_yield, 2)) \
-            + " rating " + str(stock.rating)\
-            + " favorite " + str(stock.favorite)
+            + " yield " + str(round(stock.dividend_yield, 2))  + "% " \
+            + " rating " + str(stock.rating)
     plt.title(title)
 
     print(title)

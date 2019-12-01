@@ -991,7 +991,7 @@ def select(where=None, order=None, sort=None):
         print("\"" + stock.code + "\"" + ", #" + stock.name + " "
               + "pe " + str(stock.pe) + " pb " + str(stock.pb) + " "
               + "dividend " + str(stock.dividend) + " " + str(stock.dividend_yield) + "% "
-              )
+              + " rating " + str(stock.rating))
 
     print("select done, count=", len(stock_tuple_list))
 
