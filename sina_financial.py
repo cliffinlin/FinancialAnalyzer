@@ -191,7 +191,33 @@ class SinaFinancial:
 
         return json.loads(content)
 
-    def download_financial_data(self, code, time_to_market=None):
+    def download_stock_information(self, code):
+        se = "sh"
+        if code[0] == "0" or code[0] == "3":
+            se = "sz"
+
+        symbol = se + code
+
+        url = 'http://hq.sinajs.cn/list=' + symbol + '_i'
+
+        print(url)
+
+        content = None
+
+        try:
+            content = urllib.request.urlopen(url).read().decode('gbk')
+        except Exception:
+            print("urllib.request.urlopen(url).read().decode() error")
+
+        if content is None:
+            print("content is None, return")
+            return None
+
+        value_list = content.split(",");
+
+        return value_list
+
+    def download_financial_data(self, code, total_share, time_to_market=None):
         value = 0
         financial_data = dict()
         financial_data_list = []
@@ -270,7 +296,7 @@ class SinaFinancial:
                         financial_data["book_value_per_share"] = value
                     elif '每股收益-摊薄/期末股数' in key_string:
                         financial_data["earnings_per_share"] = value
-                    elif '每股现金含量' in key_string:
+                    elif '每股现金流' in key_string:
                         financial_data["cash_flow_per_share"] = value
                     elif '流动资产合计' in key_string:
                         financial_data["total_current_assets"] = value
@@ -284,6 +310,7 @@ class SinaFinancial:
                         financial_data["financial_expenses"] = value
                     elif '净利润' in key_string:
                         financial_data["net_profit"] = value
+                        financial_data["earnings_per_share"] = 100000000.0 * float(value) / float(total_share)
 
                         net_assets = float(financial_data["total_assets"]) - float(
                             financial_data["total_long_term_liabilities"])

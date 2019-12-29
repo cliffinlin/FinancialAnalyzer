@@ -215,7 +215,11 @@ def download_financial_data(stock, time_to_market=None):
     #
     #     financial_data_list.append(financial_data)
 
-    financial_data_list = sina.download_financial_data(stock.code, time_to_market)
+    value_list = sina.download_stock_information(stock.code)
+    if value_list is not None:
+        total_share = float(value_list[7]) * 10000
+
+    financial_data_list = sina.download_financial_data(stock.code, total_share, time_to_market)
 
     # list_len = len(financial_data_list)
     # if list_len > time_to_market_len_min:
