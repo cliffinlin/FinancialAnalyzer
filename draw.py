@@ -84,7 +84,7 @@ def draw_stock_data(stock, period=constant.MONTH):
     # p3 = ax.plot(x, SMA_2, label='SMA(' + str(SMA_2_span) + ')')
 
     ax1.step(x1, cash_flow_per_share, label='CashFlowPerShare')
-    ax1.step(x1, earnings_per_share * 10.0, label='EarningsPerShare')
+    ax1.step(x1, earnings_per_share / constant.RISK_FREE_INTEREST_RATE, label='Valuation base on EarningsPerShare')
     ax1.step(x1, book_value_per_share, label='BookValuePerShare')
     ax1.step(x2, dividend, label='Dividend')
 
@@ -122,8 +122,8 @@ def draw_stock_data(stock, period=constant.MONTH):
             + " pe " + str(stock.pe)\
             + " pb " + str(stock.pb) \
             + " dividend " + str(stock.dividend) \
-            + " yield " + str(round(stock.dividend_yield, 2)) + "% " \
-            + " rating " + str(stock.rating)
+            + " yield " + str(stock.dividend_yield) + "% " \
+            + " rating " + str(stock.rating) + " discount " + str(stock.discount)
     plt.title(title)
 
     plt.show()
@@ -143,10 +143,13 @@ def draw(where=None, order=None, sort=None):
         if stock is None:
             continue
 
+        if not stock.check_out():
+            continue
+
         print("\"" + stock.code + "\"" + ", #" + stock.name + " "
               + "pe " + str(stock.pe) + " pb " + str(stock.pb) + " "
               + "dividend " + str(stock.dividend) + " " + str(stock.dividend_yield) + "% "
-              + " rating " + str(stock.rating))
+              + " rating " + str(stock.rating) + " discount " + str(stock.discount))
         # print(stock.code, stock.name, "price:" + str(stock.price), "net:" + str(stock.net), "dividend:" + str(stock.dividend),
         #       "yield:" + str(stock.dividend_yield), "rating:" + str(stock.rating), "favorite:" + str(stock.favorite))
 
@@ -175,8 +178,8 @@ def draw_line():
             + " pe " + str(stock.pe)\
             + " pb " + str(stock.pb) \
             + " dividend " + str(stock.dividend) \
-            + " yield " + str(round(stock.dividend_yield, 2))  + "% " \
-            + " rating " + str(stock.rating)
+            + " yield " + str(stock.dividend_yield)  + "% " \
+            + " rating " + str(stock.rating) + " discount " + str(stock.discount)
     plt.title(title)
 
     print(title)

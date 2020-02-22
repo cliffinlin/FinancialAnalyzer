@@ -397,7 +397,7 @@ def write_financial_data_to_database(code, financial_data_list):
                  "?,?)"
 
     if financial_data_list is None:
-        time.sleep(random.random())
+        # time.sleep(random.random())
         print("financial_data_list is None, return")
         return
 
@@ -771,11 +771,9 @@ def analyze_stock_data(stock, stock_data_tuple_list, financial_data_tuple_list):
     if financial_data is None:
         return stock
 
-    # if financial_data.earnings_per_share != 0:
-    #     stock.pe = stock_data.close / financial_data.earnings_per_share
-    #
-    # if financial_data.book_value_per_share != 0:
-    #     stock.pb = stock_data.close / financial_data.book_value_per_share
+    if financial_data.earnings_per_share != 0:
+        stock.valuation = financial_data.earnings_per_share / constant.RISK_FREE_INTEREST_RATE
+        stock.discount = round(stock.price / stock.valuation, 2)
 
     if (0 < stock.pe < constant.PE_MAX) and (0 < stock.pb < constant.PB_MAX):
         stock.rating |= constant.PRICE_TYPE
@@ -995,7 +993,7 @@ def select(where=None, order=None, sort=None):
         print("\"" + stock.code + "\"" + ", #" + stock.name + " "
               + "pe " + str(stock.pe) + " pb " + str(stock.pb) + " "
               + "dividend " + str(stock.dividend) + " " + str(stock.dividend_yield) + "% "
-              + " rating " + str(stock.rating))
+              + " rating " + str(stock.rating) + " discount " + str(stock.discount))
 
     print("select done, count=", len(stock_tuple_list))
 
@@ -1049,7 +1047,7 @@ def update():
         stock.update_to_database()
         count += 1
 
-        print(index, stock.code, stock.name, stock.rating, stock.favorite)
+        print(index, stock.code, stock.name, stock.rating, stock.favorite, stock.discount)
 
     print("update done, count=", count)
 
@@ -1117,6 +1115,8 @@ class Stock(StockBasic):
             self.rating = 0
             self.favorite = 0
             self.time_to_market = ""
+            self.valuation = 0
+            self.discount = 0
             self.created = ""
             self.modified = ""
         else:
@@ -1127,8 +1127,10 @@ class Stock(StockBasic):
             self.rating = stock_tuple[11]
             self.favorite = stock_tuple[12]
             self.time_to_market = stock_tuple[13]
-            self.created = stock_tuple[14]
-            self.modified = stock_tuple[15]
+            self.valuation = stock_tuple[14]
+            self.discount = stock_tuple[15]
+            self.created = stock_tuple[16]
+            self.modified = stock_tuple[17]
 
     def set_dividend(self, dividend):
         self.dividend = dividend
@@ -1144,6 +1146,12 @@ class Stock(StockBasic):
 
     def set_time_to_market(self, time_to_market):
         self.time_to_market = time_to_market
+
+    def set_valuation(self, valuation):
+        self.valuation = valuation
+
+    def set_discount(self, discount):
+        self.discount = discount
 
     def set_created(self, created):
         self.created = created
@@ -1161,6 +1169,7 @@ class Stock(StockBasic):
                       self.pe, self.pb,
                       self.dividend, self.dividend_yield,
                       self.rating, self.favorite, self.time_to_market,
+                      self.valuation, self.discount,
                       self.created, self.modified))
 
     def get_update_tuple(self):
@@ -1170,14 +1179,6 @@ class Stock(StockBasic):
                       self.pe, self.pb,
                       self.modified,
                       self.code))
-
-    def dump(self):
-        print(self.id, self.code, self.name,
-              self.price, self.net, self.volume, self.amount,
-              self.pe, self.pb,
-              self.dividend, self.dividend_yield,
-              self.rating, self.favorite,
-              self.created, self.modified)
 
     def is_favorite(self):
         result = False
@@ -1219,6 +1220,7 @@ class Stock(StockBasic):
 
     def check_out(self):
         result = False
+        black_stock_list = black.get_stock_list()
 
         if favorite_only:
             if self.is_favorite():
@@ -1230,8 +1232,8 @@ class Stock(StockBasic):
                 return False
             elif self.is_time_to_market_too_short():
                 return False
-            # elif self.rating < 1:
-            #     return False
+            elif self.code in black_stock_list:
+                return False
             else:
                 result = True
 
@@ -1240,13 +1242,13 @@ class Stock(StockBasic):
     def update_to_database(self):
         connect = None
         sql_update = "UPDATE stock SET dividend=?, dividend_yield=?, " \
-                     "rating=?, favorite=?, time_to_market=? WHERE code=?"
-
+                     "rating=?, favorite=?, time_to_market=?, valuation=?, discount=? WHERE code=?"
         try:
             connect = sqlite3.connect(constant.DATABASE_NAME)
             cursor = connect.cursor()
             cursor.execute(sql_update, (
-            self.dividend, self.dividend_yield, self.rating, self.favorite, self.time_to_market, self.code))
+                self.dividend, self.dividend_yield, self.rating, self.favorite, self.time_to_market, self.valuation,
+                self.discount, self.code))
             connect.commit()
         except sqlite3.Error as e:
             print('e:', e)
@@ -1275,12 +1277,12 @@ class Stock(StockBasic):
                      "code, name, price, net," \
                      "volume, amount, pe, pb," \
                      "dividend, dividend_yield, rating, favorite," \
-                     "time_to_market, created, modified" \
+                     "time_to_market, valuation, discount, created, modified" \
                      ") VALUES(" \
                      "?,?,?,?," \
                      "?,?,?,?," \
                      "?,?,?,?," \
-                     "?,?,?)"
+                     "?,?,?,?,?)"
         return insert_sql
 
     @staticmethod

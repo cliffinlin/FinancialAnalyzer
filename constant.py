@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+RISK_FREE_INTEREST_RATE = 4.0 / 100.0;
+
 SLEEP_TIME_OUT = 0.5
 
 #Stock Type
@@ -58,6 +60,8 @@ SQL_SETUP_TABLE_STOCK = """ CREATE TABLE IF NOT EXISTS stock (
                                     rating INTEGER,
                                     favorite INTEGER,
                                     time_to_market TEXT,
+                                    valuation DOUBLE,
+                                    discount DOUBLE,
                                     created TEXT,
                                     modified TEXT
                                 ); """
