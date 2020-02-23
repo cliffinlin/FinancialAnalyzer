@@ -297,8 +297,8 @@ def write_stock_list_to_database(stock_list):
         for stock_basic in stock_list:
             stock = Stock(stock_basic)
 
-            if not stock.check_out():
-                continue
+            # if not stock.check_out():
+            #     continue
 
             now = datetime.now().strftime(constant.DATE_TIME_FORMAT)
 
@@ -1359,6 +1359,7 @@ class Stock():
                      "price, change, net, " \
                      "created, modified" \
                      ") VALUES(" \
+                     "?,?,?," \
                      "?,?,?," \
                      "?,?)"
         return insert_sql
