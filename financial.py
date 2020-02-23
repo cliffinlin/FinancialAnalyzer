@@ -777,8 +777,6 @@ def analyze_stock_data(stock, stock_data_tuple_list, financial_data_tuple_list):
     if financial_data is None:
         return stock
 
-    stock.operation = 0
-
     if stock.dividend != 0:
         stock.delta = round(financial_data.net_profit_per_share / (stock.dividend / 10.0), 2)
 
@@ -795,8 +793,8 @@ def analyze_stock_data(stock, stock_data_tuple_list, financial_data_tuple_list):
         stock.pb = round(stock.price / book_value_per_share, 2)
         stock.roe = round(100.0 * financial_data.net_profit_per_share / book_value_per_share, 2)
 
-    if (0 < stock.pe < constant.PE_MAX) and (0 < stock.pb < constant.PB_MAX):
-        stock.operation |= constant.PRICE_TYPE
+    # if (0 < stock.pe < constant.PE_MAX) and (0 < stock.pb < constant.PB_MAX):
+    #     stock.operation |= constant.PRICE_TYPE
 
     if financial_data.total_long_term_liabilities < financial_data.main_business_income:
         stock.operation |= constant.LIABILITIES_TYPE
@@ -1084,37 +1082,37 @@ def update_mark():
 
 class Stock():
     def __init__(self, stock=None):
-        if stock is None:
-            self.id = 0
-            self.classes = ""
-            self.se = ""
-            self.code = ""
-            self.name = ""
-            self.pinyin = ""
-            self.mark = 0
-            self.price = 0
-            self.change = 0
-            self.net = 0
-            self.volume = 0
-            self.value = 0
-            self.operation = 0
-            self.hold = 0
-            self.cost = 0
-            self.profit = 0
-            self.total_share = 0
-            self.roe = 0
-            self.rate = 0
-            self.valuation = 0
-            self.discount = 0
-            self.pe = 0
-            self.pb = 0
-            self.dividend = 0
-            self.dividend_yield = 0
-            self.delta = 0
-            self.time_to_market = ""
-            self.created = ""
-            self.modified = ""
-        elif isinstance(stock, dict):
+        self.id = 0
+        self.classes = ""
+        self.se = ""
+        self.code = ""
+        self.name = ""
+        self.pinyin = ""
+        self.mark = 0
+        self.price = 0
+        self.change = 0
+        self.net = 0
+        self.volume = 0
+        self.value = 0
+        self.operation = 0
+        self.hold = 0
+        self.cost = 0
+        self.profit = 0
+        self.total_share = 0
+        self.roe = 0
+        self.rate = 0
+        self.valuation = 0
+        self.discount = 0
+        self.pe = 0
+        self.pb = 0
+        self.dividend = 0
+        self.dividend_yield = 0
+        self.delta = 0
+        self.time_to_market = ""
+        self.created = ""
+        self.modified = ""
+
+        if isinstance(stock, dict):
             se = stock["symbol"][0:2]
             self.set_se(se)
             self.set_code(stock['code'])
@@ -1190,6 +1188,8 @@ class Stock():
         self.value = value
 
     def set_operation(self, operation):
+        if operation is None:
+            return
         self.operation = operation
 
     def set_hold(self, hold):
@@ -1223,6 +1223,8 @@ class Stock():
         self.pb = pb
 
     def set_dividend(self, dividend):
+        if dividend is None:
+            return
         self.dividend = dividend
 
     def set_dividend_yield(self, dividend_yield):
@@ -1377,6 +1379,19 @@ class Stock():
 
 class StockData:
     def __init__(self, stock_data_tuple=None):
+        self.id = 0
+        self.stock_code = ""
+        self.date = ""
+        self.time = ""
+        self.period = ""
+        self.open = 0
+        self.high = 0
+        self.low = 0
+        self.close = 0
+        self.volume = 0
+        self.created = ""
+        self.modified = ""
+
         if stock_data_tuple is None:
             return
 
@@ -1396,6 +1411,21 @@ class StockData:
 
 class FinancialData:
     def __init__(self, financial_data_tuple=None):
+        self.id = 0
+        self.stock_code = ""
+        self.date = ""
+        self.book_value_per_share = 0
+        self.cash_flow_per_share = 0
+        self.total_current_assets = 0
+        self.total_assets = 0
+        self.total_long_term_liabilities = 0
+        self.main_business_income = 0
+        self.financial_expenses = 0
+        self.net_profit = 0
+        self.net_profit_per_share = 0
+        self.created = ""
+        self.modified = ""
+
         if financial_data_tuple is None:
             return
 
@@ -1417,6 +1447,14 @@ class FinancialData:
 
 class ShareBonus:
     def __init__(self, share_bonus_tuple=None):
+        self.id = 0
+        self.stock_code = ""
+        self.date = ""
+        self.dividend = ""
+        self.dividend_date = ""
+        self.created = ""
+        self.modified = ""
+
         if share_bonus_tuple is None:
             return
 

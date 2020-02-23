@@ -124,7 +124,7 @@ SQL_CREATE_TABLE_FINANCIAL_DATA = " CREATE TABLE IF NOT EXISTS financial_data ( 
                                   + FinancialDataColumn.id.name + " INTEGER PRIMARY KEY AUTOINCREMENT," \
                                   + FinancialDataColumn.stock_code.name + " TEXT NOT NULL," \
                                   + FinancialDataColumn.date.name + " TEXT NOT NULL," \
-                                  + FinancialDataColumn.book_value_per_share.name + " TEXT NOT NULL," \
+                                  + FinancialDataColumn.book_value_per_share.name + " DOUBLE," \
                                   + FinancialDataColumn.cash_flow_per_share.name + " DOUBLE," \
                                   + FinancialDataColumn.total_current_assets.name + " DOUBLE," \
                                   + FinancialDataColumn.total_assets.name + " DOUBLE," \
