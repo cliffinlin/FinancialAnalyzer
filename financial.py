@@ -10,12 +10,13 @@ import sqlite3
 import time
 import random
 
-import favorite
+import database_contract
 import black
+import favorite
 
 from datetime import datetime
 
-favorite_only = True
+favorite_only = False
 
 
 def setup_database():
@@ -24,13 +25,14 @@ def setup_database():
     print("setup_database")
 
     try:
-        connect = sqlite3.connect(constant.DATABASE_NAME)
+        connect = sqlite3.connect(database_contract.DATABASE_FILE_NAME)
         if connect is not None:
             cursor = connect.cursor()
-            cursor.execute(constant.SQL_SETUP_TABLE_STOCK)
-            cursor.execute(constant.SQL_SETUP_TABLE_STOCK_DATA)
-            cursor.execute(constant.SQL_SETUP_TABLE_FINANCIAL_DATA)
-            cursor.execute(constant.SQL_SETUP_TABLE_SHARE_BONUS)
+
+            cursor.execute(database_contract.SQL_CREATE_TABLE_STOCK)
+            cursor.execute(database_contract.SQL_CREATE_TABLE_STOCK_DATA)
+            cursor.execute(database_contract.SQL_CREATE_TABLE_FINANCIAL_DATA)
+            cursor.execute(database_contract.SQL_CREATE_TABLE_SHARE_BONUS)
             connect.commit()
     except sqlite3.Error as e:
         print('e:', e)
@@ -67,10 +69,6 @@ def get_time_to_market(stock_data_list):
 
 
 def download():
-    time_to_market = None
-
-    download_stock_list()
-
     stock_tuple_list = read_stock_tuple_list_from_database()
 
     count = 0
@@ -89,21 +87,24 @@ def download():
 
         count += 1
 
-        print(index, stock.code, stock.name, stock.rating, stock.favorite)
+        print(index, stock.code, stock.name, stock.mark, stock.operation)
 
         stock_data_list = download_stock_data(stock)
 
         time_to_market = get_time_to_market(stock_data_list)
-
         stock.set_time_to_market(time_to_market)
-        stock.update_to_database()
 
-        if stock.is_time_to_market_too_short():
-            time.sleep(random.random())
-            print("stock.is_time_to_market_too_short()")
+        # if stock.is_time_to_market_too_short():
+        #     time.sleep(random.random())
+        #     print("stock.is_time_to_market_too_short()")
 
-        download_financial_data(stock, time_to_market)
+        download_information_data(stock)
+
+        download_financial_data(stock)
+
         download_share_bonus(stock)
+
+        stock.update_to_database()
 
     print("download done, count=", count)
 
@@ -112,10 +113,8 @@ def download_stock_list():
     page = 1
     stock_list = list()
 
-    sina = sina_financial.SinaFinancial()
-
     while page:
-        result = sina.download_stock_list(page)
+        result = sina_financial.SinaFinancial().download_stock_list(page)
         if result is None:
             break
         stock_list += result
@@ -149,11 +148,32 @@ def download_stock_data(stock):
     return stock_data_month_list
 
 
-def download_financial_data(stock, time_to_market=None):
+def download_information_data(stock):
+    information_data_list = []
+
+    if stock is None:
+        return None
+
+    sina = sina_financial.SinaFinancial()
+
+    information_data_list = sina.download_stock_information(stock.code)
+
+    if information_data_list is not None:
+        string = information_data_list[0]
+        if string is not None:
+            words = string.split("\"")
+            if len(words) == 2:
+                stock.set_classes(words[1])
+        stock.set_pinyin(information_data_list[1])
+        stock.set_total_share(int(float(information_data_list[7]) * 10000))
+
+    return information_data_list
+
+
+def download_financial_data(stock):
     time_to_market_len_min = constant.TIME_TO_MARKET_YEAR_MIN * constant.SEASONS_IN_A_YEAR
 
     # book_value_per_share = {}
-    # earnings_per_share = {}
     # cash_flow_per_share = {}
     # total_current_assets = {}
     # total_assets = {}
@@ -163,20 +183,16 @@ def download_financial_data(stock, time_to_market=None):
     # net_profit = {}
 
     financial_data_list = []
-    test_financial_data_list = []
+    # test_financial_data_list = []
 
     if stock is None:
         return None
-
-    if time_to_market is not None:
-        time_to_market = datetime.strptime(time_to_market, constant.DATE_FORMAT)
 
     sina = sina_financial.SinaFinancial()
 
     # print("download_financial_data code=", stock.code)
 
     # book_value_per_share = sina.download_financial_data(stock.code, 'mgjzc')
-    # earnings_per_share = sina.download_financial_data(stock.code, 'mgsy')
     # cash_flow_per_share = sina.download_financial_data(stock.code, 'mgxjhl')
     # total_current_assets = sina.download_financial_data(stock.code, 'ldzchj')
     # total_assets = sina.download_financial_data(stock.code, 'zczj')
@@ -196,7 +212,6 @@ def download_financial_data(stock, time_to_market=None):
     #     financial_data = dict()
     #     financial_data["date"] = key
     #     financial_data["book_value_per_share"] = get_value_string_by_key(key, book_value_per_share)
-    #     financial_data["earnings_per_share"] = get_value_string_by_key(key, earnings_per_share)
     #     financial_data["cash_flow_per_share"] = get_value_string_by_key(key, cash_flow_per_share)
     #     financial_data["total_current_assets"] = get_value_string_by_key(key, total_current_assets)
     #     financial_data["total_assets"] = get_value_string_by_key(key, total_assets)
@@ -215,11 +230,7 @@ def download_financial_data(stock, time_to_market=None):
     #
     #     financial_data_list.append(financial_data)
 
-    value_list = sina.download_stock_information(stock.code)
-    if value_list is not None:
-        total_share = float(value_list[7]) * 10000
-
-    financial_data_list = sina.download_financial_data(stock.code, total_share, time_to_market)
+    financial_data_list = sina.download_financial_data(stock)
 
     # list_len = len(financial_data_list)
     # if list_len > time_to_market_len_min:
@@ -244,7 +255,8 @@ def download_financial_data(stock, time_to_market=None):
     #     return financial_data_list
 
     write_financial_data_to_database(stock.code, financial_data_list)
-    return financial_data_list
+
+    return financial_data_list[::-1]
 
 
 def download_share_bonus(stock):
@@ -274,10 +286,8 @@ def write_stock_list_to_database(stock_list):
         print("stock_list is None, return")
         return
 
-    setup_database()
-
     try:
-        connect = sqlite3.connect(constant.DATABASE_NAME)
+        connect = sqlite3.connect(database_contract.DATABASE_FILE_NAME)
         cursor = connect.cursor()
 
         cursor.execute(query_sql)
@@ -285,8 +295,7 @@ def write_stock_list_to_database(stock_list):
             executemany = True
 
         for stock_basic in stock_list:
-            stock = Stock()
-            stock.set_stock_basic(stock_basic)
+            stock = Stock(stock_basic)
 
             if not stock.check_out():
                 continue
@@ -349,7 +358,7 @@ def write_stock_data_to_database(code, stock_data_list, period=constant.MONTH):
         return
 
     try:
-        connect = sqlite3.connect(constant.DATABASE_NAME)
+        connect = sqlite3.connect(database_contract.DATABASE_FILE_NAME)
         cursor = connect.cursor()
 
         cursor.execute(sql_delete, (period, code))
@@ -385,24 +394,23 @@ def write_financial_data_to_database(code, financial_data_list):
     record_list = []
 
     sql_delete = "DELETE FROM financial_data WHERE stock_code = ?"
-    sql_insert = "INSERT INTO financial_data (stock_code, date, " \
-                 "book_value_per_share, earnings_per_share, cash_flow_per_share, " \
-                 "total_current_assets, total_assets, total_long_term_liabilities, " \
-                 "main_business_income, financial_expenses, net_profit, roe, book_value_per_share_rate, " \
+    sql_insert = "INSERT INTO financial_data (stock_code, date," \
+                 "book_value_per_share, cash_flow_per_share, total_current_assets," \
+                 "total_assets, total_long_term_liabilities, main_business_income," \
+                 "financial_expenses, net_profit, net_profit_per_share," \
                  "created, modified)" \
                  " VALUES(?,?," \
                  "?,?,?," \
                  "?,?,?," \
-                 "?,?,?,?,?," \
+                 "?,?,?," \
                  "?,?)"
 
     if financial_data_list is None:
-        # time.sleep(random.random())
         print("financial_data_list is None, return")
         return
 
     try:
-        connect = sqlite3.connect(constant.DATABASE_NAME)
+        connect = sqlite3.connect(database_contract.DATABASE_FILE_NAME)
         cursor = connect.cursor()
 
         cursor.execute(sql_delete, (code,))
@@ -413,7 +421,6 @@ def write_financial_data_to_database(code, financial_data_list):
 
             date = financial_data['date']
             book_value_per_share = financial_data['book_value_per_share']
-            earnings_per_share = financial_data['earnings_per_share']
             cash_flow_per_share = financial_data['cash_flow_per_share']
             total_current_assets = financial_data['total_current_assets']
             total_assets = financial_data['total_assets']
@@ -421,14 +428,13 @@ def write_financial_data_to_database(code, financial_data_list):
             main_business_income = financial_data['main_business_income']
             financial_expenses = financial_data['financial_expenses']
             net_profit = financial_data['net_profit']
-            roe = financial_data['roe']
-            book_value_per_share_rate = financial_data['book_value_per_share_rate']
+            net_profit_per_share = financial_data['net_profit_per_share']
 
             now = datetime.now().strftime(constant.DATE_TIME_FORMAT)
 
-            record = tuple((code, date, book_value_per_share, earnings_per_share, cash_flow_per_share,
+            record = tuple((code, date, book_value_per_share, cash_flow_per_share,
                             total_current_assets, total_assets, total_long_term_liabilities,
-                            main_business_income, financial_expenses, net_profit, roe, book_value_per_share_rate,
+                            main_business_income, financial_expenses, net_profit, net_profit_per_share,
                             now, now))
             record_list.append(record)
 
@@ -458,7 +464,7 @@ def write_share_bonus_to_database(code, share_bonus_list):
         return
 
     try:
-        connect = sqlite3.connect(constant.DATABASE_NAME)
+        connect = sqlite3.connect(database_contract.DATABASE_FILE_NAME)
         cursor = connect.cursor()
 
         cursor.execute(sql_delete, (code,))
@@ -546,11 +552,13 @@ def write_stock_to_file(stock_tuple_list):
 
     file_name = get_stock_file_name()
 
-    field_name_tuple = tuple(("id", "code", "name",
-                              "price", "net", "volume", "amount",
-                              "pe", "pb",
-                              "dividend", "dividend_yield",
-                              "rating", "favorite",
+    field_name_tuple = tuple(("id", "classes", "se", "code",
+                              "name", "pinyin", "mark", "price",
+                              "change", "net", "volume", "value",
+                              "operation", "hold", "cost", "profit",
+                              "total_share", "roe", "rate", "valuation",
+                              "discount", "pe", "pb", "dividend",
+                              "dividend_yield", "delta", "time_to_market",
                               "created", "modified"))
 
     with open(file_name, 'w', newline='') as csv_file:
@@ -562,11 +570,13 @@ def write_stock_to_file(stock_tuple_list):
             if stock is None:
                 continue
 
-            stock_dict = {"id": stock.id, "code": stock.code, "name": stock.name,
-                          "price": stock.price, "net": stock.net, "volume": stock.volume, "amount": stock.amount,
-                          "pe": stock.pe, "pb": stock.pb,
-                          "dividend": stock.dividend, "dividend_yield": stock.dividend_yield,
-                          "rating": stock.rating, "favorite": stock.favorite,
+            stock_dict = {"id": stock.id, "classes": stock.classes, "se": stock.se, "code": stock.code,
+                          "name": stock.name, "pinyin": stock.pinyin, "mark": stock.mark, "price": stock.price,
+                          "change": stock.change, "net": stock.net, "volume": stock.volume, "value": stock.value,
+                          "operation": stock.operation, "hold": stock.hold, "cost": stock.cost, "profit": stock.profit,
+                          "total_share": stock.total_share, "roe": stock.roe, "rate": stock.rate, "valuation": stock.valuation,
+                          "discount": stock.discount, "pe": stock.pe, "pb": stock.pb, "dividend": stock.dividend,
+                          "dividend_yield": stock.dividend_yield, "delta": stock.delta, "time_to_market": stock.time_to_market,
                           "created": stock.created, "modified": stock.modified}
             writer.writerow(stock_dict)
 
@@ -613,7 +623,6 @@ def write_financial_data_to_file(stock, financial_data_tuple_list):
 
     field_name_tuple = tuple(("date",
                               "book_value_per_share",
-                              "earnings_per_share",
                               "cash_flow_per_share",
                               "total_current_assets",
                               "total_assets",
@@ -621,8 +630,7 @@ def write_financial_data_to_file(stock, financial_data_tuple_list):
                               "main_business_income",
                               "financial_expenses",
                               "net_profit",
-                              "roe",
-                              "book_value_per_share_rate"))
+                              "net_profit_per_share"))
 
     with open(file_name, 'w', newline='') as csv_file:
         writer = csv.DictWriter(csv_file, fieldnames=field_name_tuple)
@@ -635,7 +643,6 @@ def write_financial_data_to_file(stock, financial_data_tuple_list):
 
             financial_data_dict = {"date": financial_data.date,
                                    "book_value_per_share": financial_data.book_value_per_share,
-                                   "earnings_per_share": financial_data.earnings_per_share,
                                    "cash_flow_per_share": financial_data.cash_flow_per_share,
                                    "total_current_assets": financial_data.total_current_assets,
                                    "total_assets": financial_data.total_assets,
@@ -643,8 +650,7 @@ def write_financial_data_to_file(stock, financial_data_tuple_list):
                                    "main_business_income": financial_data.main_business_income,
                                    "financial_expenses": financial_data.financial_expenses,
                                    "net_profit": financial_data.net_profit,
-                                   "roe": financial_data.roe,
-                                   "book_value_per_share_rate": financial_data.book_value_per_share_rate,
+                                   "net_profit_per_share": financial_data.net_profit_per_share,
                                    }
             writer.writerow(financial_data_dict)
 
@@ -689,7 +695,7 @@ def write_share_bonus_to_file(stock, share_bonus_tuple_list):
 #     sql_query = "SELECT * FROM stock WHERE code = ?"
 #
 #     try:
-#         connect = sqlite3.connect(constant.DATABASE_NAME)
+#         connect = sqlite3.connect(database_contract.DATABASE_FILE_NAME)
 #         cursor = connect.cursor()
 #         cursor.execute(sql_query, (code,))
 #         stock_tuple = cursor.fetchone()
@@ -709,7 +715,7 @@ def read_stock_tuple_list_from_database(where=None, order=None, sort=None):
     sql_query = Stock.get_query_sql(where, order, sort)
 
     try:
-        connect = sqlite3.connect(constant.DATABASE_NAME)
+        connect = sqlite3.connect(database_contract.DATABASE_FILE_NAME)
         cursor = connect.cursor()
         cursor.execute(sql_query)
         stock_tuple_list = cursor.fetchall()
@@ -731,7 +737,7 @@ def read_stock_data_from_database(stock, period=constant.MONTH):
         return None
 
     try:
-        connect = sqlite3.connect(constant.DATABASE_NAME)
+        connect = sqlite3.connect(database_contract.DATABASE_FILE_NAME)
         cursor = connect.cursor()
         cursor.execute(sql_query, (stock.code, period))
         stock_data_tuple_list = cursor.fetchall()
@@ -771,15 +777,29 @@ def analyze_stock_data(stock, stock_data_tuple_list, financial_data_tuple_list):
     if financial_data is None:
         return stock
 
-    if financial_data.earnings_per_share != 0:
-        stock.valuation = financial_data.earnings_per_share / constant.RISK_FREE_INTEREST_RATE
-        stock.discount = round(stock.price / stock.valuation, 2)
+    stock.operation = 0
+
+    if stock.dividend != 0:
+        stock.delta = round(financial_data.net_profit_per_share / (stock.dividend / 10.0), 2)
+
+    if financial_data.net_profit_per_share != 0:
+        stock.valuation = financial_data.net_profit_per_share / constant.RISK_INTEREST_RATE
+        if stock.valuation != 0:
+            stock.discount = round(stock.price / stock.valuation, 2)
+
+        if stock.price != 0:
+            stock.pe = round(100.0 * financial_data.net_profit_per_share / stock.price, 2)
+
+    book_value_per_share = float(financial_data.book_value_per_share)
+    if book_value_per_share != 0:
+        stock.pb = round(stock.price / book_value_per_share, 2)
+        stock.roe = round(100.0 * financial_data.net_profit_per_share / book_value_per_share, 2)
 
     if (0 < stock.pe < constant.PE_MAX) and (0 < stock.pb < constant.PB_MAX):
-        stock.rating |= constant.PRICE_TYPE
+        stock.operation |= constant.PRICE_TYPE
 
     if financial_data.total_long_term_liabilities < financial_data.main_business_income:
-        stock.rating |= constant.LIABILITIES_TYPE
+        stock.operation |= constant.LIABILITIES_TYPE
 
     return stock
 
@@ -792,7 +812,7 @@ def read_financial_data_from_database(stock):
         return None
 
     try:
-        connect = sqlite3.connect(constant.DATABASE_NAME)
+        connect = sqlite3.connect(database_contract.DATABASE_FILE_NAME)
         cursor = connect.cursor()
         cursor.execute(sql_query, (stock.code,))
         financial_data_tuple_list = cursor.fetchall()
@@ -813,7 +833,7 @@ def read_share_bonus_from_database(stock):
         return None
 
     try:
-        connect = sqlite3.connect(constant.DATABASE_NAME)
+        connect = sqlite3.connect(database_contract.DATABASE_FILE_NAME)
         cursor = connect.cursor()
         cursor.execute(sql_query, (stock.code,))
         share_bonus_tuple_list = cursor.fetchall()
@@ -855,6 +875,8 @@ def analyze_growth2(data_list_q1, data_list_q4):
 def analyze_financial_data(stock, financial_data_tuple_list):
     growth_year_min = constant.GROWTH_YEAR_MIN - 1
     time_to_market_len_min = constant.TIME_TO_MARKET_YEAR_MIN * constant.SEASONS_IN_A_YEAR
+    base = 0
+    target = 0;
 
     if stock is None:
         return stock
@@ -882,6 +904,11 @@ def analyze_financial_data(stock, financial_data_tuple_list):
         if financial_data is None:
             break
 
+        if index == 0:
+            target = financial_data.net_profit;
+        if index == constant.SEASONS_IN_A_YEAR:
+            base = financial_data.net_profit;
+
         if "03-31" in financial_data.date:
             main_business_income_q1.append(financial_data.main_business_income)
             net_profit_q1.append(financial_data.net_profit)
@@ -895,7 +922,10 @@ def analyze_financial_data(stock, financial_data_tuple_list):
 
     if analyze_growth2(main_business_income_q1, main_business_income_q4) \
             and analyze_growth2(net_profit_q1, net_profit_q4):
-        stock.rating |= constant.GROWTH_TYPE
+        stock.operation |= constant.GROWTH_TYPE
+
+    if base != 0:
+        stock.rate = round(target / base, 2)
 
     return stock
 
@@ -936,7 +966,7 @@ def analyze_share_bonus(stock, share_bonus_tuple_list):
             if prev_year != year:
                 break
 
-        total_divident += share_bonus.dividend
+        total_divident += float(share_bonus.dividend)
         stock.set_dividend(total_divident)
 
         if stock.price > 0:
@@ -966,15 +996,15 @@ def analyze():
 
         count += 1
 
-        print(index, stock.code, stock.name, stock.rating, stock.favorite)
+        print(index, stock.code, stock.name, stock.mark, stock.operation)
 
         stock_data_tuple_list = read_stock_data_from_database(stock)
         financial_data_tuple_list = read_financial_data_from_database(stock)
         share_bonus_tuple_list = read_share_bonus_from_database(stock)
 
+        stock = analyze_share_bonus(stock, share_bonus_tuple_list)
         stock = analyze_stock_data(stock, stock_data_tuple_list, financial_data_tuple_list)
         stock = analyze_financial_data(stock, financial_data_tuple_list)
-        stock = analyze_share_bonus(stock, share_bonus_tuple_list)
 
         stock.update_to_database()
 
@@ -993,7 +1023,7 @@ def select(where=None, order=None, sort=None):
         print("\"" + stock.code + "\"" + ", #" + stock.name + " "
               + "pe " + str(stock.pe) + " pb " + str(stock.pb) + " "
               + "dividend " + str(stock.dividend) + " " + str(stock.dividend_yield) + "% "
-              + " rating " + str(stock.rating) + " discount " + str(stock.discount))
+              + " operation " + str(stock.operation) + " discount " + str(stock.discount))
 
     print("select done, count=", len(stock_tuple_list))
 
@@ -1014,7 +1044,7 @@ def write_to_file(stock):
     write_share_bonus_to_file(stock, share_bonus_tuple_list)
 
 
-def update():
+def update_mark():
     stock_tuple_list = read_stock_tuple_list_from_database()
 
     black_stock_list = black.get_stock_list()
@@ -1036,28 +1066,101 @@ def update():
         if stock is None:
             continue
 
-        stock.set_favorite(constant.STOCK_TYPE_NONE)
+        stock.set_mark(constant.STOCK_TYPE_NONE)
 
         if stock.code in favorite_stock_list:
-            stock.set_favorite(constant.STOCK_TYPE_FAVORITE)
+            stock.set_mark(constant.STOCK_TYPE_FAVORITE)
 
         if stock.code in black_stock_list:
-            stock.set_favorite(constant.STOCK_TYPE_BLACK)
+            stock.set_mark(constant.STOCK_TYPE_BLACK)
 
         stock.update_to_database()
         count += 1
 
-        print(index, stock.code, stock.name, stock.rating, stock.favorite, stock.discount)
+        print(index, stock.code, stock.name, stock.operation, stock.mark, stock.discount)
 
     print("update done, count=", count)
 
 
-class StockBasic:
-    def __init__(self, stock_basic=None):
-        if stock_basic is None:
-            return
+class Stock():
+    def __init__(self, stock=None):
+        if stock is None:
+            self.id = 0
+            self.classes = ""
+            self.se = ""
+            self.code = ""
+            self.name = ""
+            self.pinyin = ""
+            self.mark = 0
+            self.price = 0
+            self.change = 0
+            self.net = 0
+            self.volume = 0
+            self.value = 0
+            self.operation = 0
+            self.hold = 0
+            self.cost = 0
+            self.profit = 0
+            self.total_share = 0
+            self.roe = 0
+            self.rate = 0
+            self.valuation = 0
+            self.discount = 0
+            self.pe = 0
+            self.pb = 0
+            self.dividend = 0
+            self.dividend_yield = 0
+            self.delta = 0
+            self.time_to_market = ""
+            self.created = ""
+            self.modified = ""
+        elif isinstance(stock, dict):
+            se = stock["symbol"][0:2]
+            self.set_se(se)
+            self.set_code(stock['code'])
+            self.set_name(stock['name'])
+            self.set_price(stock['price'])
+            self.set_change(stock['change'])
+            self.set_net(stock['net'])
+        elif isinstance(stock, tuple):
+            self.set_id(stock[0])
+            self.set_classes(stock[database_contract.StockColumn.classes.value])
+            self.set_se(stock[database_contract.StockColumn.se.value])
+            self.set_code(stock[database_contract.StockColumn.code.value])
+            self.set_name(stock[database_contract.StockColumn.name.value])
+            self.set_pinyin(stock[database_contract.StockColumn.pinyin.value])
+            self.set_mark(stock[database_contract.StockColumn.mark.value])
+            self.set_price(stock[database_contract.StockColumn.price.value])
+            self.set_change(stock[database_contract.StockColumn.change.value])
+            self.set_net(stock[database_contract.StockColumn.net.value])
+            self.set_volume(stock[database_contract.StockColumn.volume.value])
+            self.set_value(stock[database_contract.StockColumn.value.value])
+            self.set_operation(stock[database_contract.StockColumn.operation.value])
+            self.set_hold(stock[database_contract.StockColumn.hold.value])
+            self.set_cost(stock[database_contract.StockColumn.cost.value])
+            self.set_profit(stock[database_contract.StockColumn.profit.value])
+            self.set_total_share(stock[database_contract.StockColumn.total_share.value])
+            self.set_roe(stock[database_contract.StockColumn.roe.value])
+            self.set_rate(stock[database_contract.StockColumn.rate.value])
+            self.set_valuation(stock[database_contract.StockColumn.valuation.value])
+            self.set_discount(stock[database_contract.StockColumn.discount.value])
+            self.set_pe(stock[database_contract.StockColumn.pe.value])
+            self.set_pb(stock[database_contract.StockColumn.pb.value])
+            self.set_dividend(stock[database_contract.StockColumn.dividend.value])
+            self.set_dividend_yield(stock[database_contract.StockColumn.dividend_yield.value])
+            self.set_delta(stock[database_contract.StockColumn.delta.value])
+            self.set_time_to_market(stock[database_contract.StockColumn.time_to_market.value])
+            self.set_created(stock[database_contract.StockColumn.created.value])
+            self.set_modified(stock[database_contract.StockColumn.modified.value])
 
-        self.set(stock_basic)
+    def set_id(self, id):
+        self.id = id
+
+    def set_classes(self, classes):
+        self.classes = classes
+
+    def set_se(self, se):
+        self.se = se
 
     def set_code(self, code):
         self.code = code
@@ -1065,8 +1168,17 @@ class StockBasic:
     def set_name(self, name):
         self.name = name
 
+    def set_pinyin(self, pinyin):
+        self.pinyin = pinyin
+
+    def set_mark(self, mark):
+        self.mark = mark
+
     def set_price(self, price):
         self.price = price
+
+    def set_change(self, change):
+        self.change = change
 
     def set_net(self, net):
         self.net = net
@@ -1074,78 +1186,29 @@ class StockBasic:
     def set_volume(self, volume):
         self.volume = volume
 
-    def set_amount(self, amount):
-        self.amount = amount
+    def set_value(self, value):
+        self.value = value
 
-    def set_pe(self, pe):
-        self.pe = pe
+    def set_operation(self, operation):
+        self.operation = operation
 
-    def set_pb(self, pb):
-        self.pb = pb
+    def set_hold(self, hold):
+        self.hold = hold
 
-    def set(self, stock_basic):
-        if stock_basic is None:
-            return
-        if isinstance(stock_basic, dict):
-            self.set_code(stock_basic['code'])
-            self.set_name(stock_basic['name'])
-            self.set_price(stock_basic['price'])
-            self.set_net(stock_basic['net'])
-            self.set_volume(stock_basic['volume'])
-            self.set_amount(stock_basic['amount'])
-            self.set_pe(stock_basic['pe'])
-            self.set_pb(stock_basic['pb'])
-        else:
-            self.set_code(stock_basic[1])
-            self.set_name(stock_basic[2])
-            self.set_price(stock_basic[3])
-            self.set_net(stock_basic[4])
-            self.set_volume(stock_basic[5])
-            self.set_amount(stock_basic[6])
-            self.set_pe(stock_basic[7])
-            self.set_pb(stock_basic[8])
+    def set_cost(self, cost):
+        self.cost = cost
 
+    def set_profit(self, profit):
+        self.profit = profit
 
-class Stock(StockBasic):
-    def __init__(self, stock_tuple=None):
-        if stock_tuple is None:
-            self.id = 0
-            self.dividend = 0
-            self.dividend_yield = 0
-            self.rating = 0
-            self.favorite = 0
-            self.time_to_market = ""
-            self.valuation = 0
-            self.discount = 0
-            self.created = ""
-            self.modified = ""
-        else:
-            self.id = stock_tuple[0]
-            super().__init__(stock_tuple)
-            self.dividend = stock_tuple[9]
-            self.dividend_yield = stock_tuple[10]
-            self.rating = stock_tuple[11]
-            self.favorite = stock_tuple[12]
-            self.time_to_market = stock_tuple[13]
-            self.valuation = stock_tuple[14]
-            self.discount = stock_tuple[15]
-            self.created = stock_tuple[16]
-            self.modified = stock_tuple[17]
+    def set_total_share(self, total_share):
+        self.total_share = total_share
 
-    def set_dividend(self, dividend):
-        self.dividend = dividend
+    def set_roe(self, roe):
+        self.roe = roe
 
-    def set_dividend_yield(self, dividend_yield):
-        self.dividend_yield = dividend_yield
-
-    def set_rating(self, rating):
-        self.rating = rating
-
-    def set_favorite(self, favorite):
-        self.favorite = favorite
-
-    def set_time_to_market(self, time_to_market):
-        self.time_to_market = time_to_market
+    def set_rate(self, rate):
+        self.rate = rate
 
     def set_valuation(self, valuation):
         self.valuation = valuation
@@ -1153,30 +1216,38 @@ class Stock(StockBasic):
     def set_discount(self, discount):
         self.discount = discount
 
+    def set_pe(self, pe):
+        self.pe = pe
+
+    def set_pb(self, pb):
+        self.pb = pb
+
+    def set_dividend(self, dividend):
+        self.dividend = dividend
+
+    def set_dividend_yield(self, dividend_yield):
+        self.dividend_yield = dividend_yield
+
+    def set_delta(self, delta):
+        self.delta = delta
+
+    def set_time_to_market(self, time_to_market):
+        self.time_to_market = time_to_market
+
     def set_created(self, created):
         self.created = created
 
     def set_modified(self, modified):
         self.modified = modified
 
-    def set_stock_basic(self, stock_basic):
-        super().set(stock_basic)
-
     def get_insert_tuple(self):
-        return tuple((self.code, self.name,
-                      self.price, self.net,
-                      self.volume, self.amount,
-                      self.pe, self.pb,
-                      self.dividend, self.dividend_yield,
-                      self.rating, self.favorite, self.time_to_market,
-                      self.valuation, self.discount,
+        return tuple((self.se, self.code, self.name,
+                      self.price, self.change, self.net,
                       self.created, self.modified))
 
     def get_update_tuple(self):
-        return tuple((self.code, self.name,
-                      self.price, self.net,
-                      self.volume, self.amount,
-                      self.pe, self.pb,
+        return tuple((self.se, self.code, self.name,
+                      self.price, self.change, self.net,
                       self.modified,
                       self.code))
 
@@ -1241,14 +1312,24 @@ class Stock(StockBasic):
 
     def update_to_database(self):
         connect = None
-        sql_update = "UPDATE stock SET dividend=?, dividend_yield=?, " \
-                     "rating=?, favorite=?, time_to_market=?, valuation=?, discount=? WHERE code=?"
+        sql_update = "UPDATE stock SET" \
+                     " classes=?, pinyin=?," \
+                     " mark=?, operation=?," \
+                     " total_share=?, roe=?, rate=?, " \
+                     " valuation=?, discount=?," \
+                     " pe=?, pb=?," \
+                     " dividend=?, dividend_yield=?,  delta=?," \
+                     " time_to_market=? WHERE code=?"
         try:
-            connect = sqlite3.connect(constant.DATABASE_NAME)
+            connect = sqlite3.connect(database_contract.DATABASE_FILE_NAME)
             cursor = connect.cursor()
-            cursor.execute(sql_update, (
-                self.dividend, self.dividend_yield, self.rating, self.favorite, self.time_to_market, self.valuation,
-                self.discount, self.code))
+            cursor.execute(sql_update, (self.classes, self.pinyin,
+                                        self.mark, self.operation,
+                                        self.total_share, self.roe, self.rate,
+                                        self.valuation, self.discount,
+                                        self.pe, self.pb,
+                                        self.dividend, self.dividend_yield, self.delta,
+                                        self.time_to_market, self.code))
             connect.commit()
         except sqlite3.Error as e:
             print('e:', e)
@@ -1274,24 +1355,19 @@ class Stock(StockBasic):
     @staticmethod
     def get_insert_sql():
         insert_sql = "INSERT INTO stock (" \
-                     "code, name, price, net," \
-                     "volume, amount, pe, pb," \
-                     "dividend, dividend_yield, rating, favorite," \
-                     "time_to_market, valuation, discount, created, modified" \
+                     "se, code, name, " \
+                     "price, change, net, " \
+                     "created, modified" \
                      ") VALUES(" \
-                     "?,?,?,?," \
-                     "?,?,?,?," \
-                     "?,?,?,?," \
-                     "?,?,?,?,?)"
+                     "?,?,?," \
+                     "?,?)"
         return insert_sql
 
     @staticmethod
     def get_update_sql():
         update_sql = "UPDATE stock SET " \
-                     "code=?, name=?, " \
-                     "price=?, net=?, " \
-                     "volume=?, amount=?, " \
-                     "pe=?, pb=?, " \
+                     "se=?, code=?, name=?, " \
+                     "price=?, change=?, net=?, " \
                      "modified=? " \
                      " WHERE " \
                      "code=?"
@@ -1304,17 +1380,17 @@ class StockData:
             return
 
         self.id = stock_data_tuple[0]
-        self.stock_code = stock_data_tuple[1]
-        self.date = stock_data_tuple[2]
-        self.time = stock_data_tuple[3]
-        self.period = stock_data_tuple[4]
-        self.open = stock_data_tuple[5]
-        self.high = stock_data_tuple[6]
-        self.low = stock_data_tuple[7]
-        self.close = stock_data_tuple[8]
-        self.volume = stock_data_tuple[9]
-        self.created = stock_data_tuple[10]
-        self.modified = stock_data_tuple[11]
+        self.stock_code = stock_data_tuple[database_contract.StockDataColumn.stock_code.value]
+        self.date = stock_data_tuple[database_contract.StockDataColumn.date.value]
+        self.time = stock_data_tuple[database_contract.StockDataColumn.time.value]
+        self.period = stock_data_tuple[database_contract.StockDataColumn.period.value]
+        self.open = stock_data_tuple[database_contract.StockDataColumn.open.value]
+        self.high = stock_data_tuple[database_contract.StockDataColumn.high.value]
+        self.low = stock_data_tuple[database_contract.StockDataColumn.low.value]
+        self.close = stock_data_tuple[database_contract.StockDataColumn.close.value]
+        self.volume = stock_data_tuple[database_contract.StockDataColumn.volume.value]
+        self.created = stock_data_tuple[database_contract.StockDataColumn.created.value]
+        self.modified = stock_data_tuple[database_contract.StockDataColumn.modified.value]
 
 
 class FinancialData:
@@ -1323,21 +1399,19 @@ class FinancialData:
             return
 
         self.id = financial_data_tuple[0]
-        self.stock_code = financial_data_tuple[1]
-        self.date = financial_data_tuple[2]
-        self.book_value_per_share = financial_data_tuple[3]
-        self.earnings_per_share = financial_data_tuple[4]
-        self.cash_flow_per_share = financial_data_tuple[5]
-        self.total_current_assets = financial_data_tuple[6]
-        self.total_assets = financial_data_tuple[7]
-        self.total_long_term_liabilities = financial_data_tuple[8]
-        self.main_business_income = financial_data_tuple[9]
-        self.financial_expenses = financial_data_tuple[10]
-        self.net_profit = financial_data_tuple[11]
-        self.roe = financial_data_tuple[12]
-        self.book_value_per_share_rate = financial_data_tuple[13]
-        self.created = financial_data_tuple[14]
-        self.modified = financial_data_tuple[15]
+        self.stock_code = financial_data_tuple[database_contract.FinancialDataColumn.stock_code.value]
+        self.date = financial_data_tuple[database_contract.FinancialDataColumn.date.value]
+        self.book_value_per_share = financial_data_tuple[database_contract.FinancialDataColumn.book_value_per_share.value]
+        self.cash_flow_per_share = financial_data_tuple[database_contract.FinancialDataColumn.cash_flow_per_share.value]
+        self.total_current_assets = financial_data_tuple[database_contract.FinancialDataColumn.total_current_assets.value]
+        self.total_assets = financial_data_tuple[database_contract.FinancialDataColumn.total_assets.value]
+        self.total_long_term_liabilities = financial_data_tuple[database_contract.FinancialDataColumn.total_long_term_liabilities.value]
+        self.main_business_income = financial_data_tuple[database_contract.FinancialDataColumn.main_business_income.value]
+        self.financial_expenses = financial_data_tuple[database_contract.FinancialDataColumn.financial_expenses.value]
+        self.net_profit = financial_data_tuple[database_contract.FinancialDataColumn.net_profit.value]
+        self.net_profit_per_share = financial_data_tuple[database_contract.FinancialDataColumn.net_profit_per_share.value]
+        self.created = financial_data_tuple[database_contract.FinancialDataColumn.created.value]
+        self.modified = financial_data_tuple[database_contract.FinancialDataColumn.modified.value]
 
 
 class ShareBonus:
@@ -1346,9 +1420,9 @@ class ShareBonus:
             return
 
         self.id = share_bonus_tuple[0]
-        self.stock_code = share_bonus_tuple[1]
-        self.date = share_bonus_tuple[2]
-        self.dividend = share_bonus_tuple[3]
-        self.dividend_date = share_bonus_tuple[4]
-        self.created = share_bonus_tuple[5]
-        self.modified = share_bonus_tuple[6]
+        self.stock_code = share_bonus_tuple[database_contract.ShareBonusColumn.stock_code.value]
+        self.date = share_bonus_tuple[database_contract.ShareBonusColumn.date.value]
+        self.dividend = share_bonus_tuple[database_contract.ShareBonusColumn.dividend.value]
+        self.dividend_date = share_bonus_tuple[database_contract.ShareBonusColumn.dividend_date.value]
+        self.created = share_bonus_tuple[database_contract.ShareBonusColumn.created.value]
+        self.modified = share_bonus_tuple[database_contract.ShareBonusColumn.modified.value]

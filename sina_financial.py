@@ -154,7 +154,8 @@ class SinaFinancial:
         url += '&sort=symbol&asc=1&node=hs_a&symbol=&_s_r_a=init'
 
         print(url)
-
+        #http://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQNodeData?page=1&num=100&sort=symbol&asc=1&node=hs_a&symbol=&_s_r_a=init
+        #symbol: "sh600000", code: "600000", name: "浦发银行", trade: "11.300", pricechange: "0.070", changepercent: "0.623", buy: "11.300", sell: "11.310", settlement: "11.230", open: "11.230", high: "11.390", low: "11.210", volume: 38949418, amount: 439706991, ticktime: "15:00:00", per: 6.108, pb: 0.691, mktcap: 33167850.84861, nmc: 31757253.20587, turnoverratio: 0.13859
         content = None
 
         try:
@@ -181,7 +182,7 @@ class SinaFinancial:
 
         content = content.replace('low', '"low"')#low最低价
         content = content.replace('volume', '"volume"')#volume成交量
-        content = content.replace('amount', '"amount"')#amount成交金额
+        content = content.replace('amount', '"value"')#amount成交金额
         content = content.replace('ticktime', '"ticktime"')
         content = content.replace('per', '"pe"')#per市盈率
         content = content.replace('pb', '"pb"')#pb市净率
@@ -265,13 +266,16 @@ class SinaFinancial:
 
         return value_list
 
-    def download_financial_data(self, code, total_share, time_to_market=None):
+    def download_financial_data(self, stock):
         value = 0
         financial_data = dict()
         financial_data_list = []
 
+        if stock is None:
+            return None
+
         url = 'http://money.finance.sina.com.cn/corp/go.php/vFD_FinanceSummary/stockid/'\
-              + code + '.phtml'
+              + stock.code + '.phtml'
 
         print(url)
 
@@ -319,8 +323,9 @@ class SinaFinancial:
                     if value_string is None:
                         continue
 
-                    if time_to_market is not None:
-                        if datetime.strptime(value_string, constant.DATE_FORMAT) < time_to_market:
+                    if stock.time_to_market is not None:
+                        if datetime.strptime(value_string, constant.DATE_FORMAT)\
+                                < datetime.strptime(stock.time_to_market, constant.DATE_FORMAT):
                             return financial_data_list[::-1]
 
                     financial_data = dict()
@@ -342,8 +347,6 @@ class SinaFinancial:
 
                     if '每股净资产-摊薄/期末股数' in key_string:
                         financial_data["book_value_per_share"] = value
-                    elif '每股收益-摊薄/期末股数' in key_string:
-                        financial_data["earnings_per_share"] = value
                     elif '每股现金流' in key_string:
                         financial_data["cash_flow_per_share"] = value
                     elif '流动资产合计' in key_string:
@@ -358,20 +361,13 @@ class SinaFinancial:
                         financial_data["financial_expenses"] = value
                     elif '净利润' in key_string:
                         financial_data["net_profit"] = value
-                        financial_data["earnings_per_share"] = 100000000.0 * float(value) / float(total_share)
 
-                        net_assets = float(financial_data["total_assets"]) - float(
-                            financial_data["total_long_term_liabilities"])
-                        if net_assets == 0:
-                            financial_data["roe"] = 0
-                        else:
-                            financial_data["roe"] = 100.0 * float(financial_data["net_profit"]) / float(net_assets)
-
-                        financial_data["book_value_per_share_rate"] = financial_data["book_value_per_share"]
+                        if stock.total_share != 0:
+                            financial_data["net_profit_per_share"] = 100000000.0 * float(value) / float(stock.total_share)
 
                         financial_data_list.append(financial_data)
 
-        return financial_data_list[::-1]
+        return financial_data_list
 
     def download_share_bonus(self, code):
         share_bonus = dict()

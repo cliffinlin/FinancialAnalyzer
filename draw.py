@@ -13,7 +13,6 @@ from matplotlib import dates as mdates
 from matplotlib.finance import candlestick_ohlc
 
 import constant
-import favorite
 import financial
 
 import numpy as np
@@ -54,9 +53,8 @@ def draw_stock_data(stock, period=constant.MONTH):
 
     x1 = financial_data_dict['date']
     book_value_per_share = financial_data_dict['book_value_per_share']
-    earnings_per_share = financial_data_dict['earnings_per_share']
+    net_profit_per_share = financial_data_dict['net_profit_per_share']
     cash_flow_per_share = financial_data_dict['cash_flow_per_share']
-    book_value_per_share_rate = financial_data_dict['book_value_per_share_rate']
 
     total_current_assets = financial_data_dict['total_current_assets']
     total_assets = financial_data_dict['total_assets']
@@ -64,7 +62,7 @@ def draw_stock_data(stock, period=constant.MONTH):
     main_business_income = financial_data_dict['main_business_income']
     financial_expenses = financial_data_dict['financial_expenses']
     net_profit = financial_data_dict['net_profit']
-    roe = financial_data_dict['roe']
+    # roe = financial_data_dict['roe']
 
     share_bonus_dict = pandas.read_csv(financial.get_share_bonus_file_name(stock), parse_dates=True, index_col=0)
     share_bonus_dict.reset_index(inplace=True)
@@ -84,7 +82,7 @@ def draw_stock_data(stock, period=constant.MONTH):
     # p3 = ax.plot(x, SMA_2, label='SMA(' + str(SMA_2_span) + ')')
 
     ax1.step(x1, cash_flow_per_share, label='CashFlowPerShare')
-    ax1.step(x1, earnings_per_share / constant.RISK_FREE_INTEREST_RATE, label='Valuation base on EarningsPerShare')
+    ax1.step(x1, net_profit_per_share / constant.RISK_INTEREST_RATE, label='Valuation base on net_profit_per_share')
     ax1.step(x1, book_value_per_share, label='BookValuePerShare')
     ax1.step(x2, dividend, label='Dividend')
 
@@ -123,7 +121,9 @@ def draw_stock_data(stock, period=constant.MONTH):
             + " pb " + str(stock.pb) \
             + " dividend " + str(stock.dividend) \
             + " yield " + str(stock.dividend_yield) + "% " \
-            + " rating " + str(stock.rating) + " discount " + str(stock.discount)
+            + " roe " + str(stock.roe) \
+            + " rate " + str(stock.rate) \
+            + " discount " + str(stock.discount)
     plt.title(title)
 
     plt.show()
@@ -149,9 +149,9 @@ def draw(where=None, order=None, sort=None):
         print("\"" + stock.code + "\"" + ", #" + stock.name + " "
               + "pe " + str(stock.pe) + " pb " + str(stock.pb) + " "
               + "dividend " + str(stock.dividend) + " " + str(stock.dividend_yield) + "% "
-              + " rating " + str(stock.rating) + " discount " + str(stock.discount))
+              + " operation " + str(stock.operation) + " discount " + str(stock.discount))
         # print(stock.code, stock.name, "price:" + str(stock.price), "net:" + str(stock.net), "dividend:" + str(stock.dividend),
-        #       "yield:" + str(stock.dividend_yield), "rating:" + str(stock.rating), "favorite:" + str(stock.favorite))
+        #       "yield:" + str(stock.dividend_yield), "rate:" + str(stock.rate), "mark:" + str(stock.mark))
 
         financial.write_to_file(stock)
 
@@ -179,7 +179,9 @@ def draw_line():
             + " pb " + str(stock.pb) \
             + " dividend " + str(stock.dividend) \
             + " yield " + str(stock.dividend_yield)  + "% " \
-            + " rating " + str(stock.rating) + " discount " + str(stock.discount)
+            + " roe " + str(stock.roe) \
+            + " rate " + str(stock.rate) \
+            + " discount " + str(stock.discount)
     plt.title(title)
 
     print(title)
