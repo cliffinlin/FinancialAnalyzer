@@ -1,6 +1,17 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
+from configparser import ConfigParser
+
+parser = ConfigParser()
+parser.read('config.ini')
+index = parser.getint('download', 'index')
+
+parser.set('download', 'index', index)
+with open('config.ini', 'w') as configfile:
+    parser.write(configfile)
+
+
 data = np.linspace(1, 100)
 power = 0
 

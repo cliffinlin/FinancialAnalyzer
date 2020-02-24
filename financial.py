@@ -788,7 +788,7 @@ def analyze_stock_data(stock, stock_data_tuple_list, financial_data_tuple_list):
         if stock.price != 0:
             stock.pe = round(100.0 * financial_data.net_profit_per_share / stock.price, 2)
 
-    book_value_per_share = float(financial_data.book_value_per_share)
+    book_value_per_share = financial_data.book_value_per_share
     if book_value_per_share != 0:
         stock.pb = round(stock.price / book_value_per_share, 2)
         stock.roe = round(100.0 * financial_data.net_profit_per_share / book_value_per_share, 2)
@@ -1114,6 +1114,7 @@ class Stock():
 
         if isinstance(stock, dict):
             se = stock["symbol"][0:2]
+
             self.set_se(se)
             self.set_code(stock['code'])
             self.set_name(stock['name'])
@@ -1152,95 +1153,120 @@ class Stock():
             self.set_modified(stock[database_contract.StockColumn.modified.value])
 
     def set_id(self, id):
-        self.id = id
+        if id is not None:
+            self.id = id
 
     def set_classes(self, classes):
-        self.classes = classes
+        if classes is not None:
+            self.classes = classes
 
     def set_se(self, se):
-        self.se = se
+        if se is not None:
+            self.se = se
 
     def set_code(self, code):
-        self.code = code
+        if code is not None:
+            self.code = code
 
     def set_name(self, name):
-        self.name = name
+        if name is not None:
+            self.name = name
 
     def set_pinyin(self, pinyin):
-        self.pinyin = pinyin
+        if pinyin is not None:
+            self.pinyin = pinyin
 
     def set_mark(self, mark):
-        self.mark = mark
+        if mark is not None:
+            self.mark = mark
 
     def set_price(self, price):
-        self.price = price
+        if price is not None:
+            self.price = price
 
     def set_change(self, change):
-        self.change = change
+        if change is not None:
+            self.change = change
 
     def set_net(self, net):
-        self.net = net
+        if net is not None:
+            self.net = net
 
     def set_volume(self, volume):
-        self.volume = volume
+        if volume is not None:
+            self.volume = volume
 
     def set_value(self, value):
-        self.value = value
+        if value is not None:
+            self.value = value
 
     def set_operation(self, operation):
-        if operation is None:
-            return
-        self.operation = operation
+        if operation is not None:
+            self.operation = operation
 
     def set_hold(self, hold):
-        self.hold = hold
+        if hold is not None:
+            self.hold = hold
 
     def set_cost(self, cost):
-        self.cost = cost
+        if cost is not None:
+            self.cost = cost
 
     def set_profit(self, profit):
-        self.profit = profit
+        if profit is not None:
+            self.profit = profit
 
     def set_total_share(self, total_share):
-        self.total_share = total_share
+        if total_share is not None:
+            self.total_share = total_share
 
     def set_roe(self, roe):
-        self.roe = roe
+        if roe is not None:
+            self.roe = roe
 
     def set_rate(self, rate):
-        self.rate = rate
+        if rate is not None:
+            self.rate = rate
 
     def set_valuation(self, valuation):
-        self.valuation = valuation
+        if valuation is not None:
+            self.valuation = valuation
 
     def set_discount(self, discount):
-        self.discount = discount
+        if discount is not None:
+            self.discount = discount
 
     def set_pe(self, pe):
-        self.pe = pe
+        if pe is not None:
+            self.pe = pe
 
     def set_pb(self, pb):
-        self.pb = pb
+        if pb is not None:
+            self.pb = pb
 
     def set_dividend(self, dividend):
-        if dividend is None:
-            return
-        self.dividend = dividend
+        if dividend is not None:
+            self.dividend = dividend
 
     def set_dividend_yield(self, dividend_yield):
-        self.dividend_yield = dividend_yield
+        if dividend_yield is not None:
+            self.dividend_yield = dividend_yield
 
     def set_delta(self, delta):
-        self.delta = delta
+        if delta is not None:
+            self.delta = delta
 
     def set_time_to_market(self, time_to_market):
-        self.time_to_market = time_to_market
+        if time_to_market is not None:
+            self.time_to_market = time_to_market
 
     def set_created(self, created):
-        self.created = created
+        if created is not None:
+            self.created = created
 
     def set_modified(self, modified):
-        self.modified = modified
+        if modified is not None:
+            self.modified = modified
 
     def get_insert_tuple(self):
         return tuple((self.se, self.code, self.name,
@@ -1395,18 +1421,66 @@ class StockData:
         if stock_data_tuple is None:
             return
 
-        self.id = stock_data_tuple[0]
-        self.stock_code = stock_data_tuple[database_contract.StockDataColumn.stock_code.value]
-        self.date = stock_data_tuple[database_contract.StockDataColumn.date.value]
-        self.time = stock_data_tuple[database_contract.StockDataColumn.time.value]
-        self.period = stock_data_tuple[database_contract.StockDataColumn.period.value]
-        self.open = stock_data_tuple[database_contract.StockDataColumn.open.value]
-        self.high = stock_data_tuple[database_contract.StockDataColumn.high.value]
-        self.low = stock_data_tuple[database_contract.StockDataColumn.low.value]
-        self.close = stock_data_tuple[database_contract.StockDataColumn.close.value]
-        self.volume = stock_data_tuple[database_contract.StockDataColumn.volume.value]
-        self.created = stock_data_tuple[database_contract.StockDataColumn.created.value]
-        self.modified = stock_data_tuple[database_contract.StockDataColumn.modified.value]
+        self.set_id(stock_data_tuple[0])
+        self.set_stock_code(stock_data_tuple[database_contract.StockDataColumn.stock_code.value])
+        self.set_date(stock_data_tuple[database_contract.StockDataColumn.date.value])
+        self.set_time(stock_data_tuple[database_contract.StockDataColumn.time.value])
+        self.set_period(stock_data_tuple[database_contract.StockDataColumn.period.value])
+        self.set_open(stock_data_tuple[database_contract.StockDataColumn.open.value])
+        self.set_high(stock_data_tuple[database_contract.StockDataColumn.high.value])
+        self.set_low(stock_data_tuple[database_contract.StockDataColumn.low.value])
+        self.set_close(stock_data_tuple[database_contract.StockDataColumn.close.value])
+        self.set_volume(stock_data_tuple[database_contract.StockDataColumn.volume.value])
+        self.set_created(stock_data_tuple[database_contract.StockDataColumn.created.value])
+        self.set_modified(stock_data_tuple[database_contract.StockDataColumn.modified.value])
+
+    def set_id(self, id):
+        if id is not None:
+            self.id = id
+
+    def set_stock_code(self, stock_code):
+        if stock_code is not None:
+            self.stock_code = stock_code
+
+    def set_date(self, date):
+        if date is not None:
+            self.date = date
+
+    def set_time(self, time):
+        if time is not None:
+            self.time = time
+
+    def set_period(self, period):
+        if period is not None:
+            self.period = period
+
+    def set_open(self, open):
+        if open is not None:
+            self.open = open
+
+    def set_high(self, high):
+        if high is not None:
+            self.high = high
+
+    def set_low(self, low):
+        if low is not None:
+            self.low = low
+
+    def set_close(self, close):
+        if close is not None:
+            self.close = close
+
+    def set_volume(self, volume):
+        if volume is not None:
+            self.volume = volume
+
+    def set_created(self, created):
+        if created is not None:
+            self.created = created
+
+    def set_modified(self, modified):
+        if modified is not None:
+            self.modified = modified
 
 
 class FinancialData:
@@ -1429,20 +1503,76 @@ class FinancialData:
         if financial_data_tuple is None:
             return
 
-        self.id = financial_data_tuple[0]
-        self.stock_code = financial_data_tuple[database_contract.FinancialDataColumn.stock_code.value]
-        self.date = financial_data_tuple[database_contract.FinancialDataColumn.date.value]
-        self.book_value_per_share = financial_data_tuple[database_contract.FinancialDataColumn.book_value_per_share.value]
-        self.cash_flow_per_share = financial_data_tuple[database_contract.FinancialDataColumn.cash_flow_per_share.value]
-        self.total_current_assets = financial_data_tuple[database_contract.FinancialDataColumn.total_current_assets.value]
-        self.total_assets = financial_data_tuple[database_contract.FinancialDataColumn.total_assets.value]
-        self.total_long_term_liabilities = financial_data_tuple[database_contract.FinancialDataColumn.total_long_term_liabilities.value]
-        self.main_business_income = financial_data_tuple[database_contract.FinancialDataColumn.main_business_income.value]
-        self.financial_expenses = financial_data_tuple[database_contract.FinancialDataColumn.financial_expenses.value]
-        self.net_profit = financial_data_tuple[database_contract.FinancialDataColumn.net_profit.value]
-        self.net_profit_per_share = financial_data_tuple[database_contract.FinancialDataColumn.net_profit_per_share.value]
-        self.created = financial_data_tuple[database_contract.FinancialDataColumn.created.value]
-        self.modified = financial_data_tuple[database_contract.FinancialDataColumn.modified.value]
+        self.set_id(financial_data_tuple[0])
+        self.set_stock_code(financial_data_tuple[database_contract.FinancialDataColumn.stock_code.value])
+        self.set_date(financial_data_tuple[database_contract.FinancialDataColumn.date.value])
+        self.set_book_value_per_share(financial_data_tuple[database_contract.FinancialDataColumn.book_value_per_share.value])
+        self.set_cash_flow_per_share(financial_data_tuple[database_contract.FinancialDataColumn.cash_flow_per_share.value])
+        self.set_total_current_assets(financial_data_tuple[database_contract.FinancialDataColumn.total_current_assets.value])
+        self.set_total_assets(financial_data_tuple[database_contract.FinancialDataColumn.total_assets.value])
+        self.set_total_long_term_liabilities(financial_data_tuple[database_contract.FinancialDataColumn.total_long_term_liabilities.value])
+        self.set_main_business_income(financial_data_tuple[database_contract.FinancialDataColumn.main_business_income.value])
+        self.set_financial_expenses(financial_data_tuple[database_contract.FinancialDataColumn.financial_expenses.value])
+        self.set_net_profit(financial_data_tuple[database_contract.FinancialDataColumn.net_profit.value])
+        self.set_net_profit_per_share(financial_data_tuple[database_contract.FinancialDataColumn.net_profit_per_share.value])
+        self.set_created(financial_data_tuple[database_contract.FinancialDataColumn.created.value])
+        self.set_modified(financial_data_tuple[database_contract.FinancialDataColumn.modified.value])
+
+    def set_id(self, id):
+        if id is not None:
+            self.id = id
+
+    def set_stock_code(self, stock_code):
+        if stock_code is not None:
+            self.stock_code = stock_code
+
+    def set_date(self, date):
+        if date is not None:
+            self.date = date
+
+    def set_book_value_per_share(self, book_value_per_share):
+        if book_value_per_share is not None:
+            self.book_value_per_share = book_value_per_share
+
+    def set_cash_flow_per_share(self, cash_flow_per_share):
+        if cash_flow_per_share is not None:
+            self.cash_flow_per_share = cash_flow_per_share
+
+    def set_total_current_assets(self, total_current_assets):
+        if total_current_assets is not None:
+            self.total_current_assets = total_current_assets
+
+    def set_total_assets(self, total_assets):
+        if total_assets is not None:
+            self.total_assets = total_assets
+
+    def set_total_long_term_liabilities(self, total_long_term_liabilities):
+        if total_long_term_liabilities is not None:
+            self.total_long_term_liabilities = total_long_term_liabilities
+
+    def set_main_business_income(self, main_business_income):
+        if main_business_income is not None:
+            self.main_business_income = main_business_income
+
+    def set_financial_expenses(self, financial_expenses):
+        if financial_expenses is not None:
+            self.financial_expenses = financial_expenses
+
+    def set_net_profit(self, net_profit):
+        if net_profit is not None:
+            self.net_profit = net_profit
+
+    def set_net_profit_per_share(self, net_profit_per_share):
+        if net_profit_per_share is not None:
+            self.net_profit_per_share = net_profit_per_share
+
+    def set_created(self, created):
+        if created is not None:
+            self.created = created
+
+    def set_modified(self, modified):
+        if modified is not None:
+            self.modified = modified
 
 
 class ShareBonus:
@@ -1458,10 +1588,39 @@ class ShareBonus:
         if share_bonus_tuple is None:
             return
 
-        self.id = share_bonus_tuple[0]
-        self.stock_code = share_bonus_tuple[database_contract.ShareBonusColumn.stock_code.value]
-        self.date = share_bonus_tuple[database_contract.ShareBonusColumn.date.value]
-        self.dividend = share_bonus_tuple[database_contract.ShareBonusColumn.dividend.value]
-        self.dividend_date = share_bonus_tuple[database_contract.ShareBonusColumn.dividend_date.value]
-        self.created = share_bonus_tuple[database_contract.ShareBonusColumn.created.value]
-        self.modified = share_bonus_tuple[database_contract.ShareBonusColumn.modified.value]
+        self.set_id(share_bonus_tuple[0])
+        self.set_stock_code(share_bonus_tuple[database_contract.ShareBonusColumn.stock_code.value])
+        self.set_date(share_bonus_tuple[database_contract.ShareBonusColumn.date.value])
+        self.set_dividend(share_bonus_tuple[database_contract.ShareBonusColumn.dividend.value])
+        self.set_dividend_date(share_bonus_tuple[database_contract.ShareBonusColumn.dividend_date.value])
+        self.set_created(share_bonus_tuple[database_contract.ShareBonusColumn.created.value])
+        self.set_modified(share_bonus_tuple[database_contract.ShareBonusColumn.modified.value])
+
+
+    def set_id(self, id):
+        if id is not None:
+            self.id = id
+
+    def set_stock_code(self, stock_code):
+        if stock_code is not None:
+            self.stock_code = stock_code
+
+    def set_date(self, date):
+        if date is not None:
+            self.date = date
+
+    def set_dividend(self, dividend):
+        if dividend is not None:
+            self.dividend = dividend
+
+    def set_dividend_date(self, dividend_date):
+        if dividend_date is not None:
+            self.dividend_date = dividend_date
+
+    def set_created(self, created):
+        if created is not None:
+            self.created = created
+
+    def set_modified(self, modified):
+        if modified is not None:
+            self.modified = modified
