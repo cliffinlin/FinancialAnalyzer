@@ -94,9 +94,9 @@ def download():
         time_to_market = get_time_to_market(stock_data_list)
         stock.set_time_to_market(time_to_market)
 
-        # if stock.is_time_to_market_too_short():
-        #     time.sleep(random.random())
-        #     print("stock.is_time_to_market_too_short()")
+        if stock.is_time_to_market_too_short():
+            time.sleep(random.random())
+            print("stock.is_time_to_market_too_short()")
 
         download_information_data(stock)
 
@@ -1018,7 +1018,11 @@ def select(where=None, order=None, sort=None):
     for stock_tuple in stock_tuple_list:
         stock = Stock(stock_tuple)
 
+        if not stock.check_out():
+            continue
+
         print("\"" + stock.code + "\"" + ", #" + stock.name + " "
+              + "roe " + str(stock.roe) + " "
               + "pe " + str(stock.pe) + " pb " + str(stock.pb) + " "
               + "dividend " + str(stock.dividend) + " " + str(stock.dividend_yield) + "% "
               + " operation " + str(stock.operation) + " discount " + str(stock.discount))

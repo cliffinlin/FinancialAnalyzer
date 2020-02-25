@@ -13,10 +13,10 @@ import financial
 if __name__ == "__main__":
     # financial.setup_database()
     # financial.download_stock_list()
-    financial.download()
+    # financial.download()
     # financial.analyze()
     # financial.update_mark()
-    draw.draw("pe > 15 AND dividend_yield > 2", "roe", "DESC")
+    draw.draw("roe >= 15 AND pe > 15 AND dividend_yield > 4", "roe", "DESC")
     # draw.draw("mark = 1", "dividend_yield", "DESC")
     # draw.draw("mark = 1 AND rating = 7", "dividend_yield", "DESC")#where=None, order=None, sort=None #"DESC""ASC"
     # draw.draw("mark = 1", "discount", "ASC")#where=None, order=None, sort=None #"DESC""ASC"
