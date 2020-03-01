@@ -95,8 +95,9 @@ def download():
         stock.set_time_to_market(time_to_market)
 
         if stock.is_time_to_market_too_short():
-            time.sleep(random.random())
+            # time.sleep(random.random())
             print("stock.is_time_to_market_too_short()")
+            continue
 
         download_information_data(stock)
 
@@ -279,6 +280,7 @@ def write_stock_list_to_database(stock_list):
 
     query_sql = Stock.get_query_sql()
     insert_sql = Stock.get_insert_sql()
+    update_sql = Stock.get_update_sql()
 
     print("write_stock_list_to_database")
 
@@ -320,16 +322,15 @@ def write_stock_list_to_database(stock_list):
 
                     cursor.execute(insert_sql, insert_tuple)
                     connect.commit()
-                    print("insert stock:", insert_tuple)
+                    print("write_stock_list_to_database, insert stock:", insert_tuple)
                 else:
                     stock.set_modified(now)
 
-                    update_sql = Stock.get_update_sql()
                     update_tuple = stock.get_update_tuple()
 
                     cursor.execute(update_sql, update_tuple)
                     connect.commit()
-                    print("update stock:", update_tuple)
+                    print("write_stock_list_to_database, update stock:", update_tuple)
         if executemany:
             print("insert: executemany")
             cursor.executemany(insert_sql, insert_tuple_list)
