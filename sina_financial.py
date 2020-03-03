@@ -340,12 +340,16 @@ class SinaFinancial:
 
                     if ',' in value_string:
                         value_string = value_string.replace(',', '')
-                        if value_string.isdigit():
+                        try:
                             value = float(value_string)
                             value = value / 100000000.0
+                        except:
+                            value = 0
                     else:
-                        if value_string.isdigit():
+                        try:
                             value = float(value_string)
+                        except:
+                            value = 0
 
                     if '每股净资产-摊薄/期末股数' in key_string:
                         financial_data["book_value_per_share"] = value
@@ -366,6 +370,8 @@ class SinaFinancial:
 
                         if stock.total_share != 0:
                             financial_data["net_profit_per_share"] = 100000000.0 * float(value) / float(stock.total_share)
+                        else:
+                            financial_data["net_profit_per_share"] = 0
 
                         financial_data_list.append(financial_data)
 

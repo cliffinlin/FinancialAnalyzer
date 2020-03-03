@@ -82,8 +82,8 @@ def download():
         if stock is None:
             continue
 
-        # if not stock.check_out():
-        #     continue
+        if not stock.check_out():
+            continue
 
         count += 1
 
@@ -990,8 +990,8 @@ def analyze():
         if stock is None:
             continue
 
-        # if not stock.check_out():
-        #     continue
+        if not stock.check_out():
+            continue
 
         count += 1
 

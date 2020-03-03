@@ -6,91 +6,93 @@ def get_stock_list():
 
 
 stock_list = {
-"600000", #浦发银行 pe 6.438 pb 0.728 dividend 3.5 2.94%
-"600755", #厦门国贸 pe 8.928 pb 1.044 dividend 2.7 3.64%  rating 7 discount 0.29
-"600820", #隧道股份 pe 9.778 pb 0.904 dividend 1.9 3.08%  rating 7 discount 0.56
-"600987", #航民股份 pe 6.792 pb 1.537 dividend 2.8 4.29%  rating 7 discount 0.57
+#     "000651", #格力电器 pe 13.236 pb 3.444 dividend 21.0 3.64%  rating 6
 
-    "600019", #宝钢股份 pe 5.639 pb 0.698 dividend 5.0 9.14%  rating 3
-    "601566", #九牧王 pe 11.882 pb 1.48 dividend 10.0 9.05%  rating 7
-    "600028", #中国石化 pe 9.578 pb 0.832 dividend 3.8 7.62%  rating 3
-    "000429", #粤高速Ａ pe 10.025 pb 1.749 dividend 5.62 7.01%  rating 1
-    "600548", #深高速 pe 6.848 pb 1.309 dividend 7.1 6.57%  rating 1
-    "000581", #威孚高科 pe 7.848 pb 1.141 dividend 12.0 6.45%  rating 3
-    "600897", #厦门空港 pe 12.127 pb 1.695 dividend 12.8 6.22%  rating 7
-
-    "601006", #大秦铁路 pe 8.092 pb 1.058 dividend 4.8 6.05%  rating 7
-    "000039", #中集集团 pe 8.685 pb 1.015 dividend 5.5 5.71%  rating 7
-    "600566", #济川药业 pe 10.827 pb 3.219 dividend 12.3 5.46%  rating 2
-    "601328", #交通银行 pe 5.74 pb 0.605 dividend 3.0 5.44%  rating 3
-    "600104", #上汽集团 pe 7.544 pb 1.111 dividend 12.6 5.42%  rating 3
-    "600376", #首开股份 pe 7.194 pb 0.824 dividend 4.0 5.22%  rating 5
-    "601088", #中国神华 pe 7.805 pb 0.987 dividend 8.8 5.11%  rating 3
-    "601988", #中国银行 pe 6.153 pb 0.656 dividend 1.84 5.07%  rating 3
-    "600383", #金地集团 pe 6.648 pb 1.096 dividend 6.0 5.04%  rating 1
-    "600033", #福建高速 pe 11.298 pb 0.866 dividend 1.5 4.97%  rating 1
-    "600398", #海澜之家 pe 9.974 pb 2.685 dividend 3.8 4.95%  rating 6
-    "601288", #农业银行 pe 6.136 pb 0.737 dividend 1.739 4.8%  rating 7
-    "600350", #山东高速 pe 7.778 pb 0.807 dividend 2.21 4.64%  rating 1
-    "600606", #绿地控股 pe 7.043 pb 1.059 dividend 3.0 4.58%  rating 7
-    "600012", #皖通高速 pe 8.463 pb 0.905 dividend 2.5 4.36%  rating 3
-    "001979", #招商蛇口 pe 9.582 pb 2.197 dividend 7.89824 4.36%  rating 0
-    "601398", #工商银行 pe 7.061 pb 0.853 dividend 2.506 4.33%  rating 7
-    "601939", #建设银行 pe 7.1 pb 0.856 dividend 3.06 4.31%  rating 7
-    "600377", #宁沪高速 pe 12.373 pb 1.957 dividend 4.6 4.28%  rating 1
-    "600309", #万华化学 pe 12.477 pb 3.768 dividend 20.0 4.13%  rating 2
-    "600741", #华域汽车 pe 10.181 pb 1.699 dividend 10.5 4.05%  rating 3
-    "600755", #厦门国贸 pe 8.41 pb 0.983 dividend 2.7 3.87%  rating 7
-    "000513", #丽珠集团 pe 20.669 pb 2.686 dividend 12.0 3.84%  rating 3
-    "000002", #万 科Ａ pe 9.052 pb 1.872 dividend 10.451 3.77%  rating 7
-    "600900", #长江电力 pe 17.64 pb 2.747 dividend 6.8 3.75%  rating 4
-    "600585", #海螺水泥 pe 8.135 pb 1.902 dividend 16.9 3.69%  rating 7
-    "000651", #格力电器 pe 13.236 pb 3.444 dividend 21.0 3.64%  rating 6
-    "002160", #常铝股份 pe -4.747 pb 0.744 dividend 1.0 3.55%  rating 2
-    "600048", #保利地产 pe 9.075 pb 1.412 dividend 5.0 3.47%  rating 1
-    "600056", #中国医药 pe 8.668 pb 1.495 dividend 4.3366 3.46%  rating 3
-    "000828", #东莞控股 pe 7.76 pb 1.168 dividend 2.7 3.45%  rating 5
-    "600660", #福耀玻璃 pe 13.555 pb 2.669 dividend 7.5 3.37%  rating 2
-    "601668", #中国建筑 pe 5.874 pb 0.88 dividend 1.68 3.29%  rating 7
-    "002304", #洋河股份 pe 18.234 pb 4.079 dividend 32.0 3.26%  rating 6
-    "000423", #东阿阿胶 pe 10.562 pb 2.072 dividend 10.0953 3.0%  rating 3
-    "600068", #葛洲坝 pe 6.933 pb 0.978 dividend 1.8 2.93%  rating 3
-    "601601", #中国太保 pe 17.211 pb 1.823 dividend 10.0 2.92%  rating 7
-    "600018", #上港集团 pe 12.562 pb 1.604 dividend 1.54 2.76%  rating 1
-    "600036", #招商银行 pe 11.511 pb 1.616 dividend 9.4 2.61%  rating 7
-    "601800", #中国交建 pe 7.826 pb 0.771 dividend 2.3077 2.56%  rating 3
-    "600754", #锦江酒店 pe 21.31 pb 1.773 dividend 6.0 2.49%  rating 4
-    "600887", #伊利股份 pe 27.443 pb 7.283 dividend 7.0 2.41%  rating 6
-    "000333", #美的集团 pe 17.63 pb 3.848 dividend 13.0396 2.4%  rating 6
-    "600612", #老凤祥 pe 20.803 pb 3.697 dividend 11.0 2.3%  rating 6
-    "601607", #上海医药 pe 12.969 pb 1.235 dividend 4.1 2.3%  rating 7
-    "000538", #云南白药 pe 27.642 pb 3.001 dividend 20.0013 2.28%  rating 6
-    "601390", #中国中铁 pe 7.869 pb 0.764 dividend 1.28 2.27%  rating 7
-    "601318", #中国平安 pe 13.89 pb 2.384 dividend 18.5 2.21%  rating 6
-    "601186", #中国铁建 pe 7.675 pb 0.816 dividend 2.1 2.17%  rating 7
-    "600195", #中牧股份 pe 17.663 pb 2.483 dividend 2.42 1.98%  rating 2
-    "600007", #中国国贸 pe 21.156 pb 2.237 dividend 3.2 1.96%  rating 0
-    "000568", #泸州老窖 pe 34.349 pb 6.452 dividend 15.5 1.9%  rating 6
-    "600511", #国药股份 pe 13.34 pb 1.867 dividend 4.0 1.64%  rating 7
-    "600030", #中信证券 pe 27.805 pb 1.621 dividend 3.5 1.63%  rating 2
-    "000596", #古井贡酒 pe 32.095 pb 6.342 dividend 15.0 1.39%  rating 6
-    "000858", #五 粮 液 pe 36.716 pb 7.131 dividend 17.0 1.33%  rating 6
-    "000999", #华润三九 pe 20.13 pb 2.316 dividend 3.9 1.33%  rating 6
-    "600519", #贵州茅台 pe 40.293 pb 11.323 dividend 145.39 1.29%  rating 6
-    "600332", #白云山 pe 15.709 pb 2.237 dividend 4.24 1.28%  rating 6
-    "600196", #复星医药 pe 23.505 pb 2.104 dividend 3.2 1.27%  rating 0
-    "600298", #安琪酵母 pe 29.12 pb 5.197 dividend 3.5 1.16%  rating 2
-    "600004", #白云机场 pe 30.364 pb 2.181 dividend 1.7 1.02%  rating 2
-    "600600", #青岛啤酒 pe 48.139 pb 3.441 dividend 4.8 0.95%  rating 6
-    "603288", #海天味业 pe 66.037 pb 19.177 dividend 9.8 0.92%  rating 6
-    "000028", #国药一致 pe 15.41 pb 1.499 dividend 4.0 0.92%  rating 3
-    "600009", #上海机场 pe 34.15 pb 4.675 dividend 6.6 0.88%  rating 6
-    "600809", #山西汾酒 pe 52.739 pb 10.735 dividend 7.5 0.84%  rating 6
-    "601888", #中国国旅 pe 52.871 pb 8.4 dividend 5.5 0.66%  rating 6
-    "600436", #片仔癀 pe 52.794 pb 9.587 dividend 6.0 0.6%  rating 6
-    "601628", #中国人寿 pe 84.128 pb 2.434 dividend 1.6 0.49%  rating 2
-    "600276", #恒瑞医药 pe 78.091 pb 16.409 dividend 2.2 0.26%  rating 6
-    "000661", #长春高新 pe 74.155 pb 11.644 dividend 8.0 0.18%  rating 6
+# "600000", #浦发银行 pe 6.438 pb 0.728 dividend 3.5 2.94%
+# "600755", #厦门国贸 pe 8.928 pb 1.044 dividend 2.7 3.64%  rating 7 discount 0.29
+# "600820", #隧道股份 pe 9.778 pb 0.904 dividend 1.9 3.08%  rating 7 discount 0.56
+# "600987", #航民股份 pe 6.792 pb 1.537 dividend 2.8 4.29%  rating 7 discount 0.57
+#
+#     "600019", #宝钢股份 pe 5.639 pb 0.698 dividend 5.0 9.14%  rating 3
+#     "601566", #九牧王 pe 11.882 pb 1.48 dividend 10.0 9.05%  rating 7
+#     "600028", #中国石化 pe 9.578 pb 0.832 dividend 3.8 7.62%  rating 3
+#     "000429", #粤高速Ａ pe 10.025 pb 1.749 dividend 5.62 7.01%  rating 1
+#     "600548", #深高速 pe 6.848 pb 1.309 dividend 7.1 6.57%  rating 1
+#     "000581", #威孚高科 pe 7.848 pb 1.141 dividend 12.0 6.45%  rating 3
+#     "600897", #厦门空港 pe 12.127 pb 1.695 dividend 12.8 6.22%  rating 7
+#
+#     "601006", #大秦铁路 pe 8.092 pb 1.058 dividend 4.8 6.05%  rating 7
+#     "000039", #中集集团 pe 8.685 pb 1.015 dividend 5.5 5.71%  rating 7
+#     "600566", #济川药业 pe 10.827 pb 3.219 dividend 12.3 5.46%  rating 2
+#     "601328", #交通银行 pe 5.74 pb 0.605 dividend 3.0 5.44%  rating 3
+#     "600104", #上汽集团 pe 7.544 pb 1.111 dividend 12.6 5.42%  rating 3
+#     "600376", #首开股份 pe 7.194 pb 0.824 dividend 4.0 5.22%  rating 5
+#     "601088", #中国神华 pe 7.805 pb 0.987 dividend 8.8 5.11%  rating 3
+#     "601988", #中国银行 pe 6.153 pb 0.656 dividend 1.84 5.07%  rating 3
+#     "600383", #金地集团 pe 6.648 pb 1.096 dividend 6.0 5.04%  rating 1
+#     "600033", #福建高速 pe 11.298 pb 0.866 dividend 1.5 4.97%  rating 1
+#     "600398", #海澜之家 pe 9.974 pb 2.685 dividend 3.8 4.95%  rating 6
+#     "601288", #农业银行 pe 6.136 pb 0.737 dividend 1.739 4.8%  rating 7
+#     "600350", #山东高速 pe 7.778 pb 0.807 dividend 2.21 4.64%  rating 1
+#     "600606", #绿地控股 pe 7.043 pb 1.059 dividend 3.0 4.58%  rating 7
+#     "600012", #皖通高速 pe 8.463 pb 0.905 dividend 2.5 4.36%  rating 3
+#     "001979", #招商蛇口 pe 9.582 pb 2.197 dividend 7.89824 4.36%  rating 0
+#     "601398", #工商银行 pe 7.061 pb 0.853 dividend 2.506 4.33%  rating 7
+#     "601939", #建设银行 pe 7.1 pb 0.856 dividend 3.06 4.31%  rating 7
+#     "600377", #宁沪高速 pe 12.373 pb 1.957 dividend 4.6 4.28%  rating 1
+#     "600309", #万华化学 pe 12.477 pb 3.768 dividend 20.0 4.13%  rating 2
+#     "600741", #华域汽车 pe 10.181 pb 1.699 dividend 10.5 4.05%  rating 3
+#     "600755", #厦门国贸 pe 8.41 pb 0.983 dividend 2.7 3.87%  rating 7
+#     "000513", #丽珠集团 pe 20.669 pb 2.686 dividend 12.0 3.84%  rating 3
+#     "000002", #万 科Ａ pe 9.052 pb 1.872 dividend 10.451 3.77%  rating 7
+#     "600900", #长江电力 pe 17.64 pb 2.747 dividend 6.8 3.75%  rating 4
+#     "600585", #海螺水泥 pe 8.135 pb 1.902 dividend 16.9 3.69%  rating 7
+#     "000651", #格力电器 pe 13.236 pb 3.444 dividend 21.0 3.64%  rating 6
+#     "002160", #常铝股份 pe -4.747 pb 0.744 dividend 1.0 3.55%  rating 2
+#     "600048", #保利地产 pe 9.075 pb 1.412 dividend 5.0 3.47%  rating 1
+#     "600056", #中国医药 pe 8.668 pb 1.495 dividend 4.3366 3.46%  rating 3
+#     "000828", #东莞控股 pe 7.76 pb 1.168 dividend 2.7 3.45%  rating 5
+#     "600660", #福耀玻璃 pe 13.555 pb 2.669 dividend 7.5 3.37%  rating 2
+#     "601668", #中国建筑 pe 5.874 pb 0.88 dividend 1.68 3.29%  rating 7
+#     "002304", #洋河股份 pe 18.234 pb 4.079 dividend 32.0 3.26%  rating 6
+#     "000423", #东阿阿胶 pe 10.562 pb 2.072 dividend 10.0953 3.0%  rating 3
+#     "600068", #葛洲坝 pe 6.933 pb 0.978 dividend 1.8 2.93%  rating 3
+#     "601601", #中国太保 pe 17.211 pb 1.823 dividend 10.0 2.92%  rating 7
+#     "600018", #上港集团 pe 12.562 pb 1.604 dividend 1.54 2.76%  rating 1
+#     "600036", #招商银行 pe 11.511 pb 1.616 dividend 9.4 2.61%  rating 7
+#     "601800", #中国交建 pe 7.826 pb 0.771 dividend 2.3077 2.56%  rating 3
+#     "600754", #锦江酒店 pe 21.31 pb 1.773 dividend 6.0 2.49%  rating 4
+#     "600887", #伊利股份 pe 27.443 pb 7.283 dividend 7.0 2.41%  rating 6
+#     "000333", #美的集团 pe 17.63 pb 3.848 dividend 13.0396 2.4%  rating 6
+#     "600612", #老凤祥 pe 20.803 pb 3.697 dividend 11.0 2.3%  rating 6
+#     "601607", #上海医药 pe 12.969 pb 1.235 dividend 4.1 2.3%  rating 7
+#     "000538", #云南白药 pe 27.642 pb 3.001 dividend 20.0013 2.28%  rating 6
+#     "601390", #中国中铁 pe 7.869 pb 0.764 dividend 1.28 2.27%  rating 7
+#     "601318", #中国平安 pe 13.89 pb 2.384 dividend 18.5 2.21%  rating 6
+#     "601186", #中国铁建 pe 7.675 pb 0.816 dividend 2.1 2.17%  rating 7
+#     "600195", #中牧股份 pe 17.663 pb 2.483 dividend 2.42 1.98%  rating 2
+#     "600007", #中国国贸 pe 21.156 pb 2.237 dividend 3.2 1.96%  rating 0
+#     "000568", #泸州老窖 pe 34.349 pb 6.452 dividend 15.5 1.9%  rating 6
+#     "600511", #国药股份 pe 13.34 pb 1.867 dividend 4.0 1.64%  rating 7
+#     "600030", #中信证券 pe 27.805 pb 1.621 dividend 3.5 1.63%  rating 2
+#     "000596", #古井贡酒 pe 32.095 pb 6.342 dividend 15.0 1.39%  rating 6
+#     "000858", #五 粮 液 pe 36.716 pb 7.131 dividend 17.0 1.33%  rating 6
+#     "000999", #华润三九 pe 20.13 pb 2.316 dividend 3.9 1.33%  rating 6
+#     "600519", #贵州茅台 pe 40.293 pb 11.323 dividend 145.39 1.29%  rating 6
+#     "600332", #白云山 pe 15.709 pb 2.237 dividend 4.24 1.28%  rating 6
+#     "600196", #复星医药 pe 23.505 pb 2.104 dividend 3.2 1.27%  rating 0
+#     "600298", #安琪酵母 pe 29.12 pb 5.197 dividend 3.5 1.16%  rating 2
+#     "600004", #白云机场 pe 30.364 pb 2.181 dividend 1.7 1.02%  rating 2
+#     "600600", #青岛啤酒 pe 48.139 pb 3.441 dividend 4.8 0.95%  rating 6
+#     "603288", #海天味业 pe 66.037 pb 19.177 dividend 9.8 0.92%  rating 6
+#     "000028", #国药一致 pe 15.41 pb 1.499 dividend 4.0 0.92%  rating 3
+#     "600009", #上海机场 pe 34.15 pb 4.675 dividend 6.6 0.88%  rating 6
+#     "600809", #山西汾酒 pe 52.739 pb 10.735 dividend 7.5 0.84%  rating 6
+#     "601888", #中国国旅 pe 52.871 pb 8.4 dividend 5.5 0.66%  rating 6
+#     "600436", #片仔癀 pe 52.794 pb 9.587 dividend 6.0 0.6%  rating 6
+#     "601628", #中国人寿 pe 84.128 pb 2.434 dividend 1.6 0.49%  rating 2
+#     "600276", #恒瑞医药 pe 78.091 pb 16.409 dividend 2.2 0.26%  rating 6
+#     "000661", #长春高新 pe 74.155 pb 11.644 dividend 8.0 0.18%  rating 6
 #
 #
 # "601566", #九牧王 pe 11.882 pb 1.48 dividend 10.0 9.05%  rating 7
