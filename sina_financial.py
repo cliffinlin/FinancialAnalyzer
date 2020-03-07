@@ -65,13 +65,14 @@ class SinaFinancial:
         """
         # print(url)
 
-        # url = 'http://www.xicidaili.com/nn/'
+        proxies = {
+        }
 
         user_agent = self.get_user_agent()
         headers = {'User-Agent': user_agent}
 
         try:
-            with closing(requests.get(url, stream=True, headers=headers)) as resp:
+            with closing(requests.get(url, stream=True, headers=headers, proxies=proxies)) as resp:
                 if self.is_good_response(resp):
                     return resp.content
                 else:

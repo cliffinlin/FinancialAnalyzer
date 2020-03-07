@@ -14,6 +14,8 @@ import database_contract
 import black
 import favorite
 
+from configparser import ConfigParser
+
 from datetime import datetime
 
 favorite_only = False
@@ -70,13 +72,29 @@ def get_time_to_market(stock_data_list):
 
 def download():
     stock_tuple_list = read_stock_tuple_list_from_database()
+    if stock_tuple_list is None:
+        print("stock_tuple_list is None")
+        return
 
-    count = 0
-    index = -1
+    config = ConfigParser()
+    config.read('config.ini')
+    if not config.has_section("download"):
+        config.add_section('download')
+        config.set('download', 'index', "0")
+        with open('config.ini', 'w') as f:
+            config.write(f)
+
+    index = int(config.get('download', 'index'))
+
+    i = 0
     for stock_tuple in stock_tuple_list:
-        index = index + 1
-        if index < 0:
+        i = i + 1
+        if i < index:
             continue
+
+        config.set('download', 'index', str(i))
+        with open('config.ini', 'w') as f:
+            config.write(f)
 
         stock = Stock(stock_tuple)
         if stock is None:
@@ -85,9 +103,7 @@ def download():
         if not stock.check_out():
             continue
 
-        count += 1
-
-        print(index, stock.code, stock.name, stock.mark, stock.operation)
+        print(i, stock.code, stock.name, stock.mark, stock.operation)
 
         stock_data_list = download_stock_data(stock)
 
@@ -95,7 +111,6 @@ def download():
         stock.set_time_to_market(time_to_market)
 
         if stock.is_time_to_market_too_short():
-            # time.sleep(random.random())
             print("stock.is_time_to_market_too_short()")
             continue
 
@@ -107,7 +122,11 @@ def download():
 
         stock.update_to_database()
 
-    print("download done, count=", count)
+    config.set('download', 'index', "0")
+    with open('config.ini', 'w') as f:
+        config.write(f)
+
+    print("download done")
 
 
 def download_stock_list():
@@ -172,88 +191,12 @@ def download_information_data(stock):
 
 
 def download_financial_data(stock):
-    time_to_market_len_min = constant.TIME_TO_MARKET_YEAR_MIN * constant.SEASONS_IN_A_YEAR
-
-    # book_value_per_share = {}
-    # cash_flow_per_share = {}
-    # total_current_assets = {}
-    # total_assets = {}
-    # total_long_term_liabilities = {}
-    # main_business_income = {}
-    # financial_expenses = {}
-    # net_profit = {}
-
-    financial_data_list = []
-    # test_financial_data_list = []
-
     if stock is None:
         return None
 
     sina = sina_financial.SinaFinancial()
 
-    # print("download_financial_data code=", stock.code)
-
-    # book_value_per_share = sina.download_financial_data(stock.code, 'mgjzc')
-    # cash_flow_per_share = sina.download_financial_data(stock.code, 'mgxjhl')
-    # total_current_assets = sina.download_financial_data(stock.code, 'ldzchj')
-    # total_assets = sina.download_financial_data(stock.code, 'zczj')
-    # total_long_term_liabilities = sina.download_financial_data(stock.code, 'cqfzhj')
-    # main_business_income = sina.download_financial_data(stock.code, 'zyywsr')
-    # financial_expenses = sina.download_financial_data(stock.code, 'cwfy')
-    # net_profit = sina.download_financial_data(stock.code, 'jlr')
-    #
-    # for key in sorted(book_value_per_share.keys()):
-    #     if key is None:
-    #         continue
-    #
-    #     if not_before is not None:
-    #         if datetime.strptime(key, constant.DATE_FORMAT) < not_before:
-    #             continue
-    #
-    #     financial_data = dict()
-    #     financial_data["date"] = key
-    #     financial_data["book_value_per_share"] = get_value_string_by_key(key, book_value_per_share)
-    #     financial_data["cash_flow_per_share"] = get_value_string_by_key(key, cash_flow_per_share)
-    #     financial_data["total_current_assets"] = get_value_string_by_key(key, total_current_assets)
-    #     financial_data["total_assets"] = get_value_string_by_key(key, total_assets)
-    #     financial_data["total_long_term_liabilities"] = get_value_string_by_key(key, total_long_term_liabilities)
-    #     financial_data["main_business_income"] = get_value_string_by_key(key, main_business_income)
-    #     financial_data["financial_expenses"] = get_value_string_by_key(key, financial_expenses)
-    #     financial_data["net_profit"] = get_value_string_by_key(key, net_profit)
-    #
-    #     net_assets = float(financial_data["total_assets"]) - float(financial_data["total_long_term_liabilities"])
-    #     if net_assets == 0:
-    #         financial_data["roe"] = 0
-    #     else:
-    #         financial_data["roe"] = 100.0 * float(financial_data["net_profit"]) / float(net_assets)
-    #
-    #     financial_data["book_value_per_share_rate"] = financial_data["book_value_per_share"]
-    #
-    #     financial_data_list.append(financial_data)
-
     financial_data_list = sina.download_financial_data(stock)
-
-    # list_len = len(financial_data_list)
-    # if list_len > time_to_market_len_min:
-    #     begin = financial_data_list[list_len - time_to_market_len_min - 1]
-    #     end = financial_data_list[list_len - 1]
-    #
-    #     value0 = float(begin["book_value_per_share"])
-    #     value1 = float(end["book_value_per_share"])
-    #
-    #     index = 0
-    #     for financial_data in financial_data_list:
-    #         if index < list_len - time_to_market_len_min - 1:
-    #             test_financial_data_list.append(financial_data)
-    #         else:
-    #             financial_data["book_value_per_share_rate"] = value0 + (index - (list_len - time_to_market_len_min - 1)) * (value1 - value0) / time_to_market_len_min
-    #             test_financial_data_list.append(financial_data)
-    #         index += 1
-    #     write_financial_data_to_database(stock.code, test_financial_data_list)
-    #     return test_financial_data_list
-    # else:
-    #     write_financial_data_to_database(stock.code, financial_data_list)
-    #     return financial_data_list
 
     write_financial_data_to_database(stock.code, financial_data_list)
 
