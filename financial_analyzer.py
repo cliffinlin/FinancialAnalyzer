@@ -9,10 +9,10 @@ import draw
 import financial
 
 if __name__ == "__main__":
-    # financial.setup_database()
-    # financial.download_stock_list()
-    # financial.download()
-    # financial.analyze()
+    financial.setup_database()
+    financial.download_stock_list()
+    financial.download()
+    financial.analyze()
     # financial.update_mark()
     # draw.draw("roe >= 15 AND pe > 4", "roe", "DESC")
     draw.draw("pe > 10", "roe", "DESC")

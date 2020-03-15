@@ -12,6 +12,9 @@ stock_list = {
 "601003", #柳钢股份 roe 14.16 pe 11.29 pb 1.25 dividend 6.0 11.7%  operation 2 discount 0.89
 "600307", #酒钢宏兴 roe 10.59 pe 10.81 pb 0.98 dividend 0.3 1.62%  operation 2 discount 0.92
 
+"000537", #广宇发展 roe 19.07 pe 18.42 pb 1.04 dividend 1.3 1.81%  operation 0 discount 0.54
+"000885", #城发环境 roe 19.01 pe 10.34 pb 1.84 dividend 2.3 2.12%  operation 0 discount 0.97
+
 "000835", #长城动漫 roe 208.47 pe -2.97 pb -70.21 dividend 0.4 0.99%  operation 0 discount -3.37
 "600198", #大唐电信 roe 156.96 pe -5.84 pb -26.86 dividend 2.0 1.86%  operation 0 discount -1.71
 "600898", #国美通讯 roe 155.94 pe -11.64 pb -13.4 dividend 0.5 0.71%  operation 2 discount -0.86
