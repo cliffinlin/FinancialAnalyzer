@@ -18,7 +18,8 @@ from configparser import ConfigParser
 
 from datetime import datetime
 
-favorite_only = False
+favorite_only = True
+check_black_list = True
 
 
 def setup_database():
@@ -1227,15 +1228,31 @@ class Stock():
                       self.modified,
                       self.code))
 
-    def is_favorite(self):
+    def in_favorite_list(self):
         result = False
 
-        favorite_stock_list = favorite.get_stock_list()
+        favorite_list = favorite.get_stock_list()
 
-        if favorite_stock_list is None:
+        if favorite_list is None:
             return result
 
-        if self.code in favorite_stock_list:
+        if self.code in favorite_list:
+            result = True
+
+        return result
+
+    def in_black_list(self):
+        result = False
+
+        if not check_black_list:
+            return result
+
+        black_stock_list = black.get_stock_list()
+
+        if black_stock_list is None:
+            return result
+
+        if self.code in black_stock_list:
             result = True
 
         return result
@@ -1267,19 +1284,19 @@ class Stock():
 
     def check_out(self):
         result = False
-        black_stock_list = black.get_stock_list()
 
         if favorite_only:
-            if self.is_favorite():
-                return True
-            else:
-                return False
+            return self.in_favorite_list()
         else:
             if self.is_special_treatment():
                 return False
+            elif self.pe < 0:
+                return False
+            elif self.pb < 0:
+                return False
             elif self.is_time_to_market_too_short():
                 return False
-            elif self.code in black_stock_list:
+            elif self.in_black_list():
                 return False
             else:
                 result = True

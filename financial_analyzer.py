@@ -5,8 +5,6 @@ Created on Thu Mar 21 19:30:56 2019
 @author: ADMIN
 """
 
-import constant
-import os
 import draw
 import financial
 
@@ -17,7 +15,7 @@ if __name__ == "__main__":
     # financial.analyze()
     # financial.update_mark()
     # draw.draw("roe >= 15 AND pe > 4", "roe", "DESC")
-    draw.draw("roe > 10 AND pe > 8 AND dividend_yield > 1", "pe", "DESC")
+    draw.draw("pe > 10", "roe", "DESC")
     # draw.draw("mark = 1", "dividend_yield", "DESC")
     # draw.draw("mark = 1", "discount", "ASC")#where=None, order=None, sort=None #"DESC""ASC"
     # draw.draw("discount > 0 AND discount < 1 AND dividend_yield > 3 AND rating = 7", "discount", "ASC")#where=None, order=None, sort=None #"DESC""ASC"
