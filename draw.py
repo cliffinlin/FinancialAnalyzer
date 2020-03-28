@@ -143,7 +143,7 @@ def draw(where=None, order=None, sort=None):
         if stock is None:
             continue
 
-        if not stock.check_out():
+        if not financial.check_out(stock):
             continue
 
         print("\"" + stock.code + "\"" + ", #" + stock.name + " "

@@ -11,16 +11,18 @@ import time
 import random
 
 import database_contract
-import black
-import favorite
 
 from configparser import ConfigParser
-
 from datetime import datetime
 
-favorite_only = True
-check_black_list = True
+from Black import Black
+from Favorite import Favorite
 
+favorite_only = True
+Favorite = Favorite()
+
+check_black_list = True
+Black = Black()
 
 def setup_database():
     connect = None
@@ -101,7 +103,7 @@ def download():
         if stock is None:
             continue
 
-        if not stock.check_out():
+        if not check_out(stock):
             continue
 
         print(i, stock.code, stock.name, stock.mark, stock.operation)
@@ -170,8 +172,6 @@ def download_stock_data(stock):
 
 
 def download_information_data(stock):
-    information_data_list = []
-
     if stock is None:
         return None
 
@@ -243,7 +243,7 @@ def write_stock_list_to_database(stock_list):
         for stock_basic in stock_list:
             stock = Stock(stock_basic)
 
-            if not stock.check_out():
+            if not check_out(stock):
                 continue
 
             now = datetime.now().strftime(constant.DATE_TIME_FORMAT)
@@ -519,9 +519,11 @@ def write_stock_to_file(stock_tuple_list):
                           "name": stock.name, "pinyin": stock.pinyin, "mark": stock.mark, "price": stock.price,
                           "change": stock.change, "net": stock.net, "volume": stock.volume, "value": stock.value,
                           "operation": stock.operation, "hold": stock.hold, "cost": stock.cost, "profit": stock.profit,
-                          "total_share": stock.total_share, "roe": stock.roe, "rate": stock.rate, "valuation": stock.valuation,
+                          "total_share": stock.total_share, "roe": stock.roe, "rate": stock.rate,
+                          "valuation": stock.valuation,
                           "discount": stock.discount, "pe": stock.pe, "pb": stock.pb, "dividend": stock.dividend,
-                          "dividend_yield": stock.dividend_yield, "delta": stock.delta, "time_to_market": stock.time_to_market,
+                          "dividend_yield": stock.dividend_yield, "delta": stock.delta,
+                          "time_to_market": stock.time_to_market,
                           "created": stock.created, "modified": stock.modified}
             writer.writerow(stock_dict)
 
@@ -819,7 +821,7 @@ def analyze_financial_data(stock, financial_data_tuple_list):
     growth_year_min = constant.GROWTH_YEAR_MIN - 1
     time_to_market_len_min = constant.TIME_TO_MARKET_YEAR_MIN * constant.SEASONS_IN_A_YEAR
     base = 0
-    target = 0;
+    target = 0
 
     if stock is None:
         return stock
@@ -848,9 +850,9 @@ def analyze_financial_data(stock, financial_data_tuple_list):
             break
 
         if index == 0:
-            target = financial_data.net_profit;
+            target = financial_data.net_profit
         if index == constant.SEASONS_IN_A_YEAR:
-            base = financial_data.net_profit;
+            base = financial_data.net_profit
 
         if "03-31" in financial_data.date:
             main_business_income_q1.append(financial_data.main_business_income)
@@ -875,7 +877,6 @@ def analyze_financial_data(stock, financial_data_tuple_list):
 
 def analyze_share_bonus(stock, share_bonus_tuple_list):
     total_divident = 0
-    year = None
     prev_year = None
 
     if stock is None:
@@ -915,7 +916,7 @@ def analyze_share_bonus(stock, share_bonus_tuple_list):
         if stock.price > 0:
             stock.set_dividend_yield(round(100.0 * stock.dividend / 10 / stock.price, 2))
 
-        prev_year = year;
+        prev_year = year
 
     return stock
 
@@ -934,7 +935,7 @@ def analyze():
         if stock is None:
             continue
 
-        if not stock.check_out():
+        if not check_out(stock):
             continue
 
         count += 1
@@ -955,6 +956,8 @@ def analyze():
 
 
 def select(where=None, order=None, sort=None):
+    select_tuple_list = tuple()
+
     make_data_directory()
 
     stock_tuple_list = read_stock_tuple_list_from_database(where, order, sort)
@@ -963,7 +966,7 @@ def select(where=None, order=None, sort=None):
     for stock_tuple in stock_tuple_list:
         stock = Stock(stock_tuple)
 
-        if not stock.check_out():
+        if not check_out(stock):
             continue
 
         print("\"" + stock.code + "\"" + ", #" + stock.name + " "
@@ -994,11 +997,11 @@ def write_to_file(stock):
 def update_mark():
     stock_tuple_list = read_stock_tuple_list_from_database()
 
-    black_stock_list = black.get_stock_list()
+    black_stock_list = Black.get_stock_list()
     if black_stock_list is None:
         return
 
-    favorite_stock_list = favorite.get_stock_list()
+    favorite_stock_list = Favorite.get_stock_list()
     if favorite_stock_list is None:
         return
 
@@ -1029,7 +1032,58 @@ def update_mark():
     print("update done, count=", count)
 
 
-class Stock():
+def in_favorite_list(stock):
+    result = False
+
+    favorite_stock_list = Favorite.get_stock_list()
+    if favorite_stock_list is None:
+        return result
+
+    if stock.code in favorite_stock_list:
+        result = True
+
+    return result
+
+
+def in_black_list(stock):
+    result = False
+
+    black_stock_list = Black.get_stock_list()
+    if black_stock_list is None:
+        return result
+
+    if not check_black_list:
+        return result
+
+    if stock.code in black_stock_list:
+        result = True
+
+    return result
+
+
+def check_out(stock):
+    result = False
+
+    if favorite_only:
+        return in_favorite_list(stock)
+    else:
+        if stock.is_special_treatment():
+            return False
+        elif stock.pe < 0:
+            return False
+        elif stock.pb < 0:
+            return False
+        elif stock.is_time_to_market_too_short():
+            return False
+        elif in_black_list(stock):
+            return False
+        else:
+            result = True
+
+    return result
+
+
+class Stock:
     def __init__(self, stock=None):
         self.id = 0
         self.classes = ""
@@ -1228,33 +1282,6 @@ class Stock():
                       self.modified,
                       self.code))
 
-    def in_favorite_list(self):
-        result = False
-
-        favorite_list = favorite.get_stock_list()
-        if favorite_list is None:
-            return result
-
-        if self.code in favorite_list:
-            result = True
-
-        return result
-
-    def in_black_list(self):
-        result = False
-
-        black_stock_list = black.get_stock_list()
-        if black_stock_list is None:
-            return result
-
-        if not check_black_list:
-            return result
-
-        if self.code in black_stock_list:
-            result = True
-
-        return result
-
     def is_special_treatment(self):
         result = False
 
@@ -1277,27 +1304,6 @@ class Stock():
 
         if time_to_market > time_to_market_min:
             result = True
-
-        return result
-
-    def check_out(self):
-        result = False
-
-        if favorite_only:
-            return self.in_favorite_list()
-        else:
-            if self.is_special_treatment():
-                return False
-            elif self.pe < 0:
-                return False
-            elif self.pb < 0:
-                return False
-            elif self.is_time_to_market_too_short():
-                return False
-            elif self.in_black_list():
-                return False
-            else:
-                result = True
 
         return result
 
@@ -1469,15 +1475,22 @@ class FinancialData:
         self.set_id(financial_data_tuple[0])
         self.set_stock_code(financial_data_tuple[database_contract.FinancialDataColumn.stock_code.value])
         self.set_date(financial_data_tuple[database_contract.FinancialDataColumn.date.value])
-        self.set_book_value_per_share(financial_data_tuple[database_contract.FinancialDataColumn.book_value_per_share.value])
-        self.set_cash_flow_per_share(financial_data_tuple[database_contract.FinancialDataColumn.cash_flow_per_share.value])
-        self.set_total_current_assets(financial_data_tuple[database_contract.FinancialDataColumn.total_current_assets.value])
+        self.set_book_value_per_share(
+            financial_data_tuple[database_contract.FinancialDataColumn.book_value_per_share.value])
+        self.set_cash_flow_per_share(
+            financial_data_tuple[database_contract.FinancialDataColumn.cash_flow_per_share.value])
+        self.set_total_current_assets(
+            financial_data_tuple[database_contract.FinancialDataColumn.total_current_assets.value])
         self.set_total_assets(financial_data_tuple[database_contract.FinancialDataColumn.total_assets.value])
-        self.set_total_long_term_liabilities(financial_data_tuple[database_contract.FinancialDataColumn.total_long_term_liabilities.value])
-        self.set_main_business_income(financial_data_tuple[database_contract.FinancialDataColumn.main_business_income.value])
-        self.set_financial_expenses(financial_data_tuple[database_contract.FinancialDataColumn.financial_expenses.value])
+        self.set_total_long_term_liabilities(
+            financial_data_tuple[database_contract.FinancialDataColumn.total_long_term_liabilities.value])
+        self.set_main_business_income(
+            financial_data_tuple[database_contract.FinancialDataColumn.main_business_income.value])
+        self.set_financial_expenses(
+            financial_data_tuple[database_contract.FinancialDataColumn.financial_expenses.value])
         self.set_net_profit(financial_data_tuple[database_contract.FinancialDataColumn.net_profit.value])
-        self.set_net_profit_per_share(financial_data_tuple[database_contract.FinancialDataColumn.net_profit_per_share.value])
+        self.set_net_profit_per_share(
+            financial_data_tuple[database_contract.FinancialDataColumn.net_profit_per_share.value])
         self.set_created(financial_data_tuple[database_contract.FinancialDataColumn.created.value])
         self.set_modified(financial_data_tuple[database_contract.FinancialDataColumn.modified.value])
 
@@ -1558,7 +1571,6 @@ class ShareBonus:
         self.set_dividend_date(share_bonus_tuple[database_contract.ShareBonusColumn.dividend_date.value])
         self.set_created(share_bonus_tuple[database_contract.ShareBonusColumn.created.value])
         self.set_modified(share_bonus_tuple[database_contract.ShareBonusColumn.modified.value])
-
 
     def set_id(self, id):
         if id is not None:
