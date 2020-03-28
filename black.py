@@ -1,9 +1,6 @@
 # -*- coding: utf-8 -*-
 
 
-def get_stock_list():
-    return stock_list
-
 stock_list = {
 "600507", #方大特钢 roe 26.15 pe 13.22 pb 1.98 dividend 17.0 19.02%  operation 2 discount 0.76
 "000717", #韶钢松山 roe 17.27 pe 12.25 pb 1.41 dividend 0.5 1.15%  operation 2 discount 0.82
@@ -1216,3 +1213,6 @@ stock_list = {
 "300164", #通源石油 roe 4.02 pe 3.02 pb 1.33 dividend 1.0 1.89%  operation 2 discount 3.32
 "002500", #山西证券 roe 4.01 pe 2.15 pb 1.87 dividend 0.5 0.6%  operation 2 discount 4.66
 }
+
+def get_stock_list():
+    return stock_list

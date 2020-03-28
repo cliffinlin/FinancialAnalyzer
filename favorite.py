@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 
 
-def get_stock_list():
-    return stock_list
 stock_list = {
 "000672", #上峰水泥 roe 33.5 pe 9.15 pb 3.66 dividend 4.0 1.93%  operation 6 discount 1.09
 "600779", #水井坊 roe 33.11 pe 2.91 pb 11.39 dividend 11.42 2.54%  operation 6 discount 3.44
@@ -174,3 +172,5 @@ stock_list = {
 }
 
 
+def get_stock_list():
+    return stock_list

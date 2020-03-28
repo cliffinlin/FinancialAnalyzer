@@ -243,8 +243,8 @@ def write_stock_list_to_database(stock_list):
         for stock_basic in stock_list:
             stock = Stock(stock_basic)
 
-            # if not stock.check_out():
-            #     continue
+            if not stock.check_out():
+                continue
 
             now = datetime.now().strftime(constant.DATE_TIME_FORMAT)
 
@@ -1232,7 +1232,6 @@ class Stock():
         result = False
 
         favorite_list = favorite.get_stock_list()
-
         if favorite_list is None:
             return result
 
@@ -1244,12 +1243,11 @@ class Stock():
     def in_black_list(self):
         result = False
 
-        if not check_black_list:
+        black_stock_list = black.get_stock_list()
+        if black_stock_list is None:
             return result
 
-        black_stock_list = black.get_stock_list()
-
-        if black_stock_list is None:
+        if not check_black_list:
             return result
 
         if self.code in black_stock_list:
