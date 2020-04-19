@@ -10,8 +10,8 @@ import pandas
 import matplotlib.pyplot as plt
 
 from matplotlib import dates as mdates
-from matplotlib.finance import candlestick_ohlc
-
+# from matplotlib.finance import candlestick_ohlc
+from mplfinance.original_flavor import candlestick_ohlc # pip install --upgrade mplfinance
 import constant
 import financial
 
@@ -29,7 +29,7 @@ def draw_stock_data(stock, period=constant.MONTH):
 
     stock_data_dict = pandas.read_csv(financial.get_stock_data_file_name(stock), parse_dates=True, index_col=0)
     stock_data_dict.reset_index(inplace=True)
-    stock_data_dict['date'] = mdates.date2num(stock_data_dict['date'].astype(datetime.date))
+    stock_data_dict['date'] = mdates.date2num(stock_data_dict['date'])
 
     # setup moving average models
 
@@ -49,7 +49,7 @@ def draw_stock_data(stock, period=constant.MONTH):
 
     financial_data_dict = pandas.read_csv(financial.get_financial_data_file_name(stock), parse_dates=True, index_col=0)
     financial_data_dict.reset_index(inplace=True)
-    financial_data_dict['date'] = mdates.date2num(financial_data_dict['date'].astype(datetime.date))
+    financial_data_dict['date'] = mdates.date2num(financial_data_dict['date'])
 
     x1 = financial_data_dict['date']
     book_value_per_share = financial_data_dict['book_value_per_share']
@@ -66,7 +66,7 @@ def draw_stock_data(stock, period=constant.MONTH):
 
     share_bonus_dict = pandas.read_csv(financial.get_share_bonus_file_name(stock), parse_dates=True, index_col=0)
     share_bonus_dict.reset_index(inplace=True)
-    share_bonus_dict['date'] = mdates.date2num(share_bonus_dict['date'].astype(datetime.date))
+    share_bonus_dict['date'] = mdates.date2num(share_bonus_dict['date'])
 
     x2 = share_bonus_dict['date']
     dividend = share_bonus_dict['dividend']

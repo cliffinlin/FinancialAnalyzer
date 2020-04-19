@@ -6,7 +6,7 @@ import json
 import requests
 import urllib.request
 
-from bs4 import BeautifulSoup
+from bs4 import BeautifulSoup #pip3 install bs4
 from contextlib import closing
 from datetime import datetime
 from requests.exceptions import RequestException
