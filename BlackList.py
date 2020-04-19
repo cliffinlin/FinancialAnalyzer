@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-class Black:
+class BlackList:
     def __init__(self):
         self.stock_list = {
             "600507",  # 方大特钢 roe 26.15 pe 13.22 pb 1.98 dividend 17.0 19.02%  operation 2 discount 0.76

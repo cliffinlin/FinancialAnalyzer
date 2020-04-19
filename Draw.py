@@ -5,17 +5,15 @@ Created on Thu Mar 21 19:30:56 2019
 @author: ADMIN
 """
 
-import datetime
-import pandas
 import matplotlib.pyplot as plt
-
+import numpy as np
+import pandas
 from matplotlib import dates as mdates
 # from matplotlib.finance import candlestick_ohlc
-from mplfinance.original_flavor import candlestick_ohlc # pip install --upgrade mplfinance
-import constant
-import financial
+from mplfinance.original_flavor import candlestick_ohlc  # pip install --upgrade mplfinance
 
-import numpy as np
+import Constant
+import Financial
 
 stock_index = 0
 stock_tuple_list = None
@@ -24,10 +22,10 @@ data = np.linspace(1, 100)
 power = 0
 
 
-def draw_stock_data(stock, period=constant.MONTH):
+def draw_stock_data(stock, period=Constant.MONTH):
     # read and reformat data
 
-    stock_data_dict = pandas.read_csv(financial.get_stock_data_file_name(stock), parse_dates=True, index_col=0)
+    stock_data_dict = pandas.read_csv(Financial.get_stock_data_file_name(stock), parse_dates=True, index_col=0)
     stock_data_dict.reset_index(inplace=True)
     stock_data_dict['date'] = mdates.date2num(stock_data_dict['date'])
 
@@ -47,7 +45,7 @@ def draw_stock_data(stock, period=constant.MONTH):
     #
     # MACD = EMA_1 - EMA_2
 
-    financial_data_dict = pandas.read_csv(financial.get_financial_data_file_name(stock), parse_dates=True, index_col=0)
+    financial_data_dict = pandas.read_csv(Financial.get_financial_data_file_name(stock), parse_dates=True, index_col=0)
     financial_data_dict.reset_index(inplace=True)
     financial_data_dict['date'] = mdates.date2num(financial_data_dict['date'])
 
@@ -64,7 +62,7 @@ def draw_stock_data(stock, period=constant.MONTH):
     net_profit = financial_data_dict['net_profit']
     # roe = financial_data_dict['roe']
 
-    share_bonus_dict = pandas.read_csv(financial.get_share_bonus_file_name(stock), parse_dates=True, index_col=0)
+    share_bonus_dict = pandas.read_csv(Financial.get_share_bonus_file_name(stock), parse_dates=True, index_col=0)
     share_bonus_dict.reset_index(inplace=True)
     share_bonus_dict['date'] = mdates.date2num(share_bonus_dict['date'])
 
@@ -82,7 +80,7 @@ def draw_stock_data(stock, period=constant.MONTH):
     # p3 = ax.plot(x, SMA_2, label='SMA(' + str(SMA_2_span) + ')')
 
     ax1.step(x1, cash_flow_per_share, label='CashFlowPerShare')
-    ax1.step(x1, net_profit_per_share / constant.RISK_INTEREST_RATE, label='Valuation base on net_profit_per_share')
+    ax1.step(x1, net_profit_per_share / Constant.RISK_INTEREST_RATE, label='Valuation base on net_profit_per_share')
     ax1.step(x1, book_value_per_share, label='BookValuePerShare')
     ax1.step(x2, dividend, label='Dividend')
 
@@ -118,7 +116,7 @@ def draw_stock_data(stock, period=constant.MONTH):
 
     title = stock.name + " " + stock.code \
             + " roe " + str(stock.roe) \
-            + " pe " + str(stock.pe)\
+            + " pe " + str(stock.pe) \
             + " pb " + str(stock.pb) \
             + " dividend " + str(stock.dividend) \
             + " yield " + str(stock.dividend_yield) + "% " \
@@ -133,17 +131,17 @@ def draw(where=None, order=None, sort=None):
     global stock_index
     global stock_tuple_list
 
-    stock_tuple_list = financial.select(where, order, sort)
+    stock_tuple_list = Financial.select(where, order, sort)
 
     index = -1
     for stock_tuple in stock_tuple_list:
         index = index + 1
 
-        stock = financial.Stock(stock_tuple)
+        stock = Financial.Stock(stock_tuple)
         if stock is None:
             continue
 
-        if not financial.check_out(stock):
+        if not Financial.check_out(stock):
             continue
 
         print("\"" + stock.code + "\"" + ", #" + stock.name + " "
@@ -154,7 +152,7 @@ def draw(where=None, order=None, sort=None):
         # print(stock.code, stock.name, "price:" + str(stock.price), "net:" + str(stock.net), "dividend:" + str(stock.dividend),
         #       "yield:" + str(stock.dividend_yield), "rate:" + str(stock.rate), "mark:" + str(stock.mark))
 
-        financial.write_to_file(stock)
+        Financial.write_to_file(stock)
 
         draw_stock_data(stock)
 
@@ -166,8 +164,8 @@ def draw_line():
     if stock_tuple_list is None:
         return
 
-    stock = financial.Stock(stock_tuple_list[stock_index])
-    financial.write_to_file(stock)
+    stock = Financial.Stock(stock_tuple_list[stock_index])
+    Financial.write_to_file(stock)
 
     plt.clf()
 
@@ -177,10 +175,10 @@ def draw_line():
 
     title = stock.name + " " + stock.code \
             + " roe " + str(stock.roe) \
-            + " pe " + str(stock.pe)\
+            + " pe " + str(stock.pe) \
             + " pb " + str(stock.pb) \
             + " dividend " + str(stock.dividend) \
-            + " yield " + str(stock.dividend_yield)  + "% " \
+            + " yield " + str(stock.dividend_yield) + "% " \
             + " roe " + str(stock.roe) \
             + " rate " + str(stock.rate) \
             + " discount " + str(stock.discount)
@@ -234,7 +232,7 @@ def test(where=None, order=None, sort=None):
     plt.gcf().canvas.mpl_connect('key_press_event', on_keyboard)
 
     stock_index = 0
-    stock_tuple_list = financial.select(where, order, sort)
+    stock_tuple_list = Financial.select(where, order, sort)
 
     if stock_tuple_list is None:
         return

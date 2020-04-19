@@ -1,15 +1,15 @@
 # -*- coding: utf-8 -*-
-import random
-
-import constant
 import json
-import requests
+import random
 import urllib.request
-
-from bs4 import BeautifulSoup #pip3 install bs4
 from contextlib import closing
 from datetime import datetime
+
+import requests
+from bs4 import BeautifulSoup  # pip3 install bs4
 from requests.exceptions import RequestException
+
+import Constant
 
 
 class SinaFinancial:
@@ -56,7 +56,6 @@ class SinaFinancial:
 
         return user_agent
 
-
     def get_content(self, url):
         """
         Attempts to get the content at `url` by making an HTTP GET request.
@@ -98,7 +97,6 @@ class SinaFinancial:
         make it do anything.
         """
         print(e)
-
 
     # def parse_tr(self, parent):
     #     value = 0
@@ -146,7 +144,6 @@ class SinaFinancial:
     #
     #     return result
 
-
     def download_stock_list(self, page):
         url = 'http://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQNodeData?'
 
@@ -155,8 +152,8 @@ class SinaFinancial:
         url += '&sort=symbol&asc=1&node=hs_a&symbol=&_s_r_a=init'
 
         print(url)
-        #http://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQNodeData?page=1&num=100&sort=symbol&asc=1&node=hs_a&symbol=&_s_r_a=init
-        #symbol: "sh600000", code: "600000", name: "浦发银行", trade: "11.300", pricechange: "0.070", changepercent: "0.623", buy: "11.300", sell: "11.310", settlement: "11.230", open: "11.230", high: "11.390", low: "11.210", volume: 38949418, amount: 439706991, ticktime: "15:00:00", per: 6.108, pb: 0.691, mktcap: 33167850.84861, nmc: 31757253.20587, turnoverratio: 0.13859
+        # http://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQNodeData?page=1&num=100&sort=symbol&asc=1&node=hs_a&symbol=&_s_r_a=init
+        # symbol: "sh600000", code: "600000", name: "浦发银行", trade: "11.300", pricechange: "0.070", changepercent: "0.623", buy: "11.300", sell: "11.310", settlement: "11.230", open: "11.230", high: "11.390", low: "11.210", volume: 38949418, amount: 439706991, ticktime: "15:00:00", per: 6.108, pb: 0.691, mktcap: 33167850.84861, nmc: 31757253.20587, turnoverratio: 0.13859
         content = None
 
         try:
@@ -168,34 +165,33 @@ class SinaFinancial:
             print("content is None, return")
             return None
 
-        content = content.replace('symbol', '"symbol"')#标记
-        content = content.replace('code', '"code"')#code代码
-        content = content.replace('name', '"name"')#name名称
-        content = content.replace('trade', '"price"')#trade现价
+        content = content.replace('symbol', '"symbol"')  # 标记
+        content = content.replace('code', '"code"')  # code代码
+        content = content.replace('name', '"name"')  # name名称
+        content = content.replace('trade', '"price"')  # trade现价
         content = content.replace('pricechange', '"change"')
 
-        content = content.replace('changepercent', '"net"')#changepercent涨跌幅
-        content = content.replace('buy', '"buy"')#buy买入价
-        content = content.replace('sell', '"sell"')#卖出价
-        content = content.replace('settlement', '"settlement"')#settlement昨日收盘价
-        content = content.replace('open', '"open"')#open开盘价
-        content = content.replace('high', '"high"')#high最高价
+        content = content.replace('changepercent', '"net"')  # changepercent涨跌幅
+        content = content.replace('buy', '"buy"')  # buy买入价
+        content = content.replace('sell', '"sell"')  # 卖出价
+        content = content.replace('settlement', '"settlement"')  # settlement昨日收盘价
+        content = content.replace('open', '"open"')  # open开盘价
+        content = content.replace('high', '"high"')  # high最高价
 
-        content = content.replace('low', '"low"')#low最低价
-        content = content.replace('volume', '"volume"')#volume成交量
-        content = content.replace('amount', '"value"')#amount成交金额
+        content = content.replace('low', '"low"')  # low最低价
+        content = content.replace('volume', '"volume"')  # volume成交量
+        content = content.replace('amount', '"value"')  # amount成交金额
         content = content.replace('ticktime', '"ticktime"')
-        content = content.replace('per', '"pe"')#per市盈率
-        content = content.replace('pb', '"pb"')#pb市净率
+        content = content.replace('per', '"pe"')  # per市盈率
+        content = content.replace('pb', '"pb"')  # pb市净率
 
-        content = content.replace('mktcap', '"mktcap"')#mktcap总市值
-        content = content.replace('nmc', '"nmc"')#nmc流通市值
-        content = content.replace('turnoverratio', '"turnoverratio"')#turnoverratio换手率
+        content = content.replace('mktcap', '"mktcap"')  # mktcap总市值
+        content = content.replace('nmc', '"nmc"')  # nmc流通市值
+        content = content.replace('turnoverratio', '"turnoverratio"')  # turnoverratio换手率
 
         return json.loads(content)
 
-
-    def download_stock_data(self, code, length, period=constant.MONTH):
+    def download_stock_data(self, code, length, period=Constant.MONTH):
         url = "http://money.finance.sina.com.cn/quotes_service/api/json_v2.php/CN_MarketData.getKLineData?"
 
         se = "sh"
@@ -205,11 +201,11 @@ class SinaFinancial:
         symbol = "&symbol=" + se + code
 
         # for day 240, week 1680, month 7200
-        if period == constant.DAY:
+        if period == Constant.DAY:
             scale = "&scale=240"
-        elif period == constant.WEEK:
+        elif period == Constant.WEEK:
             scale = "&scale=1680"
-        elif period == constant.MONTH:
+        elif period == Constant.MONTH:
             scale = "&scale=7200"
         else:
             return None
@@ -263,7 +259,7 @@ class SinaFinancial:
             print("content is None, return")
             return None
 
-        value_list = content.split(",");
+        value_list = content.split(",")
 
         return value_list
 
@@ -275,7 +271,7 @@ class SinaFinancial:
         if stock is None:
             return None
 
-        url = 'http://money.finance.sina.com.cn/corp/go.php/vFD_FinanceSummary/stockid/'\
+        url = 'http://money.finance.sina.com.cn/corp/go.php/vFD_FinanceSummary/stockid/' \
               + stock.code + '.phtml'
 
         print(url)
@@ -325,8 +321,8 @@ class SinaFinancial:
                         continue
 
                     if stock.time_to_market is not None:
-                        if datetime.strptime(value_string, constant.DATE_FORMAT)\
-                                < datetime.strptime(stock.time_to_market, constant.DATE_FORMAT):
+                        if datetime.strptime(value_string, Constant.DATE_FORMAT) \
+                                < datetime.strptime(stock.time_to_market, Constant.DATE_FORMAT):
                             return financial_data_list[::-1]
 
                     financial_data = dict()
@@ -370,7 +366,8 @@ class SinaFinancial:
                         financial_data["net_profit"] = value
 
                         if stock.total_share != 0:
-                            financial_data["net_profit_per_share"] = 100000000.0 * float(value) / float(stock.total_share)
+                            financial_data["net_profit_per_share"] = 100000000.0 * float(value) / float(
+                                stock.total_share)
                         else:
                             financial_data["net_profit_per_share"] = 0
 
@@ -382,7 +379,7 @@ class SinaFinancial:
         share_bonus = dict()
         share_bonus_list = []
 
-        url = 'http://money.finance.sina.com.cn/corp/go.php/vISSUE_ShareBonus/stockid/'\
+        url = 'http://money.finance.sina.com.cn/corp/go.php/vISSUE_ShareBonus/stockid/' \
               + code + '.phtml'
 
         print(url)
