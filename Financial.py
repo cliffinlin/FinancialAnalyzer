@@ -22,7 +22,7 @@ from StockData import StockData
 favorite_only = True
 Favorite = Favorite()
 
-check_black_list = True
+check_black_list = False
 black_list = BlackList()
 
 
@@ -234,6 +234,10 @@ def write_stock_list_to_database(stock_list):
         print("stock_list is None, return")
         return
 
+    if len(stock_list) == 0:
+        print("stock_list len =", len(stock_list), ", return")
+        return
+
     try:
         connect = sqlite3.connect(DatabaseContract.DATABASE_FILE_NAME)
         cursor = connect.cursor()
@@ -400,7 +404,7 @@ def write_share_bonus_to_database(code, share_bonus_list):
 
     sql_delete = "DELETE FROM share_bonus WHERE stock_code = ?"
     sql_insert = "INSERT INTO share_bonus (stock_code, date, " \
-                 "dividend, dividend_date, " \
+                 "dividend, r_date, " \
                  "created, modified)" \
                  " VALUES(?,?," \
                  "?,?," \
@@ -422,11 +426,11 @@ def write_share_bonus_to_database(code, share_bonus_list):
 
             date = share_bonus['date']
             dividend = share_bonus['dividend']
-            dividend_date = share_bonus['dividend_date']
+            r_date = share_bonus['r_date']
 
             now = datetime.now().strftime(Constant.DATE_TIME_FORMAT)
 
-            record = tuple((code, date, dividend, dividend_date,
+            record = tuple((code, date, dividend, r_date,
                             now, now))
             record_list.append(record)
 
@@ -618,7 +622,7 @@ def write_share_bonus_to_file(stock, share_bonus_tuple_list):
 
     field_name_tuple = tuple(("date",
                               "dividend",
-                              "dividend_date"))
+                              "r_date"))
 
     with open(file_name, 'w', newline='') as csv_file:
         writer = csv.DictWriter(csv_file, fieldnames=field_name_tuple)
@@ -631,7 +635,7 @@ def write_share_bonus_to_file(stock, share_bonus_tuple_list):
 
             share_bonus_dict = {"date": share_bonus.date,
                                 "dividend": share_bonus.dividend,
-                                "dividend_date": share_bonus.dividend_date,
+                                "r_date": share_bonus.r_date,
                                 }
             writer.writerow(share_bonus_dict)
 
@@ -898,10 +902,10 @@ def analyze_share_bonus(stock, share_bonus_tuple_list):
         if share_bonus is None:
             break
 
-        if share_bonus.dividend_date is None:
+        if share_bonus.date is None:
             break
 
-        strings = share_bonus.dividend_date.split("-")
+        strings = share_bonus.date.split("-")
 
         if strings is None or len(strings) == 0:
             break
