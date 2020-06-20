@@ -8,7 +8,7 @@ class ShareBonus:
         self.stock_code = ""
         self.date = ""
         self.dividend = ""
-        self.dividend_date = ""
+        self.r_date = ""
         self.created = ""
         self.modified = ""
 
@@ -19,7 +19,7 @@ class ShareBonus:
         self.set_stock_code(share_bonus_tuple[DatabaseContract.ShareBonusColumn.stock_code.value])
         self.set_date(share_bonus_tuple[DatabaseContract.ShareBonusColumn.date.value])
         self.set_dividend(share_bonus_tuple[DatabaseContract.ShareBonusColumn.dividend.value])
-        self.set_dividend_date(share_bonus_tuple[DatabaseContract.ShareBonusColumn.dividend_date.value])
+        self.set_r_date(share_bonus_tuple[DatabaseContract.ShareBonusColumn.r_date.value])
         self.set_created(share_bonus_tuple[DatabaseContract.ShareBonusColumn.created.value])
         self.set_modified(share_bonus_tuple[DatabaseContract.ShareBonusColumn.modified.value])
 
@@ -39,9 +39,9 @@ class ShareBonus:
         if dividend is not None:
             self.dividend = dividend
 
-    def set_dividend_date(self, dividend_date):
-        if dividend_date is not None:
-            self.dividend_date = dividend_date
+    def set_r_date(self, r_date):
+        if r_date is not None:
+            self.r_date = r_date
 
     def set_created(self, created):
         if created is not None:

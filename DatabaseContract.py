@@ -143,7 +143,7 @@ class ShareBonusColumn(Enum):
     stock_code = auto()
     date = auto()
     dividend = auto()
-    dividend_date = auto()
+    r_date = auto()
     created = auto()
     modified = auto()
 
@@ -153,7 +153,7 @@ SQL_CREATE_TABLE_SHARE_BONUS = " CREATE TABLE IF NOT EXISTS share_bonus ( " \
                                + ShareBonusColumn.stock_code.name + " TEXT NOT NULL," \
                                + ShareBonusColumn.date.name + " TEXT NOT NULL," \
                                + ShareBonusColumn.dividend.name + " TEXT NOT NULL," \
-                               + ShareBonusColumn.dividend_date.name + " TEXT NOT NULL," \
+                               + ShareBonusColumn.r_date.name + " TEXT NOT NULL," \
                                + ShareBonusColumn.created.name + " TEXT," \
                                + ShareBonusColumn.modified.name + " TEXT" \
                                + "); "

@@ -153,7 +153,7 @@ class SinaFinancial:
 
         print(url)
         # http://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQNodeData?page=1&num=100&sort=symbol&asc=1&node=hs_a&symbol=&_s_r_a=init
-        # symbol: "sh600000", code: "600000", name: "浦发银行", trade: "11.300", pricechange: "0.070", changepercent: "0.623", buy: "11.300", sell: "11.310", settlement: "11.230", open: "11.230", high: "11.390", low: "11.210", volume: 38949418, amount: 439706991, ticktime: "15:00:00", per: 6.108, pb: 0.691, mktcap: 33167850.84861, nmc: 31757253.20587, turnoverratio: 0.13859
+        #{"symbol":"sh600000","code":"600000","name":"\u6d66\u53d1\u94f6\u884c","trade":"10.610","pricechange":"0.110","changepercent":"1.048","buy":"10.610","sell":"10.620","settlement":"10.500","open":"10.560","high":"10.680","low":"10.500","volume":39814479,"amount":422462428,"ticktime":"15:00:00","per":5.441,"pb":0.604,"mktcap":31142557.301217,"nmc":29818093.496839,"turnoverratio":0.14167},
         content = None
 
         try:
@@ -165,29 +165,33 @@ class SinaFinancial:
             print("content is None, return")
             return None
 
-        content = content.replace('symbol', '"symbol"')  # 标记
-        content = content.replace('code', '"code"')  # code代码
-        content = content.replace('name', '"name"')  # name名称
-        content = content.replace('trade', '"price"')  # trade现价
-        content = content.replace('pricechange', '"change"')
+        if content == '[]':
+            print("content is [], return")
+            return None
 
-        content = content.replace('changepercent', '"net"')  # changepercent涨跌幅
-        content = content.replace('buy', '"buy"')  # buy买入价
-        content = content.replace('sell', '"sell"')  # 卖出价
-        content = content.replace('settlement', '"settlement"')  # settlement昨日收盘价
-        content = content.replace('open', '"open"')  # open开盘价
-        content = content.replace('high', '"high"')  # high最高价
-
-        content = content.replace('low', '"low"')  # low最低价
-        content = content.replace('volume', '"volume"')  # volume成交量
-        content = content.replace('amount', '"value"')  # amount成交金额
-        content = content.replace('ticktime', '"ticktime"')
-        content = content.replace('per', '"pe"')  # per市盈率
-        content = content.replace('pb', '"pb"')  # pb市净率
-
-        content = content.replace('mktcap', '"mktcap"')  # mktcap总市值
-        content = content.replace('nmc', '"nmc"')  # nmc流通市值
-        content = content.replace('turnoverratio', '"turnoverratio"')  # turnoverratio换手率
+        # content = content.replace('symbol', '"symbol"')  # 标记
+        # content = content.replace('code', '"code"')  # code代码
+        # content = content.replace('name', '"name"')  # name名称
+        content = content.replace('trade', 'price')  # trade现价
+        content = content.replace('pricechange', 'change')
+        #
+        content = content.replace('changepercent', 'net')  # changepercent涨跌幅
+        # content = content.replace('buy', '"buy"')  # buy买入价
+        # content = content.replace('sell', '"sell"')  # 卖出价
+        # content = content.replace('settlement', '"settlement"')  # settlement昨日收盘价
+        # content = content.replace('open', '"open"')  # open开盘价
+        # content = content.replace('high', '"high"')  # high最高价
+        #
+        # content = content.replace('low', '"low"')  # low最低价
+        # content = content.replace('volume', '"volume"')  # volume成交量
+        content = content.replace('amount', 'value')  # amount成交金额
+        # content = content.replace('ticktime', '"ticktime"')
+        content = content.replace('per', 'pe')  # per市盈率
+        # content = content.replace('pb', '"pb"')  # pb市净率
+        #
+        # content = content.replace('mktcap', '"mktcap"')  # mktcap总市值
+        # content = content.replace('nmc', '"nmc"')  # nmc流通市值
+        # content = content.replace('turnoverratio', '"turnoverratio"')  # turnoverratio换手率
 
         return json.loads(content)
 
@@ -228,12 +232,12 @@ class SinaFinancial:
             print("content is None, return")
             return None
 
-        content = content.replace('day', '"date"')
-        content = content.replace('open', '"open"')
-        content = content.replace('high', '"high"')
-        content = content.replace('low', '"low"')
-        content = content.replace('close', '"close"')
-        content = content.replace('volume', '"volume"')
+        content = content.replace('day', 'date')
+        # content = content.replace('open', '"open"')
+        # content = content.replace('high', '"high"')
+        # content = content.replace('low', '"low"')
+        # content = content.replace('close', '"close"')
+        # content = content.replace('volume', '"volume"')
 
         return json.loads(content)
 
@@ -426,8 +430,8 @@ class SinaFinancial:
                 if dividend_string is None or "--" in dividend_string:
                     continue
 
-                dividend_date_string = tds[5].text
-                if dividend_date_string is None or "--" in dividend_date_string:
+                r_date_string = tds[6].text
+                if r_date_string is None:
                     continue
 
                 share_bonus["date"] = date_string
@@ -438,7 +442,7 @@ class SinaFinancial:
                 dividend = float(dividend_string)
                 share_bonus["dividend"] = dividend
 
-                share_bonus["dividend_date"] = dividend_date_string
+                share_bonus["r_date"] = r_date_string
 
                 share_bonus_list.append(share_bonus)
 
