@@ -170,6 +170,13 @@ class Favorite:
             "600019",  # 宝钢股份 roe 5.08 pe 7.39 pb 0.69 dividend 5.0 9.28%  operation 2 discount 1.35
             "000544",  # 中原环保 roe 4.44 pe 4.01 pb 1.11 dividend 2.5 3.81%  operation 0 discount 2.49
             "000402",  # 金 融 街 roe 4.24 pe 6.36 pb 0.67 dividend 3.0 4.15%  operation 0 discount 1.57
+
+            "000789",  # 万年青 roe 27.03 pe 12.93 pb 2.09 dividend 8.0 6.02%  operation 2 discount 0.77
+            "002016",  # 世荣兆业 roe 24.67 pe 12.93 pb 1.91 dividend 5.0 6.98%  operation 2 discount 0.77
+            "600325",  # 华发股份 roe 20.81 pe 19.81 pb 1.05 dividend 3.5 5.27%  operation 0 discount 0.5
+            "000736",  # 中交地产 roe 19.84 pe 13.33 pb 1.49 dividend 1.9 2.5%  operation 2 discount 0.75
+
+
         }
 
     def get_stock_list(self):

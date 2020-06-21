@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
 
+
 class BlackList:
     def __init__(self):
         self.stock_list = {
+
             "600507",  # 方大特钢 roe 26.15 pe 13.22 pb 1.98 dividend 17.0 19.02%  operation 2 discount 0.76
             "000717",  # 韶钢松山 roe 17.27 pe 12.25 pb 1.41 dividend 0.5 1.15%  operation 2 discount 0.82
             "002110",  # 三钢闽光 roe 15.81 pe 13.54 pb 1.17 dividend 20.0 23.5%  operation 2 discount 0.74
@@ -40,7 +42,6 @@ class BlackList:
             "600732",  # 爱旭股份 roe 28.19 pe 3.44 pb 8.21 dividend 1.0 1.07%  operation 2 discount 2.91
             "600678",  # 四川金顶 roe 27.88 pe 1.03 pb 27.19 dividend 0.333 0.41%  operation 0 discount 9.75
             "601918",  # 新集能源 roe 26.37 pe 25.42 pb 1.04 dividend 0.1 0.34%  operation 0 discount 0.39
-            "002016",  # 世荣兆业 roe 24.67 pe 12.51 pb 1.97 dividend 5.0 6.76%  operation 2 discount 0.8
             "002555",  # 三七互娱 roe 23.85 pe 2.31 pb 10.31 dividend 3.0 0.94%  operation 2 discount 4.32
             "300198",  # 纳川股份 roe 23.81 pe 9.3 pb 2.56 dividend 0.1 0.26%  operation 2 discount 1.08
             "002182",  # 云海金属 roe 22.7 pe 7.19 pb 3.16 dividend 1.0 0.9%  operation 2 discount 1.39
@@ -56,7 +57,6 @@ class BlackList:
             "600570",  # 恒生电子 roe 21.09 pe 1.1 pb 19.21 dividend 3.2 0.35%  operation 6 discount 9.11
             "300117",  # 嘉寓股份 roe 20.98 pe 13.41 pb 1.56 dividend 0.08 0.21%  operation 2 discount 0.75
             "300216",  # 千山药机 roe 20.87 pe 0.0 pb 0.0 dividend 0.6 0.0%  operation 0 discount 0.0
-            "000789",  # 万年青 roe 20.55 pe 9.96 pb 2.06 dividend 8.0 6.99%  operation 2 discount 1.0
             "002512",  # 达华智能 roe 20.43 pe 4.52 pb 4.52 dividend 0.45 0.75%  operation 2 discount 2.21
             "603899",  # 晨光文具 roe 20.37 pe 1.97 pb 10.35 dividend 3.0 0.68%  operation 2 discount 5.08
             "300357",  # 我武生物 roe 20.23 pe 1.02 pb 19.79 dividend 2.5 0.54%  operation 6 discount 9.78
@@ -132,7 +132,6 @@ class BlackList:
             "000779",  # 甘咨询 roe 13.76 pe 6.07 pb 2.27 dividend 0.0 0.0%  operation 6 discount 1.65
             "002595",  # 豪迈科技 roe 13.76 pe 3.87 pb 3.55 dividend 3.75 1.79%  operation 2 discount 2.58
             "600867",  # 通化东宝 roe 13.75 pe 2.81 pb 4.9 dividend 2.0 1.66%  operation 2 discount 3.56
-            "600325",  # 华发股份 roe 13.73 pe 11.94 pb 1.15 dividend 3.5 5.12%  operation 0 discount 0.84
             "600438",  # 通威股份 roe 13.72 pe 3.8 pb 3.61 dividend 1.6 1.05%  operation 6 discount 2.63
             "601233",  # 桐昆股份 roe 13.71 pe 9.66 pb 1.42 dividend 1.2 0.87%  operation 6 discount 1.04
             "603609",  # 禾丰牧业 roe 13.7 pe 6.52 pb 2.1 dividend 1.8 1.52%  operation 6 discount 1.53
@@ -684,7 +683,6 @@ class BlackList:
             "601669",  # 中国电建 roe 6.95 pe 8.84 pb 0.79 dividend 0.9782 2.27%  operation 4 discount 1.13
             "600648",  # 外高桥 roe 6.94 pe 4.1 pb 1.69 dividend 2.2 1.38%  operation 2 discount 2.44
             "002130",  # 沃尔核材 roe 6.94 pe 2.84 pb 2.44 dividend 0.2 0.36%  operation 2 discount 3.52
-            "000736",  # 中交地产 roe 6.93 pe 3.09 pb 2.24 dividend 1.9 1.93%  operation 4 discount 3.23
             "002126",  # 银轮股份 roe 6.93 pe 2.85 pb 2.44 dividend 0.5 0.44%  operation 6 discount 3.51
             "000987",  # 越秀金控 roe 6.92 pe 4.75 pb 1.46 dividend 0.9 1.0%  operation 2 discount 2.11
             "002443",  # 金洲管道 roe 6.92 pe 4.85 pb 1.43 dividend 2.0 3.13%  operation 6 discount 2.06

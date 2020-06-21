@@ -8,6 +8,7 @@ DATABASE_FILE_NAME = "orion.db"
 class StockColumn(Enum):
     id = 0
     classes = auto()
+    symbol = auto()
     se = auto()
     code = auto()
     name = auto()
@@ -23,15 +24,24 @@ class StockColumn(Enum):
     cost = auto()
     profit = auto()
     total_share = auto()
-    roe = auto()
+    total_assets = auto()
+    total_long_term_liabilities = auto()
+    debt_to_net_assets_rato = auto()
+    book_value_per_share = auto()
+    cash_flow_per_share = auto()
+    net_profit = auto()
+    net_profit_per_share = auto()
+    net_profit_per_share_in_year = auto()
+    net_profit_per_share_last_year = auto()
     rate = auto()
-    valuation = auto()
-    discount = auto()
+    roe = auto()
     pe = auto()
     pb = auto()
+    date = auto()
     dividend = auto()
     dividend_yield = auto()
     delta = auto()
+    r_date = auto()
     time_to_market = auto()
     created = auto()
     modified = auto()
@@ -40,6 +50,7 @@ class StockColumn(Enum):
 SQL_CREATE_TABLE_STOCK = " CREATE TABLE IF NOT EXISTS stock ( " \
                          + StockColumn.id.name + " INTEGER PRIMARY KEY AUTOINCREMENT," \
                          + StockColumn.classes.name + " TEXT," \
+                         + StockColumn.symbol.name + " TEXT," \
                          + StockColumn.se.name + " TEXT NOT NULL," \
                          + StockColumn.code.name + " TEXT NOT NULL," \
                          + StockColumn.name.name + " TEXT NOT NULL," \
@@ -55,15 +66,24 @@ SQL_CREATE_TABLE_STOCK = " CREATE TABLE IF NOT EXISTS stock ( " \
                          + StockColumn.cost.name + " DOUBLE," \
                          + StockColumn.profit.name + " DOUBLE," \
                          + StockColumn.total_share.name + " DOUBLE," \
-                         + StockColumn.roe.name + " DOUBLE," \
+                         + StockColumn.total_assets.name + " DOUBLE," \
+                         + StockColumn.total_long_term_liabilities.name + " DOUBLE," \
+                         + StockColumn.debt_to_net_assets_rato.name + " DOUBLE," \
+                         + StockColumn.book_value_per_share.name + " DOUBLE," \
+                         + StockColumn.cash_flow_per_share.name + " DOUBLE," \
+                         + StockColumn.net_profit.name + " DOUBLE," \
+                         + StockColumn.net_profit_per_share.name + " DOUBLE," \
+                         + StockColumn.net_profit_per_share_in_year.name + " DOUBLE," \
+                         + StockColumn.net_profit_per_share_last_year.name + " DOUBLE," \
                          + StockColumn.rate.name + " DOUBLE," \
-                         + StockColumn.valuation.name + " DOUBLE," \
-                         + StockColumn.discount.name + " DOUBLE," \
+                         + StockColumn.roe.name + " DOUBLE," \
                          + StockColumn.pe.name + " DOUBLE," \
                          + StockColumn.pb.name + " DOUBLE," \
+                         + StockColumn.date.name + " TEXT," \
                          + StockColumn.dividend.name + " DOUBLE," \
                          + StockColumn.dividend_yield.name + " DOUBLE," \
                          + StockColumn.delta.name + " DOUBLE," \
+                         + StockColumn.r_date.name + " TEXT," \
                          + StockColumn.time_to_market.name + " TEXT," \
                          + StockColumn.created.name + " TEXT," \
                          + StockColumn.modified.name + " TEXT" \

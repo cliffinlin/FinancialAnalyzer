@@ -12,7 +12,7 @@ from matplotlib import dates as mdates
 # from matplotlib.finance import candlestick_ohlc
 from mplfinance.original_flavor import candlestick_ohlc  # pip install --upgrade mplfinance
 
-import Constant
+import Constants
 import Financial
 
 stock_index = 0
@@ -22,7 +22,7 @@ data = np.linspace(1, 100)
 power = 0
 
 
-def draw_stock_data(stock, period=Constant.MONTH):
+def draw_stock_data(stock, period=Constants.MONTH):
     # read and reformat data
 
     stock_data_dict = pandas.read_csv(Financial.get_stock_data_file_name(stock), parse_dates=True, index_col=0)
@@ -51,7 +51,7 @@ def draw_stock_data(stock, period=Constant.MONTH):
 
     x1 = financial_data_dict['date']
     book_value_per_share = financial_data_dict['book_value_per_share']
-    net_profit_per_share = financial_data_dict['net_profit_per_share']
+    net_profit_per_share = financial_data_dict['net_profit_per_share'] * 10
     cash_flow_per_share = financial_data_dict['cash_flow_per_share']
 
     total_current_assets = financial_data_dict['total_current_assets']
@@ -80,7 +80,7 @@ def draw_stock_data(stock, period=Constant.MONTH):
     # p3 = ax.plot(x, SMA_2, label='SMA(' + str(SMA_2_span) + ')')
 
     ax1.step(x1, cash_flow_per_share, label='CashFlowPerShare')
-    ax1.step(x1, net_profit_per_share / Constant.RISK_INTEREST_RATE, label='Valuation base on net_profit_per_share')
+    ax1.step(x1, net_profit_per_share, label='NetProfitPerShare')
     ax1.step(x1, book_value_per_share, label='BookValuePerShare')
     ax1.step(x2, dividend, label='Dividend')
 
@@ -114,14 +114,13 @@ def draw_stock_data(stock, period=Constant.MONTH):
     plt.rcParams['font.sans-serif'] = ['KaiTi']
     plt.rcParams['font.serif'] = ['KaiTi']
 
-    title = stock.name + " " + stock.code \
-            + " roe " + str(stock.roe) \
-            + " pe " + str(stock.pe) \
-            + " pb " + str(stock.pb) \
-            + " dividend " + str(stock.dividend) \
-            + " yield " + str(stock.dividend_yield) + "% " \
-            + " rate " + str(stock.rate) \
-            + " discount " + str(stock.discount)
+    title = stock.mName + " " + stock.mCode \
+            + " roe " + str(stock.mRoe) \
+            + " pe " + str(stock.mPe) \
+            + " pb " + str(stock.mPb) \
+            + " dividend " + str(stock.mDividend) \
+            + " yield " + str(stock.mDividendYield) + "% " \
+            + " rate " + str(stock.mRate)
     plt.title(title)
 
     plt.show()
@@ -144,13 +143,11 @@ def draw(where=None, order=None, sort=None):
         if not Financial.check_out(stock):
             continue
 
-        print("\"" + stock.code + "\"" + ", #" + stock.name + " "
-              + "roe " + str(stock.roe) + " "
-              + "pe " + str(stock.pe) + " pb " + str(stock.pb) + " "
-              + "dividend " + str(stock.dividend) + " " + str(stock.dividend_yield) + "% "
-              + " operation " + str(stock.operation) + " discount " + str(stock.discount))
-        # print(stock.code, stock.name, "price:" + str(stock.price), "net:" + str(stock.net), "dividend:" + str(stock.dividend),
-        #       "yield:" + str(stock.dividend_yield), "rate:" + str(stock.rate), "mark:" + str(stock.mark))
+        print("\"" + stock.mCode + "\"" + ", #" + stock.mName + " "
+              + "roe " + str(stock.mRoe) + " "
+              + "pe " + str(stock.mPe) + " pb " + str(stock.mPb) + " "
+              + "dividend " + str(stock.mDividend) + " " + str(stock.mDividendYield) + "% "
+              + " operation " + str(stock.mOperation))
 
         Financial.write_to_file(stock)
 
@@ -173,15 +170,14 @@ def draw_line():
     plt.rcParams['font.sans-serif'] = ['KaiTi']
     plt.rcParams['font.serif'] = ['KaiTi']
 
-    title = stock.name + " " + stock.code \
-            + " roe " + str(stock.roe) \
-            + " pe " + str(stock.pe) \
-            + " pb " + str(stock.pb) \
-            + " dividend " + str(stock.dividend) \
-            + " yield " + str(stock.dividend_yield) + "% " \
-            + " roe " + str(stock.roe) \
-            + " rate " + str(stock.rate) \
-            + " discount " + str(stock.discount)
+    title = stock.mName + " " + stock.mCode \
+            + " roe " + str(stock.mRoe) \
+            + " pe " + str(stock.mPe) \
+            + " pb " + str(stock.mPb) \
+            + " dividend " + str(stock.mDividend) \
+            + " yield " + str(stock.mDividendYield) + "% " \
+            + " roe " + str(stock.mRoe) \
+            + " rate " + str(stock.mRate)
     plt.title(title)
 
     print(title)
