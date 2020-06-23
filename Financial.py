@@ -19,10 +19,10 @@ from ShareBonus import ShareBonus
 from Stock import Stock
 from StockData import StockData
 
-favorite_only = False
+favorite_only = True
 Favorite = Favorite()
 
-check_black_list = False
+check_black_list = True
 black_list = BlackList()
 
 
@@ -115,9 +115,10 @@ def download():
         time_to_market = get_time_to_market(stock_data_list)
         stock.set_time_to_market(time_to_market)
 
-        if stock.is_time_to_market_too_short():
-            print("stock.is_time_to_market_too_short()")
-            continue
+        # if stock.is_time_to_market_too_short():
+        #     print("stock.is_time_to_market_too_short()")
+        #     time.sleep(random.random() * 5)
+        #     continue
 
         download_information_data(stock)
 
@@ -198,6 +199,10 @@ def download_financial_data(stock):
     sina = SinaFinancial.SinaFinancial()
 
     financial_data_list = sina.download_financial_data(stock)
+
+    if financial_data_list is None:
+        print("download_financial_data", "download_financial_data is None, return")
+        return
 
     write_financial_data_to_database(stock.mCode, financial_data_list)
 

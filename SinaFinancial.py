@@ -98,52 +98,6 @@ class SinaFinancial:
         """
         print(e)
 
-    # def parse_tr(self, parent):
-    #     value = 0
-    #     result = {}
-    #
-    #     if parent is None:
-    #         return None
-    #
-    #     trs = parent.select("tr")
-    #     if trs is None:
-    #         return None
-    #
-    #     for tr in trs:
-    #         if tr is None:
-    #             return None
-    #
-    #         tds = tr.select("td")
-    #         if tds is None:
-    #             return None
-    #
-    #         if len(tds) < 2:
-    #             continue
-    #
-    #         key_string = tds[0].text
-    #         if key_string is None:
-    #             continue
-    #
-    #         # key = datetime.strptime(key_string, constant.DATE_FORMAT)
-    #
-    #         value_string = tds[1].text
-    #         if value_string is None:
-    #             continue
-    #
-    #         if not value_string.strip():
-    #             value_string = "0.0"
-    #
-    #         if ',' in value_string:
-    #             value_string = value_string.replace(',', '')
-    #             value = float(value_string)
-    #             value = value / 100000000.0
-    #         else:
-    #             value = float(value_string)
-    #
-    #         result[key_string] = value
-    #
-    #     return result
-
     def download_stock_list(self, page):
         url = 'http://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQNodeData?'
 
@@ -328,10 +282,10 @@ class SinaFinancial:
                     if value_string is None:
                         continue
 
-                    if stock.mTimeToMarket is not None:
-                        if datetime.strptime(value_string, Constants.DATE_FORMAT) \
-                                < datetime.strptime(stock.mTimeToMarket, Constants.DATE_FORMAT):
-                            return financial_data_list[::-1]
+                    # if stock.mTimeToMarket is not None:
+                    #     if datetime.strptime(value_string, Constants.DATE_FORMAT) \
+                    #             < datetime.strptime(stock.mTimeToMarket, Constants.DATE_FORMAT):
+                    #         return financial_data_list[::-1]
 
                     financial_data = dict()
 

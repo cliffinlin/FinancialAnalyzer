@@ -3,6 +3,50 @@
 class Favorite:
     def __init__(self):
         self.stock_list = {
+            "000672",  # 上峰水泥 roe 60.54 pe 12.23 pb 3.27 dividend 9.0 3.88%  operation 0
+            "000895",  # 双汇发展 roe 39.18 pe 3.98 pb 7.87 dividend 10.0 2.35%  operation 0
+            "600340",  # 华夏幸福 roe 38.95 pe 21.14 pb 1.44 dividend 15.0 6.57%  operation 0
+            "600519",  # 贵州茅台 roe 34.72 pe 2.38 pb 12.13 dividend 170.25 1.18%  operation 0
+            "600809",  # XD山西汾 roe 31.99 pe 1.9 pb 13.84 dividend 9.0 0.65%  operation 0
+            "603288",  # 海天味业 roe 29.79 pe 1.42 pb 17.72 dividend 10.8 0.9%  operation 0
+            "600585",  # 海螺水泥 roe 27.29 pe 11.21 pb 2.03 dividend 20.0 3.66%  operation 0
+            "600846",  # 同济科技 roe 27.0 pe 11.69 pb 1.88 dividend 3.4 3.95%  operation 0
+            "600566",  # 济川药业 roe 26.86 pe 7.84 pb 3.11 dividend 12.3 4.98%  operation 0
+            "002146",  # 荣盛发展 roe 26.73 pe 26.34 pb 0.84 dividend 4.8 5.96%  operation 0
+            "000858",  # 五 粮 液 roe 26.63 pe 2.9 pb 7.84 dividend 22.0 1.33%  operation 0
+            "002032",  # 苏 泊 尔 roe 26.63 pe 3.05 pb 8.12 dividend 13.3 1.95%  operation 0
+            "000049",  # 德赛电池 roe 26.25 pe 4.64 pb 4.61 dividend 7.0 1.4%  operation 0
+            "600436",  # 片仔癀 roe 26.1 pe 1.5 pb 13.53 dividend 8.2 0.52%  operation 0
+            "000568",  # 泸州老窖 roe 26.05 pe 3.59 pb 6.39 dividend 15.9 1.73%  operation 0
+            "600486",  # 扬农化工 roe 25.97 pe 5.04 pb 4.64 dividend 6.5 0.79%  operation 0
+            "002035",  # 华帝股份 roe 25.31 pe 7.15 pb 3.07 dividend 3.0 2.82%  operation 0
+            "600763",  # 通策医疗 roe 24.81 pe 0.72 pb 27.51 dividend 0.0 0.0%  operation 0
+            "002236",  # 大华股份 roe 24.5 pe 5.61 pb 3.56 dividend 1.33 0.7%  operation 0
+            "000333",  # 美的集团 roe 24.09 pe 5.47 pb 3.95 dividend 16.0 2.68%  operation 0
+            "002508",  # 老板电器 roe 23.79 pe 4.95 pb 4.3 dividend 5.0 1.55%  operation 0
+            "600048",  # 保利地产 roe 23.74 pe 16.13 pb 1.2 dividend 8.2 5.63%  operation 0
+            "000963",  # 华东医药 roe 23.54 pe 7.44 pb 3.04 dividend 2.8 1.19%  operation 0
+            "000002",  # 万 科Ａ roe 23.52 pe 12.94 pb 1.55 dividend 10.17 3.92%  operation 0
+            "002507",  # 涪陵榨菜 roe 23.43 pe 2.23 pb 9.1 dividend 3.0 0.86%  operation 0
+            "000596",  # 古井贡酒 roe 23.27 pe 2.63 pb 7.73 dividend 15.0 1.02%  operation 0
+            "002311",  # 海大集团 roe 23.15 pe 2.41 pb 8.08 dividend 3.5 0.73%  operation 0
+            "600352",  # 浙江龙盛 roe 22.95 pe 11.86 pb 1.62 dividend 2.5 1.95%  operation 0
+            "600801",  # 华新水泥 roe 22.93 pe 11.15 pb 2.37 dividend 12.1 4.97%  operation 0
+            "600668",  # 尖峰集团 roe 22.27 pe 14.32 pb 1.3 dividend 3.0 2.02%  operation 0
+            "600276",  # 恒瑞医药 roe 22.24 pe 1.1 pb 15.75 dividend 2.3 0.25%  operation 0
+            "600887",  # 伊利股份 roe 22.09 pe 3.2 pb 6.76 dividend 8.1 2.71%  operation 0
+            "000651",  # 格力电器 roe 22.02 pe 5.81 pb 3.13 dividend 12.0 2.04%  operation 0
+            "601318",  # 中国平安 roe 21.69 pe 9.68 pb 1.94 dividend 13.0 1.77%  operation 0
+            "601336",  # 新华保险 roe 21.63 pe 11.21 pb 1.61 dividend 14.1 3.12%  operation 0
+            "600612",  # 老凤祥 roe 21.42 pe 5.55 pb 3.43 dividend 11.5 2.37%  operation 0
+            "600309",  # 万华化学 roe 21.26 pe 5.67 pb 3.52 dividend 13.0 2.66%  operation 0
+            "600298",  # 安琪酵母 roe 21.17 pe 2.58 pb 7.26 dividend 4.0 0.88%  operation 0
+            "600383",  # 金地集团 roe 20.64 pe 16.4 pb 1.14 dividend 6.7 5.03%  operation 0
+            "600872",  # 中炬高新 roe 20.39 pe 1.66 pb 10.65 dividend 2.8 0.5%  operation 0
+            "600153",  # 建发股份 roe 20.38 pe 22.06 pb 0.79 dividend 5.0 5.48%  operation 0
+            "002242",  # 九阳股份 roe 20.02 pe 2.98 pb 6.95 dividend 5.8 1.64%  operation 0
+
+
             "000672",  # 上峰水泥 roe 33.5 pe 9.15 pb 3.66 dividend 4.0 1.93%  operation 6 discount 1.09
             "600779",  # 水井坊 roe 33.11 pe 2.91 pb 11.39 dividend 11.42 2.54%  operation 6 discount 3.44
             "000895",  # 双汇发展 roe 25.96 pe 3.27 pb 7.93 dividend 5.5 1.52%  operation 2 discount 3.05
@@ -175,7 +219,6 @@ class Favorite:
             "002016",  # 世荣兆业 roe 24.67 pe 12.93 pb 1.91 dividend 5.0 6.98%  operation 2 discount 0.77
             "600325",  # 华发股份 roe 20.81 pe 19.81 pb 1.05 dividend 3.5 5.27%  operation 0 discount 0.5
             "000736",  # 中交地产 roe 19.84 pe 13.33 pb 1.49 dividend 1.9 2.5%  operation 2 discount 0.75
-
 
         }
 
