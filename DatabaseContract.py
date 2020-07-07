@@ -34,6 +34,7 @@ class StockColumn(Enum):
     net_profit_per_share_in_year = auto()
     net_profit_per_share_last_year = auto()
     rate = auto()
+    roi = auto()
     roe = auto()
     pe = auto()
     pb = auto()
@@ -76,6 +77,7 @@ SQL_CREATE_TABLE_STOCK = " CREATE TABLE IF NOT EXISTS stock ( " \
                          + StockColumn.net_profit_per_share_in_year.name + " DOUBLE," \
                          + StockColumn.net_profit_per_share_last_year.name + " DOUBLE," \
                          + StockColumn.rate.name + " DOUBLE," \
+                         + StockColumn.roi.name + " DOUBLE," \
                          + StockColumn.roe.name + " DOUBLE," \
                          + StockColumn.pe.name + " DOUBLE," \
                          + StockColumn.pb.name + " DOUBLE," \

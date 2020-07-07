@@ -39,6 +39,7 @@ class Stock:
         self.mNetProfitPerShareInYear = 0
         self.mNetProfitPerShareLastYear = 0
         self.mRate = 0
+        self.mRoi = 0
         self.mRoe = 0
         self.mPe = 0
         self.mPb = 0
@@ -92,6 +93,7 @@ class Stock:
             self.set_net_profit_per_share_last_year(
                 stock[DatabaseContract.StockColumn.net_profit_per_share_last_year.value])
             self.set_rate(stock[DatabaseContract.StockColumn.rate.value])
+            self.set_roi(stock[DatabaseContract.StockColumn.roi.value])
             self.set_roe(stock[DatabaseContract.StockColumn.roe.value])
             self.set_pe(stock[DatabaseContract.StockColumn.pe.value])
             self.set_pb(stock[DatabaseContract.StockColumn.pb.value])
@@ -216,6 +218,10 @@ class Stock:
         if rate is not None:
             self.mRate = rate
 
+    def set_roi(self, roi):
+        if roi is not None:
+            self.mRoi = roi
+
     def set_roe(self, roe):
         if roe is not None:
             self.mRoe = roe
@@ -337,6 +343,9 @@ class Stock:
 
         self.mDebtToNetAssetsRato = self.mTotalLongTermLiabilities / self.mTotalShare / self.mBookValuePerShare
 
+    def setup_roi(self):
+        self.mRoi = round(self.mRoe * self.mPe, Constants.DOUBLE_FIXED_DECIMAL)
+
     def setup_roe(self, financial_data_tuple_list):
         if financial_data_tuple_list is None:
             return
@@ -376,9 +385,6 @@ class Stock:
         if self.mDividend == 0:
             return
         if self.mNetProfitPerShareInYear <= 0:
-            return
-
-        if self.mRoe <= 0:
             return
 
         self.mDelta = (self.mDividend / 10.0) / self.mNetProfitPerShareInYear
@@ -430,7 +436,7 @@ class Stock:
                      " book_value_per_share=?, cash_flow_per_share=?, " \
                      " net_profit=?, net_profit_per_share=?, " \
                      " net_profit_per_share_in_year=?, net_profit_per_share_last_year=?, " \
-                     " rate=?, roe=?, " \
+                     " rate=?, roi=?, roe=?, " \
                      " pe=?, pb=?," \
                      " date=?, dividend=?," \
                      " dividend_yield=?, delta=?," \
@@ -446,7 +452,7 @@ class Stock:
                                         self.mBookValuePerShare, self.mCashFlowPerShare,
                                         self.mNetProfit, self.mNetProfitPerShare,
                                         self.mNetProfitPerShareInYear, self.mNetProfitPerShareLastYear,
-                                        self.mRate, self.mRoe,
+                                        self.mRate, self.mRoi, self.mRoe,
                                         self.mPe, self.mPb,
                                         self.mDate, self.mDividend,
                                         self.mDividendYield, self.mDelta,

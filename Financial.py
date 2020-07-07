@@ -19,10 +19,10 @@ from ShareBonus import ShareBonus
 from Stock import Stock
 from StockData import StockData
 
-favorite_only = True
+favorite_only = False
 Favorite = Favorite()
 
-check_black_list = True
+check_black_list = False
 black_list = BlackList()
 
 
@@ -826,6 +826,7 @@ def analyze_financial_data(stock, financial_data_tuple_list):
     stock.setup_debt_to_net_assets_rato()
     stock.setup_roe(financial_data_tuple_list)
     stock.setup_pe()
+    stock.setup_roi()
     stock.setup_pb()
 
     return stock
