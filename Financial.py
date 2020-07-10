@@ -19,7 +19,7 @@ from ShareBonus import ShareBonus
 from Stock import Stock
 from StockData import StockData
 
-favorite_only = False
+favorite_only = True
 Favorite = Favorite()
 
 check_black_list = False
@@ -704,59 +704,6 @@ def read_stock_data_from_database(stock, period=Constants.MONTH):
 
     return stock_data_tuple_list
 
-
-def analyze_stock_data(stock, stock_data_tuple_list, financial_data_tuple_list):
-    if stock is None:
-        return stock
-
-    if stock_data_tuple_list is None:
-        return stock
-
-    if len(stock_data_tuple_list) < 1:
-        return stock
-
-    if financial_data_tuple_list is None:
-        return stock
-
-    if len(financial_data_tuple_list) < 1:
-        return stock
-
-    stock_data_tuple = stock_data_tuple_list[0]
-    financial_data_tuple = financial_data_tuple_list[0]
-
-    stock_data = StockData(stock_data_tuple)
-    if stock_data is None:
-        return stock
-
-    financial_data = FinancialData(financial_data_tuple)
-    if financial_data is None:
-        return stock
-
-    if stock.dividend != 0:
-        stock.delta = round(financial_data.net_profit_per_share / (stock.dividend / 10.0), 2)
-
-    if financial_data.net_profit_per_share != 0:
-        stock.valuation = financial_data.net_profit_per_share / Constants.RISK_INTEREST_RATE
-        if stock.valuation != 0:
-            stock.discount = round(stock.price / stock.valuation, 2)
-
-        if stock.price != 0:
-            stock.pe = round(100.0 * financial_data.net_profit_per_share / stock.price, 2)
-
-    book_value_per_share = financial_data.book_value_per_share
-    if book_value_per_share != 0:
-        stock.pb = round(stock.price / book_value_per_share, 2)
-        stock.roe = round(100.0 * financial_data.net_profit_per_share / book_value_per_share, 2)
-
-    # if (0 < stock.pe < constant.PE_MAX) and (0 < stock.pb < constant.PB_MAX):
-    #     stock.operation |= constant.PRICE_TYPE
-
-    if financial_data.total_long_term_liabilities < financial_data.main_business_income:
-        stock.operation |= Constants.LIABILITIES_TYPE
-
-    return stock
-
-
 def read_financial_data_from_database(stock):
     connect = None
     financial_data_tuple_list = tuple()
@@ -908,7 +855,6 @@ def analyze():
 
         stock = analyze_financial_data(stock, financial_data_tuple_list)
         stock = analyze_share_bonus(stock, share_bonus_tuple_list)
-        # stock = analyze_stock_data(stock, stock_data_tuple_list, financial_data_tuple_list)
 
         stock.update_to_database()
 
@@ -930,6 +876,7 @@ def select(where=None, order=None, sort=None):
             continue
 
         print("\"" + stock.mCode + "\"" + ", #" + stock.mName + " "
+              + "roi " + str(stock.mRoi) + " "
               + "roe " + str(stock.mRoe) + " "
               + "pe " + str(stock.mPe) + " pb " + str(stock.mPb) + " "
               + "dividend " + str(stock.mDividend) + " " + str(stock.mDividendYield) + "% "

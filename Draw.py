@@ -115,6 +115,7 @@ def draw_stock_data(stock, period=Constants.MONTH):
     plt.rcParams['font.serif'] = ['KaiTi']
 
     title = stock.mName + " " + stock.mCode \
+            + " roi " + str(stock.mRoi) \
             + " roe " + str(stock.mRoe) \
             + " pe " + str(stock.mPe) \
             + " pb " + str(stock.mPb) \
@@ -144,6 +145,7 @@ def draw(where=None, order=None, sort=None):
             continue
 
         print("\"" + stock.mCode + "\"" + ", #" + stock.mName + " "
+              + "roi " + str(stock.mRoi) + " "
               + "roe " + str(stock.mRoe) + " "
               + "pe " + str(stock.mPe) + " pb " + str(stock.mPb) + " "
               + "dividend " + str(stock.mDividend) + " " + str(stock.mDividendYield) + "% "
@@ -171,6 +173,7 @@ def draw_line():
     plt.rcParams['font.serif'] = ['KaiTi']
 
     title = stock.mName + " " + stock.mCode \
+            + " roi " + str(stock.mRoi) \
             + " roe " + str(stock.mRoe) \
             + " pe " + str(stock.mPe) \
             + " pb " + str(stock.mPb) \
