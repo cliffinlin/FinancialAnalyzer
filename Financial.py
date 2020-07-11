@@ -108,7 +108,7 @@ def download():
         if not check_out(stock):
             continue
 
-        print(i, stock.mCode, stock.mName, stock.mMark, stock.mOperation)
+        print(i, stock.mCode, stock.mName)
 
         stock_data_list = download_stock_data(stock)
 

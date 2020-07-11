@@ -49,14 +49,12 @@ class Favorite:
             "002142",  # 宁波银行 roi 137.92 roe 17.75 pe 7.77 pb 1.89 dividend 5.0 1.63%  operation 0
             "000895",  # 双汇发展 roi 135.17 roe 39.18 pe 3.45 pb 9.09 dividend 10.0 2.03%  operation 0
             "601006",  # 大秦铁路 roi 132.96 roe 11.08 pe 12.0 pb 0.88 dividend 4.8 7.0%  operation 0
-            "002589",  # 瑞康医药 roi 129.4 roe -11.85 pe -10.92 pb 1.29 dividend 0.0 0.0%  operation 0
             "000651",  # 格力电器 roi 127.72 roe 22.02 pe 5.8 pb 3.14 dividend 12.0 2.03%  operation 0
             "600486",  # 扬农化工 roi 127.25 roe 25.97 pe 4.9 pb 4.77 dividend 6.5 0.77%  operation 0
             "600823",  # 世茂股份 roi 125.29 roe 9.92 pe 12.63 pb 0.74 dividend 2.6 5.17%  operation 0
             "000333",  # 美的集团 roi 123.96 roe 24.07 pe 5.15 pb 4.19 dividend 16.0 2.52%  operation 0
             "000581",  # 威孚高科 roi 119.48 roe 12.82 pe 9.32 pb 1.33 dividend 11.0 4.86%  operation 0
             "600987",  # 航民股份 roi 117.81 roe 10.7 pe 11.01 pb 1.27 dividend 2.2 3.82%  operation 0
-            "000001",  # 平安银行 roi 115.93 roe 11.41 pe 10.16 pb 1.02 dividend 2.18 1.47%  operation 0
             "000049",  # 德赛电池 roi 113.4 roe 26.25 pe 4.32 pb 4.96 dividend 7.0 1.3%  operation 0
             "600663",  # 陆家嘴 roi 111.48 roe 17.5 pe 6.37 pb 2.97 dividend 4.56 3.29%  operation 0
             "600309",  # 万华化学 roi 109.7 roe 21.26 pe 5.16 pb 3.86 dividend 13.0 2.42%  operation 0
@@ -121,6 +119,18 @@ class Favorite:
             "601888",  # 中国中免 roi 6.55 roe 11.91 pe 0.55 pb 20.01 dividend 7.2 0.35%  operation 0
             "600269",  # 赣粤高速 roi 0.53 roe 0.55 pe 0.96 pb 0.58 dividend 1.5 3.92%  operation 0
 
+            "000672",  # 上峰水泥 roi 665.33 roe 60.54 pe 10.99 pb 3.64 dividend 9.0 3.49%  operation 0
+            "000789",  # 万年青 roi 309.24 roe 25.41 pe 12.17 pb 2.17 dividend 7.0 4.84%  operation 0
+            "002035",  # 华帝股份 roi 178.44 roe 25.31 pe 7.05 pb 3.12 dividend 3.0 2.78%  operation 0
+            "600801",  # 华新水泥 roi 235.26 roe 22.93 pe 10.26 pb 2.58 dividend 12.1 4.58%  operation 0
+            "000951",  # 中国重汽 roi 102.18 roe 18.41 pe 5.55 pb 2.92 dividend 5.5 1.74%  operation 0
+            "000718",  # 苏宁环球 roi 189.57 roe 15.3 pe 12.39 pb 1.25 dividend 3.0 8.62%  operation 0
+            "600657",  # 信达地产 roi 249.88 roe 14.07 pe 17.76 pb 0.71 dividend 1.0 1.81%  operation 0
+            "600000",  # 浦发银行 roi 229.11 roe 13.04 pe 17.57 pb 0.66 dividend 6.0 5.17%  operation 0
+            "600326",  # 西藏天路 roi 60.74 roe 12.32 pe 4.93 pb 2.25 dividend 0.8 0.91%  operation 0
+            "601169",  # 北京银行 roi 230.94 roe 12.11 pe 19.07 pb 0.58 dividend 3.05 5.65%  operation 0
+            "600999",  # 招商证券 roi 37.41 roe 10.25 pe 3.65 pb 2.63 dividend 0.0 0.0%  operation 0
+
             "600340",  # 华夏幸福 roi 689.03 roe 38.95 pe 17.69 pb 1.72 dividend 15.0 5.5%  operation 0
             "002146",  # 荣盛发展 roi 587.26 roe 26.73 pe 21.97 pb 1.01 dividend 4.8 4.97%  operation 0
             "600466",  # 蓝光发展 roi 536.58 roe 27.86 pe 19.26 pb 1.13 dividend 2.87 4.82%  operation 0
@@ -174,7 +184,6 @@ class Favorite:
             "600987",  # 航民股份 roi 119.52 roe 10.7 pe 11.17 pb 1.25 dividend 2.2 3.87%  operation 0
             "600663",  # 陆家嘴 roi 113.75 roe 17.5 pe 6.5 pb 2.91 dividend 4.56 3.35%  operation 0
             "000049",  # 德赛电池 roi 111.3 roe 26.25 pe 4.24 pb 5.05 dividend 7.0 1.28%  operation 0
-            "000001",  # 平安银行 roi 111.25 roe 11.41 pe 9.75 pb 1.06 dividend 2.18 1.41%  operation 0
             "600309",  # 万华化学 roi 106.94 roe 21.26 pe 5.03 pb 3.96 dividend 13.0 2.36%  operation 0
             "600612",  # 老凤祥 roi 104.74 roe 21.42 pe 4.89 pb 3.89 dividend 11.5 2.09%  operation 0
             "600690",  # 海尔智家 roi 100.45 roe 17.2 pe 5.84 pb 2.54 dividend 3.75 2.02%  operation 0
@@ -242,8 +251,6 @@ class Favorite:
             "600298",  # 安琪酵母 roe 21.17 pe 2.58 pb 7.26 dividend 4.0 0.88%  operation 0
             "600383",  # 金地集团 roe 20.64 pe 16.4 pb 1.14 dividend 6.7 5.03%  operation 0
             "600872",  # 中炬高新 roe 20.39 pe 1.66 pb 10.65 dividend 2.8 0.5%  operation 0
-
-
 
             "000895",  # 双汇发展 roe 25.96 pe 3.27 pb 7.93 dividend 5.5 1.52%  operation 2 discount 3.05
             "603288",  # 海天味业 roe 25.46 pe 1.39 pb 18.27 dividend 9.8 0.96%  operation 6 discount 7.17
@@ -315,7 +322,6 @@ class Favorite:
             "601288",  # 农业银行 roe 10.52 pe 15.05 pb 0.7 dividend 1.739 5.07%  operation 6 discount 0.66
             "000581",  # 威孚高科 roe 10.5 pe 8.61 pb 1.22 dividend 12.0 6.04%  operation 2 discount 1.16
             "601398",  # 工商银行 roe 10.41 pe 13.3 pb 0.78 dividend 2.506 4.72%  operation 6 discount 0.75
-            "000001",  # 平安银行 roe 10.33 pe 10.05 pb 1.03 dividend 1.45 1.0%  operation 6 discount 0.99
             "600016",  # 民生银行 roe 10.31 pe 17.96 pb 0.57 dividend 3.45 5.96%  operation 2 discount 0.56
             "600741",  # 华域汽车 roe 10.24 pe 6.08 pb 1.68 dividend 10.5 4.09%  operation 2 discount 1.64
             "002025",  # 航天电器 roe 10.12 pe 2.85 pb 3.55 dividend 1.5 0.62%  operation 2 discount 3.5
@@ -343,7 +349,6 @@ class Favorite:
             "600196",  # 复星医药 roe 6.74 pe 2.83 pb 2.38 dividend 3.2 1.12%  operation 0 discount 3.53
             "600030",  # 中信证券 roe 6.57 pe 3.46 pb 1.9 dividend 3.5 1.39%  operation 2 discount 2.89
             "600153",  # 建发股份 roe 6.52 pe 7.95 pb 0.82 dividend 5.0 6.17%  operation 2 discount 1.26
-            "002589",  # 瑞康医药 roe 6.52 pe 5.97 pb 1.09 dividend 0.52 0.81%  operation 2 discount 1.67
             "600820",  # 隧道股份 roe 6.48 pe 7.4 pb 0.88 dividend 1.9 3.18%  operation 6 discount 1.35
             "600269",  # 赣粤高速 roe 6.45 pe 11.39 pb 0.57 dividend 1.0 2.64%  operation 0 discount 0.88
             "600874",  # 创业环保 roe 6.4 pe 3.75 pb 1.71 dividend 1.06 1.46%  operation 0 discount 2.67
