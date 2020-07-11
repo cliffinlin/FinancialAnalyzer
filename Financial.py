@@ -869,12 +869,14 @@ def select(where=None, order=None, sort=None):
     stock_tuple_list = read_stock_tuple_list_from_database(where, order, sort)
     write_stock_to_file(stock_tuple_list)
 
+    count = 0
     for stock_tuple in stock_tuple_list:
         stock = Stock(stock_tuple)
 
         if not check_out(stock):
             continue
 
+        count = count + 1
         print("\"" + stock.mCode + "\"" + ", #" + stock.mName + " "
               + "roi " + str(stock.mRoi) + " "
               + "roe " + str(stock.mRoe) + " "
@@ -882,7 +884,7 @@ def select(where=None, order=None, sort=None):
               + "dividend " + str(stock.mDividend) + " " + str(stock.mDividendYield) + "% "
               + " operation " + str(stock.mOperation))
 
-    print("select done, count=", len(stock_tuple_list))
+    print("select done, count=", count)
 
     return stock_tuple_list
 
