@@ -773,8 +773,8 @@ def analyze_financial_data(stock, financial_data_tuple_list):
     stock.setup_debt_to_net_assets_rato()
     stock.setup_roe(financial_data_tuple_list)
     stock.setup_pe()
-    stock.setup_roi()
     stock.setup_pb()
+    stock.setup_roi()
 
     return stock
 
