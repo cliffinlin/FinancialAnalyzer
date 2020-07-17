@@ -31,7 +31,7 @@ class Stock:
         self.mTotalShare = 0
         self.mTotalAssets = 0
         self.mTotalLongTermLiabilities = 0
-        self.mDebtToNetAssetsRato = 0
+        self.mDebtToNetAssetsRatio = 0
         self.mBookValuePerShare = 0
         self.mCashFlowPerShare = 0
         self.mNetProfit = 0
@@ -83,7 +83,7 @@ class Stock:
             self.set_total_share(stock[DatabaseContract.StockColumn.total_share.value])
             self.set_total_assets(stock[DatabaseContract.StockColumn.total_assets.value])
             self.set_total_long_term_liabilities(stock[DatabaseContract.StockColumn.total_long_term_liabilities.value])
-            self.set_debt_to_net_assets_rato(stock[DatabaseContract.StockColumn.debt_to_net_assets_rato.value])
+            self.set_debt_to_net_assets_ratio(stock[DatabaseContract.StockColumn.debt_to_net_assets_ratio.value])
             self.set_book_value_per_share(stock[DatabaseContract.StockColumn.book_value_per_share.value])
             self.set_cash_flow_per_share(stock[DatabaseContract.StockColumn.cash_flow_per_share.value])
             self.set_net_profit(stock[DatabaseContract.StockColumn.net_profit.value])
@@ -186,9 +186,9 @@ class Stock:
         if totalLongTermLiabilities is not None:
             self.mTotalLongTermLiabilities = totalLongTermLiabilities
 
-    def set_debt_to_net_assets_rato(self, debtToNetAssetsRato):
-        if debtToNetAssetsRato is not None:
-            self.mDebtToNetAssetsRato = debtToNetAssetsRato
+    def set_debt_to_net_assets_ratio(self, debtToNetAssetsRatio):
+        if debtToNetAssetsRatio is not None:
+            self.mDebtToNetAssetsRatio = debtToNetAssetsRatio
 
     def set_book_value_per_share(self, bookValuePerShare):
         if bookValuePerShare is not None:
@@ -331,7 +331,7 @@ class Stock:
         self.mRate = round(self.mNetProfitPerShareInYear / self.mNetProfitPerShareLastYear,
                            Constants.DOUBLE_FIXED_DECIMAL)
 
-    def setup_debt_to_net_assets_rato(self):
+    def setup_debt_to_net_assets_ratio(self):
         if self.mTotalLongTermLiabilities == 0:
             return
 
@@ -341,7 +341,7 @@ class Stock:
         if self.mBookValuePerShare == 0:
             return
 
-        self.mDebtToNetAssetsRato = self.mTotalLongTermLiabilities / self.mTotalShare / self.mBookValuePerShare
+        self.mDebtToNetAssetsRatio = self.mTotalLongTermLiabilities / self.mTotalShare / self.mBookValuePerShare
 
     def setup_roi(self):
         self.mRoi = round(self.mRate * self.mRoe * self.mPe / Constants.ROI_COEFFICIENT, Constants.DOUBLE_FIXED_DECIMAL)
@@ -432,7 +432,7 @@ class Stock:
                      " classes=?, pinyin=?," \
                      " mark=?, operation=?," \
                      " total_share=?, total_assets=?, " \
-                     " total_long_term_liabilities=?, debt_to_net_assets_rato=?, " \
+                     " total_long_term_liabilities=?, debt_to_net_assets_ratio=?, " \
                      " book_value_per_share=?, cash_flow_per_share=?, " \
                      " net_profit=?, net_profit_per_share=?, " \
                      " net_profit_per_share_in_year=?, net_profit_per_share_last_year=?, " \
@@ -448,7 +448,7 @@ class Stock:
             cursor.execute(sql_update, (self.mClasses, self.mPinyin,
                                         self.mMark, self.mOperation,
                                         self.mTotalShare, self.mTotalAssets,
-                                        self.mTotalLongTermLiabilities, self.mDebtToNetAssetsRato,
+                                        self.mTotalLongTermLiabilities, self.mDebtToNetAssetsRatio,
                                         self.mBookValuePerShare, self.mCashFlowPerShare,
                                         self.mNetProfit, self.mNetProfitPerShare,
                                         self.mNetProfitPerShareInYear, self.mNetProfitPerShareLastYear,

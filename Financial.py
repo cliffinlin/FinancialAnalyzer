@@ -770,7 +770,7 @@ def analyze_financial_data(stock, financial_data_tuple_list):
     stock.setup_net_profit_per_share_in_year(financial_data_tuple_list)
     stock.setup_net_profit_per_share_last_year(financial_data_tuple_list)
     stock.setup_rate()
-    stock.setup_debt_to_net_assets_rato()
+    stock.setup_debt_to_net_assets_ratio()
     stock.setup_roe(financial_data_tuple_list)
     stock.setup_pe()
     stock.setup_pb()
@@ -879,6 +879,7 @@ def select(where=None, order=None, sort=None):
         count = count + 1
         print("\"" + stock.mCode + "\"" + ", #" + stock.mName + " "
               + "roi " + str(stock.mRoi) + " "
+              + "rate " + str(stock.mRate) + " "
               + "roe " + str(stock.mRoe) + " "
               + "pe " + str(stock.mPe) + " pb " + str(stock.mPb) + " "
               + "dividend " + str(stock.mDividend) + " " + str(stock.mDividendYield) + "% "

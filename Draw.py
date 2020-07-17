@@ -116,6 +116,7 @@ def draw_stock_data(stock, period=Constants.MONTH):
 
     title = stock.mName + " " + stock.mCode \
             + " roi " + str(stock.mRoi) \
+            + " rate " + str(stock.mRate) \
             + " roe " + str(stock.mRoe) \
             + " pe " + str(stock.mPe) \
             + " pb " + str(stock.mPb) \

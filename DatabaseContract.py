@@ -26,7 +26,7 @@ class StockColumn(Enum):
     total_share = auto()
     total_assets = auto()
     total_long_term_liabilities = auto()
-    debt_to_net_assets_rato = auto()
+    debt_to_net_assets_ratio = auto()
     book_value_per_share = auto()
     cash_flow_per_share = auto()
     net_profit = auto()
@@ -69,7 +69,7 @@ SQL_CREATE_TABLE_STOCK = " CREATE TABLE IF NOT EXISTS stock ( " \
                          + StockColumn.total_share.name + " DOUBLE," \
                          + StockColumn.total_assets.name + " DOUBLE," \
                          + StockColumn.total_long_term_liabilities.name + " DOUBLE," \
-                         + StockColumn.debt_to_net_assets_rato.name + " DOUBLE," \
+                         + StockColumn.debt_to_net_assets_ratio.name + " DOUBLE," \
                          + StockColumn.book_value_per_share.name + " DOUBLE," \
                          + StockColumn.cash_flow_per_share.name + " DOUBLE," \
                          + StockColumn.net_profit.name + " DOUBLE," \
