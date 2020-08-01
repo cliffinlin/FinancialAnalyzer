@@ -10,13 +10,13 @@ import Financial
 
 
 def main():
-    # Financial.setup_database()
-    # Financial.download_stock_list()
-    # Financial.download()
-    # Financial.analyze()
+    Financial.setup_database()
+    Financial.download_stock_list()
+    Financial.download()
+    Financial.analyze()
     # Financial.update_mark()
     Draw.draw("roi > 0 ", "roi", "DESC")
-    # Draw.draw("roe > 20", "pe", "DESC")
+    # Draw.draw("roe > 15", "pe", "DESC")
     # Draw.draw("roe >= 15 AND pe > 10", "pe", "DESC")
     # Draw.draw("roe >= 15 AND pe > 10", "roe", "DESC")
     # draw.draw("roe > 6 AND pe > 8 AND dividend_yield > 4", "pe", "DESC")

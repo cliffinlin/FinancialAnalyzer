@@ -345,6 +345,7 @@ class Stock:
 
     def setup_roi(self):
         self.mRoi = round(self.mRate * self.mRoe * self.mPe / Constants.ROI_COEFFICIENT, Constants.DOUBLE_FIXED_DECIMAL)
+        # self.mRoi = round(self.mRoe * self.mPe / Constants.ROI_COEFFICIENT, Constants.DOUBLE_FIXED_DECIMAL)
 
     def setup_roe(self, financial_data_tuple_list):
         if financial_data_tuple_list is None:
