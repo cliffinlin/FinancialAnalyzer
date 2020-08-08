@@ -222,6 +222,18 @@ class Favorite:
             "000661",  # 长春高新 roi 1.44 rate 1.68 roe 14.86 pe 0.97 pb 11.66 dividend 10.0 0.2%  operation 0
             "601888",  # 中国中免 roi 0.55 rate 0.52 roe 11.91 pe 0.46 pb 23.9 dividend 7.2 0.3%  operation 0
             "000039",  # 中集集团 roi 0.2 rate 0.15 roe 1.18 pe 1.66 pb 0.86 dividend 1.2 1.44%  operation 0
+
+            "600048",  # 保利地产 roi 51.23 rate 1.45 roe 23.73 pe 14.89 pb 1.3 dividend 8.2 5.2%  operation 0
+            "000069",  # 华侨城Ａ roi 43.68 rate 1.12 roe 19.52 pe 19.98 pb 0.89 dividend 3.05 4.17%  operation 0
+            "600383",  # 金地集团 roi 37.4 rate 1.16 roe 20.64 pe 15.62 pb 1.2 dividend 6.7 4.79%  operation 0
+            "600068",  # XD葛洲坝 roi 36.25 rate 1.12 roe 18.7 pe 17.31 pb 0.97 dividend 1.56 2.41%  operation 0
+            "601668",  # 中国建筑 roi 34.65 rate 1.04 roe 17.6 pe 18.93 pb 0.82 dividend 1.85 3.62%  operation 0
+            "600668",  # 尖峰集团 roi 33.74 rate 1.21 roe 22.27 pe 12.52 pb 1.49 dividend 3.0 1.77%  operation 0
+            "000002",  # 万 科Ａ roi 33.59 rate 1.15 roe 23.52 pe 12.42 pb 1.62 dividend 10.17 3.76%  operation 0
+            "600606",  # 绿地控股 roi 32.26 rate 1.14 roe 19.29 pe 14.67 pb 1.24 dividend 4.0 5.1%  operation 0
+            "601601",  # 中国太保 roi 29.32 rate 1.55 roe 17.81 pe 10.62 pb 1.46 dividend 12.0 4.0%  operation 0
+            "600036",  # 招商银行 roi 21.31 rate 1.15 roe 17.94 pe 10.33 pb 1.52 dividend 12.0 3.28%  operation 0
+            "600755",  # 厦门国贸 roi 20.73 rate 0.83 roe 15.58 pe 16.03 pb 0.92 dividend 2.3 3.34%  operation 0
         }
 
     def get_stock_list(self):

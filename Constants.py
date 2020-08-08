@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-ROI_COEFFICIENT = 10
+ROI_COEFFICIENT = (1.0 / 10.0)
 
 SEASONS_IN_A_YEAR = 4
 DOUBLE_FIXED_DECIMAL = 2
