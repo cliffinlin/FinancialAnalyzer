@@ -904,44 +904,6 @@ def write_to_file(stock):
     write_share_bonus_to_file(stock, share_bonus_tuple_list)
 
 
-def update_mark():
-    stock_tuple_list = read_stock_tuple_list_from_database()
-
-    black_stock_list = black_list.get_stock_list()
-    if black_stock_list is None:
-        return
-
-    favorite_stock_list = Favorite.get_stock_list()
-    if favorite_stock_list is None:
-        return
-
-    count = 0
-    index = -1
-    for stock_tuple in stock_tuple_list:
-        index = index + 1
-        if index < 0:
-            continue
-
-        stock = Stock(stock_tuple)
-        if stock is None:
-            continue
-
-        stock.set_mark(Constants.STOCK_TYPE_NONE)
-
-        if stock.mCode in favorite_stock_list:
-            stock.set_mark(Constants.STOCK_TYPE_FAVORITE)
-
-        if stock.mCode in black_stock_list:
-            stock.set_mark(Constants.STOCK_TYPE_BLACK)
-
-        stock.update_to_database()
-        count += 1
-
-        print(index, stock.mCode, stock.mName, stock.mOperation, stock.mMark, stock.mDiscount)
-
-    print("update done, count=", count)
-
-
 def in_favorite_list(stock):
     result = False
 

@@ -14,8 +14,9 @@ def main():
     # Financial.download_stock_list()
     # Financial.download()
     # Financial.analyze()
-    # Financial.update_mark()
-    Draw.draw("roe > 15 AND pe > 10", "roi", "DESC")
+    Draw.draw("roi > 0", "roi", "DESC")
+    # Draw.draw("roe > 15", "roi", "DESC")
+    # Draw.draw("roe > 15 AND pe > 10", "roi", "DESC")
     # Draw.draw("roe >= 15 AND pe > 10", "pe", "DESC")
 
 if __name__ == "__main__":
