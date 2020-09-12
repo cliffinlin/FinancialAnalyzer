@@ -19,7 +19,7 @@ from ShareBonus import ShareBonus
 from Stock import Stock
 from StockData import StockData
 
-favorite_only = True
+favorite_only = False
 Favorite = Favorite()
 
 check_black_list = False
@@ -506,14 +506,13 @@ def write_stock_to_file(stock_tuple_list):
 
     file_name = get_stock_file_name()
 
-    field_name_tuple = tuple(("id", "classes", "se", "code",
-                              "name", "pinyin", "mark", "price",
-                              "change", "net", "volume", "value",
-                              "operation", "hold", "cost", "profit",
-                              "total_share", "roe", "rate", "valuation",
-                              "discount", "pe", "pb", "dividend",
-                              "dividend_yield", "delta", "time_to_market",
-                              "created", "modified"))
+    field_name_tuple = tuple(("id", "classes",
+                              "se", "code", "name", "pinyin",
+                              "price", "change", "net", "volume", "value",
+                              "mark", "operation", "hold", "cost", "profit",
+                              "roi", "roe", "pe", "rate", "pb",
+                              "dividend", "dividend_yield", "delta",
+                              "total_share", "time_to_market", "created", "modified"))
 
     with open(file_name, 'w', newline='') as csv_file:
         writer = csv.DictWriter(csv_file, fieldnames=field_name_tuple)
@@ -524,15 +523,13 @@ def write_stock_to_file(stock_tuple_list):
             if stock is None:
                 continue
 
-            stock_dict = {"id": stock.mID, "classes": stock.mClasses, "se": stock.mSE, "code": stock.mCode,
-                          "name": stock.mName, "pinyin": stock.mPinyin, "mark": stock.mMark, "price": stock.mPrice,
-                          "change": stock.mChange, "net": stock.mNet, "volume": stock.mVolume, "value": stock.mValue,
-                          "operation": stock.mOperation, "hold": stock.mHold, "cost": stock.mCost, "profit": stock.mProfit,
-                          "total_share": stock.mTotalShare, "roe": stock.mRoe, "rate": stock.mRate,
-                          "pe": stock.mPe, "pb": stock.mPb, "dividend": stock.mDividend,
-                          "dividend_yield": stock.mDividendYield, "delta": stock.mDelta,
-                          "time_to_market": stock.mTimeToMarket,
-                          "created": stock.mCreated, "modified": stock.mModified}
+            stock_dict = {"id": stock.mID, "classes": stock.mClasses,
+                          "se": stock.mSE, "code": stock.mCode, "name": stock.mName, "pinyin": stock.mPinyin,
+                          "price": stock.mPrice, "change": stock.mChange, "net": stock.mNet, "volume": stock.mVolume, "value": stock.mValue,
+                          "mark": stock.mMark, "operation": stock.mOperation, "hold": stock.mHold, "cost": stock.mCost, "profit": stock.mProfit,
+                          "roi": stock.mRoi, "roe": stock.mRoe, "pe": stock.mPe, "rate": stock.mRate, "pb": stock.mPb,
+                          "dividend": stock.mDividend, "dividend_yield": stock.mDividendYield, "delta": stock.mDelta,
+                          "total_share": stock.mTotalShare, "time_to_market": stock.mTimeToMarket, "created": stock.mCreated, "modified": stock.mModified}
             writer.writerow(stock_dict)
 
 
