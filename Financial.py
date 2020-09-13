@@ -525,11 +525,14 @@ def write_stock_to_file(stock_tuple_list):
 
             stock_dict = {"id": stock.mID, "classes": stock.mClasses,
                           "se": stock.mSE, "code": stock.mCode, "name": stock.mName, "pinyin": stock.mPinyin,
-                          "price": stock.mPrice, "change": stock.mChange, "net": stock.mNet, "volume": stock.mVolume, "value": stock.mValue,
-                          "mark": stock.mMark, "operation": stock.mOperation, "hold": stock.mHold, "cost": stock.mCost, "profit": stock.mProfit,
+                          "price": stock.mPrice, "change": stock.mChange, "net": stock.mNet, "volume": stock.mVolume,
+                          "value": stock.mValue,
+                          "mark": stock.mMark, "operation": stock.mOperation, "hold": stock.mHold, "cost": stock.mCost,
+                          "profit": stock.mProfit,
                           "roi": stock.mRoi, "roe": stock.mRoe, "pe": stock.mPe, "rate": stock.mRate, "pb": stock.mPb,
                           "dividend": stock.mDividend, "dividend_yield": stock.mDividendYield, "delta": stock.mDelta,
-                          "total_share": stock.mTotalShare, "time_to_market": stock.mTimeToMarket, "created": stock.mCreated, "modified": stock.mModified}
+                          "total_share": stock.mTotalShare, "time_to_market": stock.mTimeToMarket,
+                          "created": stock.mCreated, "modified": stock.mModified}
             writer.writerow(stock_dict)
 
 
@@ -701,6 +704,7 @@ def read_stock_data_from_database(stock, period=Constants.MONTH):
 
     return stock_data_tuple_list
 
+
 def read_financial_data_from_database(stock):
     connect = None
     financial_data_tuple_list = tuple()
@@ -825,6 +829,7 @@ def analyze_share_bonus(stock, share_bonus_tuple_list):
 
     return stock
 
+
 def analyze():
     stock_tuple_list = read_stock_tuple_list_from_database()
 
@@ -941,6 +946,8 @@ def check_out(stock):
         elif stock.mPe < 0:
             return False
         elif stock.mPb < 0:
+            return False
+        elif stock.mDividend < 1:
             return False
         elif stock.is_time_to_market_too_short():
             return False
