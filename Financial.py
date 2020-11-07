@@ -879,13 +879,8 @@ def select(where=None, order=None, sort=None):
             continue
 
         count = count + 1
-        print("\"" + stock.mCode + "\"" + ", #" + stock.mName + " "
-              + "roi " + str(stock.mRoi) + " "
-              + "rate " + str(stock.mRate) + " "
-              + "roe " + str(stock.mRoe) + " "
-              + "pe " + str(stock.mPe) + " pb " + str(stock.mPb) + " "
-              + "dividend " + str(stock.mDividend) + " " + str(stock.mDividendYield) + "% "
-              + " operation " + str(stock.mOperation))
+
+        print("\"" + stock.mCode + "\"" + ", #" + stock.to_string())
 
     print("select done, count=", count)
 

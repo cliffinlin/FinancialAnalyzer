@@ -174,45 +174,45 @@ class Stock:
         if profit is not None:
             self.mProfit = profit
 
-    def set_total_share(self, totalShare):
-        if totalShare is not None:
-            self.mTotalShare = totalShare
+    def set_total_share(self, total_share):
+        if total_share is not None:
+            self.mTotalShare = total_share
 
-    def set_total_assets(self, totalAssets):
-        if totalAssets is not None:
-            self.mTotalAssets = totalAssets
+    def set_total_assets(self, total_assets):
+        if total_assets is not None:
+            self.mTotalAssets = total_assets
 
-    def set_total_long_term_liabilities(self, totalLongTermLiabilities):
-        if totalLongTermLiabilities is not None:
-            self.mTotalLongTermLiabilities = totalLongTermLiabilities
+    def set_total_long_term_liabilities(self, total_long_term_liabilities):
+        if total_long_term_liabilities is not None:
+            self.mTotalLongTermLiabilities = total_long_term_liabilities
 
-    def set_debt_to_net_assets_ratio(self, debtToNetAssetsRatio):
-        if debtToNetAssetsRatio is not None:
-            self.mDebtToNetAssetsRatio = debtToNetAssetsRatio
+    def set_debt_to_net_assets_ratio(self, debt_to_net_assets_ratio):
+        if debt_to_net_assets_ratio is not None:
+            self.mDebtToNetAssetsRatio = debt_to_net_assets_ratio
 
-    def set_book_value_per_share(self, bookValuePerShare):
-        if bookValuePerShare is not None:
-            self.mBookValuePerShare = bookValuePerShare
+    def set_book_value_per_share(self, book_value_per_share):
+        if book_value_per_share is not None:
+            self.mBookValuePerShare = book_value_per_share
 
-    def set_cash_flow_per_share(self, cashFlowPerShare):
-        if cashFlowPerShare is not None:
-            self.mCashFlowPerShare = cashFlowPerShare
+    def set_cash_flow_per_share(self, cash_flow_per_share):
+        if cash_flow_per_share is not None:
+            self.mCashFlowPerShare = cash_flow_per_share
 
-    def set_net_profit(self, netProfit):
-        if netProfit is not None:
-            self.mNetProfit = netProfit
+    def set_net_profit(self, net_profit):
+        if net_profit is not None:
+            self.mNetProfit = net_profit
 
-    def set_net_profit_per_share(self, netProfitPerShare):
-        if netProfitPerShare is not None:
-            self.mNetProfitPerShare = netProfitPerShare
+    def set_net_profit_per_share(self, net_profit_per_share):
+        if net_profit_per_share is not None:
+            self.mNetProfitPerShare = net_profit_per_share
 
-    def set_net_profit_per_share_in_year(self, netProfitPerShareInYear):
-        if netProfitPerShareInYear is not None:
-            self.mNetProfitPerShareInYear = netProfitPerShareInYear
+    def set_net_profit_per_share_in_year(self, net_profit_per_share_in_year):
+        if net_profit_per_share_in_year is not None:
+            self.mNetProfitPerShareInYear = net_profit_per_share_in_year
 
-    def set_net_profit_per_share_last_year(self, netProfitPerShareLastYear):
-        if netProfitPerShareLastYear is not None:
-            self.mNetProfitPerShareLastYear = netProfitPerShareLastYear
+    def set_net_profit_per_share_last_year(self, net_profit_per_share_last_year):
+        if net_profit_per_share_last_year is not None:
+            self.mNetProfitPerShareLastYear = net_profit_per_share_last_year
 
     def set_rate(self, rate):
         if rate is not None:
@@ -248,15 +248,15 @@ class Stock:
 
     def set_delta(self, delta):
         if delta is not None:
-            self.Delta = delta
+            self.mDelta = delta
 
     def set_r_date(self, r_date):
         if r_date is not None:
             self.mRDate = r_date
 
-    def set_time_to_market(self, timeToMarket):
-        if timeToMarket is not None:
-            self.mTimeToMarket = timeToMarket
+    def set_time_to_market(self, time_to_market):
+        if time_to_market is not None:
+            self.mTimeToMarket = time_to_market
 
     def set_created(self, created):
         if created is not None:
@@ -388,9 +388,7 @@ class Stock:
         if self.mNetProfitPerShareInYear <= 0:
             return
 
-        self.mDelta = (self.mDividend / 10.0) / self.mNetProfitPerShareInYear
-
-        self.mDelta = round(self.mDelta, Constants.DOUBLE_FIXED_DECIMAL)
+        self.mDelta = round(100.0 * self.mDividend / 10.0 / self.mNetProfitPerShareInYear, Constants.DOUBLE_FIXED_DECIMAL)
 
     def get_insert_tuple(self):
         return tuple((self.mSymbol, self.mSE, self.mCode, self.mName,
@@ -424,6 +422,19 @@ class Stock:
 
         if time_to_market > time_to_market_min:
             result = True
+
+        return result
+
+    def to_string(self):
+        result = self.mName + "(" + self.mCode + ")" \
+                + " roi=" + str(self.mRoi) + ", " \
+                + " roe=" + str(self.mRoe) + ", " \
+                + " 1/pe=" + str(self.mPe) + ", " \
+                + " rate=" + str(self.mRate) + ", " \
+                + " pb=" + str(self.mPb) + ", " \
+                + " dividend=" + str(self.mDividend) + ", " \
+                + " yield=" + str(self.mDividendYield) + "% " \
+                + " delta=" + str(self.mDelta) + "% "
 
         return result
 

@@ -114,16 +114,7 @@ def draw_stock_data(stock, period=Constants.MONTH):
     plt.rcParams['font.sans-serif'] = ['KaiTi']
     plt.rcParams['font.serif'] = ['KaiTi']
 
-    title = stock.mName + " " + stock.mCode \
-            + " roi " + str(stock.mRoi) \
-            + " rate " + str(stock.mRate) \
-            + " roe " + str(stock.mRoe) \
-            + " pe " + str(stock.mPe) \
-            + " pb " + str(stock.mPb) \
-            + " dividend " + str(stock.mDividend) \
-            + " yield " + str(stock.mDividendYield) + "% " \
-            + " rate " + str(stock.mRate)
-    plt.title(title)
+    plt.title(stock.to_string())
 
     plt.show()
 
@@ -145,12 +136,7 @@ def draw(where=None, order=None, sort=None):
         if not Financial.check_out(stock):
             continue
 
-        print("\"" + stock.mCode + "\"" + ", #" + stock.mName + " "
-              + "roi " + str(stock.mRoi) + " "
-              + "roe " + str(stock.mRoe) + " "
-              + "pe " + str(stock.mPe) + " pb " + str(stock.mPb) + " "
-              + "dividend " + str(stock.mDividend) + " " + str(stock.mDividendYield) + "% "
-              + " operation " + str(stock.mOperation))
+        print(stock.to_string())
 
         Financial.write_to_file(stock)
 
