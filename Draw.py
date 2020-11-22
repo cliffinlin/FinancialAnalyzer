@@ -4,6 +4,7 @@ Created on Thu Mar 21 19:30:56 2019
 
 @author: ADMIN
 """
+import os
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -62,7 +63,11 @@ def draw_stock_data(stock, period=Constants.MONTH):
     net_profit = financial_data_dict['net_profit']
     # roe = financial_data_dict['roe']
 
-    share_bonus_dict = pandas.read_csv(Financial.get_share_bonus_file_name(stock), parse_dates=True, index_col=0)
+    share_bonus_file_name = Financial.get_share_bonus_file_name(stock)
+    if not os.path.exists(share_bonus_file_name):
+        return
+
+    share_bonus_dict = pandas.read_csv(share_bonus_file_name, parse_dates=True, index_col=0)
     share_bonus_dict.reset_index(inplace=True)
     share_bonus_dict['date'] = mdates.date2num(share_bonus_dict['date'])
 

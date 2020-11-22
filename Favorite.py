@@ -332,6 +332,154 @@ class Favorite:
             "601888",  # 中国中免 roi 0.29 rate 0.43 roe 12.64 pe 0.54 pb 24.37 dividend 7.2 0.33%  operation 0
             "600004",  # 白云机场
             "000089",  # 深圳机场
+
+            "600383",  # 金地集团 roi 112.03 rate 1.28 roe 33.14 pe 26.41 pb 1.17 dividend 6.7 4.92%  operation 0
+            "600606",  # 绿地控股 roi 90.92 rate 1.08 roe 29.17 pe 28.86 pb 0.94 dividend 4.0 6.4%  operation 0
+            "601668",  # 中国建筑 roi 87.65 rate 1.07 roe 27.16 pe 30.16 pb 0.78 dividend 1.85 3.54%  operation 0
+            "600048",  # 保利地产 roi 82.01 rate 1.27 roe 31.33 pe 20.61 pb 1.28 dividend 8.2 5.28%  operation 0
+            "000002",  # 万 科Ａ roi 57.52 rate 1.01 roe 32.92 pe 17.3 pb 1.61 dividend 10.17 3.61%  operation 0
+            "000951",  # 中国重汽 roi 49.17 rate 1.67 roe 34.08 pe 8.64 pb 3.28 dividend 5.5 1.42%  operation 0
+            "000069",  # 华侨城Ａ roi 48.9 rate 1.02 roe 20.79 pe 23.06 pb 0.8 dividend 3.05 4.45%  operation 0
+            "600755",  # 厦门国贸 roi 47.36 rate 1.09 roe 20.34 pe 21.36 pb 0.87 dividend 2.3 3.4%  operation 0
+            "600585",  # 海螺水泥 roi 35.98 rate 1.05 roe 27.86 pe 12.3 pb 1.91 dividend 20.0 3.67%  operation 0
+            "600663",  # 陆家嘴 roi 31.69 rate 1.05 roe 28.58 pe 10.56 pb 2.47 dividend 4.56 4.01%  operation 0
+            "600068",  # 葛洲坝 roi 30.93 rate 0.89 roe 19.79 pe 17.56 pb 1.01 dividend 1.56 2.2%  operation 0
+            "000581",  # 威孚高科 roi 24.12 rate 1.33 roe 17.14 pe 10.58 pb 1.5 dividend 11.0 4.17%  operation 0
+            "600612",  # 老凤祥 roi 22.46 rate 1.06 roe 28.21 pe 7.51 pb 3.33 dividend 11.5 2.36%  operation 0
+            "000049",  # 德赛电池 roi 21.16 rate 1.05 roe 31.89 pe 6.32 pb 4.12 dividend 7.0 1.39%  operation 0
+            "000895",  # 双汇发展 roi 19.33 rate 1.22 roe 41.58 pe 3.81 pb 7.01 dividend 16.4 3.29%  operation 0
+            "600352",  # 浙江龙盛 roi 18.64 rate 0.94 roe 19.16 pe 10.35 pb 1.63 dividend 2.5 1.86%  operation 0
+            "601318",  # 中国平安 roi 16.23 rate 0.8 roe 21.45 pe 9.46 pb 2.05 dividend 21.0 2.64%  operation 0
+            "000513",  # 丽珠集团 roi 14.56 rate 1.59 roe 19.28 pe 4.75 pb 3.84 dividend 11.5 2.44%  operation 0
+            "600056",  # 中国医药 roi 14.5 rate 0.96 roe 16.53 pe 9.14 pb 1.63 dividend 2.76 1.82%  operation 0
+            "600036",  # 招商银行 roi 14.4 rate 1.02 roe 16.49 pe 8.56 pb 1.75 dividend 12.0 2.8%  operation 0
+            "601607",  # 上海医药 roi 13.01 rate 1.13 roe 12.57 pe 9.16 pb 1.27 dividend 4.4 2.23%  operation 0
+            "601319",  # 中国人保 roi 12.82 rate 0.86 roe 15.48 pe 9.63 pb 1.46 dividend 1.52 2.33%  operation 0
+            "000333",  # 美的集团 roi 10.67 rate 1.01 roe 25.33 pe 4.17 pb 5.33 dividend 16.0 1.87%  operation 0
+            "000028",  # 国药一致 roi 10.33 rate 1.08 roe 12.67 pe 7.55 pb 1.54 dividend 6.0 1.23%  operation 0
+            "601336",  # 新华保险 roi 10.31 rate 0.96 roe 15.87 pe 6.77 pb 1.99 dividend 14.1 2.35%  operation 0
+            "000828",  # 东莞控股 roi 9.97 rate 0.77 roe 13.02 pe 9.94 pb 1.21 dividend 3.0 3.42%  operation 0
+            "601601",  # 中国太保 roi 9.94 rate 0.87 roe 13.91 pe 8.21 pb 1.51 dividend 12.0 3.77%  operation 0
+            "600887",  # 伊利股份 roi 9.62 rate 1.04 roe 30.23 pe 3.06 pb 8.45 dividend 8.1 2.05%  operation 0
+            "600519",  # 贵州茅台 roi 9.16 rate 1.09 roe 37.85 pe 2.22 pb 14.38 dividend 170.25 1.0%  operation 0
+            "600900",  # 长江电力 roi 9.11 rate 1.07 roe 16.04 pe 5.31 pb 2.74 dividend 6.8 3.41%  operation 0
+            "600511",  # 国药股份 roi 9.03 rate 0.97 roe 17.37 pe 5.36 pb 2.89 dividend 6.38 1.51%  operation 0
+            "600062",  # 华润双鹤 roi 8.77 rate 0.96 roe 12.02 pe 7.6 pb 1.46 dividend 3.04 2.37%  operation 0
+            "600104",  # 上汽集团 roi 8.69 rate 0.76 roe 11.78 pe 9.71 pb 1.17 dividend 8.8 3.46%  operation 0
+            "600486",  # 扬农化工 roi 8.3 rate 0.95 roe 22.41 pe 3.9 pb 5.0 dividend 6.5 0.7%  operation 0
+            "000568",  # 泸州老窖 roi 7.91 rate 1.25 roe 30.26 pe 2.09 pb 12.28 dividend 15.9 0.87%  operation 0
+            "000858",  # 五 粮 液 roi 7.15 rate 1.18 roe 29.28 pe 2.07 pb 12.23 dividend 22.0 0.87%  operation 0
+            "600007",  # 中国国贸 roi 7.02 rate 0.92 roe 11.54 pe 6.61 pb 1.64 dividend 3.8 2.99%  operation 0
+            "600809",  # 山西汾酒 roi 6.83 rate 1.35 roe 37.47 pe 1.35 pb 22.06 dividend 9.0 0.39%  operation 0
+            "600690",  # 海尔智家 roi 6.76 rate 0.69 roe 20.0 pe 4.9 pb 3.71 dividend 3.75 1.33%  operation 0
+            "000999",  # 华润三九 roi 6.75 rate 0.75 roe 13.96 pe 6.45 pb 1.96 dividend 4.3 1.57%  operation 0
+            "000661",  # 长春高新 roi 6.07 rate 1.52 roe 19.96 pe 2.0 pb 15.04 dividend 10.0 0.27%  operation 0
+            "600332",  # 白云山 roi 5.96 rate 0.85 roe 11.98 pe 5.85 pb 1.91 dividend 5.89 1.93%  operation 0
+            "000538",  # 云南白药 roi 5.93 rate 1.19 roe 13.05 pe 3.82 pb 3.35 dividend 30.0 3.0%  operation 0
+            "600741",  # 华域汽车 roi 5.32 rate 0.72 roe 12.77 pe 5.79 pb 2.12 dividend 8.5 2.53%  operation 0
+            "002304",  # 洋河股份 roi 5.16 rate 0.9 roe 20.46 pe 2.8 pb 6.95 dividend 30.0 1.7%  operation 0
+            "601628",  # 中国人寿 roi 4.97 rate 0.98 roe 12.78 pe 3.97 pb 2.94 dividend 7.3 1.68%  operation 0
+            "603288",  # 海天味业 roi 4.69 rate 1.2 roe 33.72 pe 1.16 pb 28.81 dividend 10.8 0.67%  operation 0
+            "600309",  # 万华化学 roi 4.6 rate 0.77 roe 19.66 pe 3.04 pb 5.94 dividend 13.0 1.56%  operation 0
+            "600197",  # 伊力特 roi 4.49 rate 0.79 roe 14.17 pe 4.01 pb 3.31 dividend 4.38 2.15%  operation 0
+            "000651",  # 格力电器 roi 4.28 rate 0.6 roe 16.27 pe 4.38 pb 3.26 dividend 22.0 3.54%  operation 0
+            "600030",  # 中信证券 roi 3.99 rate 1.14 roe 8.73 pe 4.01 pb 2.07 dividend 5.0 1.74%  operation 0
+            "600436",  # 片仔癀 roi 3.65 rate 1.21 roe 25.78 pe 1.17 pb 18.35 dividend 8.2 0.36%  operation 0
+            "000596",  # 古井贡酒 roi 3.38 rate 0.85 roe 22.23 pe 1.79 pb 10.94 dividend 15.0 0.71%  operation 0
+            "600276",  # 恒瑞医药 roi 3.06 rate 1.21 roe 20.91 pe 1.21 pb 16.94 dividend 2.3 0.26%  operation 0
+            "600377",  # 宁沪高速 roi 3.05 rate 0.59 roe 9.37 pe 5.52 pb 1.7 dividend 4.6 4.94%  operation 0
+            "600660",  # 福耀玻璃 roi 1.71 rate 0.71 roe 10.88 pe 2.22 pb 4.88 dividend 7.5 1.84%  operation 0
+            "601888",  # 中国中免 roi 1.17 rate 0.67 roe 18.79 pe 0.93 pb 20.11 dividend 7.2 0.36%  operation 0
+            "600004",  # 白云机场 roi 0.01 rate 0.19 roe 0.99 pe 0.6 pb 1.61 dividend 1.45 1.16%  operation 0
+            "600009",
+            "600383",  # 金地集团 roi=100.7 roe=33.14 1/pe=23.74 rate=1.28 pb=1.3 dividend=6.7 yield=4.42% delta=18.61%
+            "600606",  # 绿地控股 roi=89.09 roe=29.17 1/pe=28.28 rate=1.08 pb=0.96 dividend=4.0 yield=6.27% delta=22.17%
+            "601668",  # 中国建筑 roi=86.31 roe=27.16 1/pe=29.7 rate=1.07 pb=0.8 dividend=1.85 yield=3.48% delta=11.73%
+            "600048",  # 保利地产 roi=76.16 roe=31.33 1/pe=19.14 rate=1.27 pb=1.38 dividend=8.2 yield=4.9% delta=25.6%
+            "000002",  # 万 科Ａ roi=52.67 roe=32.92 1/pe=15.84 rate=1.01 pb=1.76 dividend=10.17 yield=3.31% delta=20.87%
+            "000951",  # 中国重汽 roi=52.36 roe=34.08 1/pe=9.2 rate=1.67 pb=3.08 dividend=5.5 yield=1.51% delta=16.45%
+            "000069",  # 华侨城Ａ roi=46.46 roe=20.79 1/pe=21.91 rate=1.02 pb=0.84 dividend=3.05 yield=4.23% delta=19.31%
+            "600755",  # 厦门国贸 roi=42.86 roe=20.34 1/pe=19.33 rate=1.09 pb=0.96 dividend=2.3 yield=3.08% delta=15.93%
+            "600585",  # 海螺水泥 roi=34.14 roe=27.86 1/pe=11.67 rate=1.05 pb=2.01 dividend=20.0 yield=3.48% delta=29.81%
+            "600068",  # 葛洲坝 roi=32.02 roe=19.79 1/pe=18.18 rate=0.89 pb=0.98 dividend=1.56 yield=2.28% delta=12.53%
+            "600663",  # 陆家嘴 roi=31.27 roe=28.58 1/pe=10.42 rate=1.05 pb=2.51 dividend=4.56 yield=3.96% delta=38.0%
+            "000581",  # 威孚高科 roi=24.41 roe=17.14 1/pe=10.71 rate=1.33 pb=1.48 dividend=11.0 yield=4.22% delta=39.37%
+            "600612",  # 老凤祥 roi=22.76 roe=28.21 1/pe=7.61 rate=1.06 pb=3.28 dividend=11.5 yield=2.4% delta=31.46%
+            "000049",  # 德赛电池 roi=19.82 roe=31.89 1/pe=5.92 rate=1.05 pb=4.39 dividend=7.0 yield=1.31% delta=22.08%
+            "000895",  # 双汇发展 roi=18.57 roe=41.58 1/pe=3.66 rate=1.22 pb=7.3 dividend=16.4 yield=3.16% delta=86.18%
+            "000877",  # 天山股份 roi=17.96 roe=19.31 1/pe=9.03 rate=1.03 pb=1.92 dividend=5.1 yield=2.72% delta=30.12%
+            "600352",  # 浙江龙盛 roi=16.73 roe=19.16 1/pe=9.29 rate=0.94 pb=1.82 dividend=2.5 yield=1.67% delta=17.97%
+            "601318",  # 中国平安 roi=15.12 roe=21.45 1/pe=8.81 rate=0.8 pb=2.2 dividend=21.0 yield=2.46% delta=27.92%
+            "000513",  # 丽珠集团 roi=14.89 roe=19.27 1/pe=4.86 rate=1.59 pb=3.75 dividend=11.5 yield=2.5% delta=51.36%
+            "600056",  # 中国医药 roi=14.33 roe=16.53 1/pe=9.03 rate=0.96 pb=1.65 dividend=2.76 yield=1.8% delta=19.92%
+            "600036",  # 招商银行 roi=13.83 roe=16.49 1/pe=8.22 rate=1.02 pb=1.82 dividend=12.0 yield=2.68% delta=32.64%
+            "601319",  # 中国人保 roi=12.58 roe=15.48 1/pe=9.45 rate=0.86 pb=1.48 dividend=1.52 yield=2.29% delta=24.21%
+            "601607",  # 上海医药 roi=12.37 roe=12.57 1/pe=8.71 rate=1.13 pb=1.33 dividend=4.4 yield=2.12% delta=24.31%
+            "601336",  # 新华保险 roi=10.3 roe=15.87 1/pe=6.76 rate=0.96 pb=2.0 dividend=14.1 yield=2.35% delta=34.74%
+            "000333",  # 美的集团 roi=10.23 roe=25.33 1/pe=4.0 rate=1.01 pb=5.56 dividend=16.0 yield=1.79% delta=44.77%
+            "000028",  # 国药一致 roi=10.06 roe=12.67 1/pe=7.35 rate=1.08 pb=1.58 dividend=6.0 yield=1.2% delta=16.28%
+            "600887",  # 伊利股份 roi=9.9 roe=30.23 1/pe=3.15 rate=1.04 pb=8.21 dividend=8.1 yield=2.11% delta=67.08%
+            "000828",  # 东莞控股 roi=9.63 roe=13.02 1/pe=9.61 rate=0.77 pb=1.25 dividend=3.0 yield=3.3% delta=34.36%
+            "601601",  # 中国太保 roi=9.56 roe=13.91 1/pe=7.9 rate=0.87 pb=1.57 dividend=12.0 yield=3.63% delta=45.93%
+            "600519",  # 贵州茅台 roi=9.2 roe=37.85 1/pe=2.23 rate=1.09 pb=14.33 dividend=170.25 yield=1.01% delta=45.11%
+            "600900",  # 长江电力 roi=9.18 roe=16.04 1/pe=5.35 rate=1.07 pb=2.71 dividend=6.8 yield=3.44% delta=64.23%
+            "600511",  # 国药股份 roi=9.06 roe=17.37 1/pe=5.38 rate=0.97 pb=2.88 dividend=6.38 yield=1.51% delta=28.07%
+            "600062",  # 华润双鹤 roi=8.76 roe=12.02 1/pe=7.59 rate=0.96 pb=1.46 dividend=3.04 yield=2.36% delta=31.15%
+            "600104",  # 上汽集团 roi=8.61 roe=11.78 1/pe=9.62 rate=0.76 pb=1.18 dividend=8.8 yield=3.43% delta=35.68%
+            "000568",  # 泸州老窖 roi=7.57 roe=30.26 1/pe=2.0 rate=1.25 pb=12.81 dividend=15.9 yield=0.83% delta=41.47%
+            "000858",  # 五 粮 液 roi=6.88 roe=29.28 1/pe=1.99 rate=1.18 pb=12.75 dividend=22.0 yield=0.83% delta=42.01%
+            "600690",  # 海尔智家 roi=6.78 roe=20.0 1/pe=4.91 rate=0.69 pb=3.7 dividend=3.75 yield=1.33% delta=27.16%
+            "000999",  # 华润三九 roi=6.78 roe=13.96 1/pe=6.48 rate=0.75 pb=1.95 dividend=4.3 yield=1.57% delta=24.28%
+            "600007",  # 中国国贸 roi=6.77 roe=11.54 1/pe=6.38 rate=0.92 pb=1.7 dividend=3.8 yield=2.88% delta=45.22%
+            "600486",  # 扬农化工 roi=6.6 roe=22.41 1/pe=3.1 rate=0.95 pb=6.29 dividend=6.5 yield=0.56% delta=17.91%
+            "000661",  # 长春高新 roi=6.58 roe=19.96 1/pe=2.17 rate=1.52 pb=13.86 dividend=10.0 yield=0.29% delta=13.29%
+            "000538",  # 云南白药 roi=6.15 roe=13.05 1/pe=3.96 rate=1.19 pb=3.24 dividend=30.0 yield=3.11% delta=78.46%
+            "600809",  # 山西汾酒 roi=6.07 roe=37.47 1/pe=1.2 rate=1.35 pb=24.68 dividend=9.0 yield=0.35% delta=28.86%
+            "600332",  # 白云山 roi=5.81 roe=11.98 1/pe=5.71 rate=0.85 pb=1.96 dividend=5.89 yield=1.89% delta=33.08%
+            "600741",  # 华域汽车 roi=5.42 roe=12.77 1/pe=5.89 rate=0.72 pb=2.08 dividend=8.5 yield=2.57% delta=43.62%
+            "600019",  # 宝钢股份 roi=5.16 roe=7.21 1/pe=8.95 rate=0.8 pb=0.78 dividend=2.8 yield=4.44% delta=49.56%
+            "002304",  # 洋河股份 roi=5.08 roe=20.46 1/pe=2.76 rate=0.9 pb=7.05 dividend=30.0 yield=1.68% delta=60.91%
+            "601628",  # 中国人寿 roi=5.03 roe=12.78 1/pe=4.02 rate=0.98 pb=2.9 dividend=7.3 yield=1.7% delta=42.39%
+            "603288",  # 海天味业 roi=4.69 roe=33.72 1/pe=1.16 rate=1.2 pb=28.7 dividend=10.8 yield=0.67% delta=57.41%
+            "600309",  # 万华化学 roi=4.24 roe=19.66 1/pe=2.8 rate=0.77 pb=6.46 dividend=13.0 yield=1.44% delta=51.45%
+            "600197",  # 伊力特 roi=4.16 roe=14.17 1/pe=3.72 rate=0.79 pb=3.57 dividend=4.38 yield=1.99% delta=53.63%
+            "000651",  # 格力电器 roi=3.99 roe=16.27 1/pe=4.09 rate=0.6 pb=3.5 dividend=22.0 yield=3.3% delta=80.69%
+            "600030",  # 中信证券 roi=3.94 roe=8.73 1/pe=3.96 rate=1.14 pb=2.1 dividend=5.0 yield=1.72% delta=43.36%
+            "600436",  # 片仔癀 roi=3.84 roe=25.78 1/pe=1.23 rate=1.21 pb=17.49 dividend=8.2 yield=0.38% delta=30.56%
+            "000596",  # 古井贡酒 roi=3.29 roe=22.23 1/pe=1.74 rate=0.85 pb=11.31 dividend=15.0 yield=0.69% delta=39.57%
+            "600276",  # 恒瑞医药 roi=3.19 roe=20.91 1/pe=1.26 rate=1.21 pb=16.27 dividend=2.3 yield=0.27% delta=21.01%
+            "600377",  # 宁沪高速 roi=2.95 roe=9.37 1/pe=5.34 rate=0.59 pb=1.76 dividend=4.6 yield=4.78% delta=89.41%
+            "600660",  # 福耀玻璃 roi=1.71 roe=10.88 1/pe=2.21 rate=0.71 pb=4.9 dividend=7.5 yield=1.83% delta=82.76%
+            "601888",  # 中国中免 roi=1.35 roe=18.79 1/pe=1.07 rate=0.67 pb=17.41 dividend=7.2 yield=0.41% delta=38.41%
+            "600897",  # 厦门空港 roi=1.13 roe=6.46 1/pe=4.08 rate=0.43 pb=1.56 dividend=5.23 yield=2.72% delta=66.68%
+            "600004",  # 白云机场 roi=0.01 roe=0.86 1/pe=0.42 rate=0.19 pb=2.03 dividend=1.45 yield=0.92% delta=219.53%
+
+            "000672",  # 上峰水泥 roi=68.01 roe=51.01 1/pe=12.12 rate=1.1 pb=3.1 dividend=9.0 yield=3.78% delta=31.21%
+            "601155",  # 新城控股 roi=113.67 roe=50.28 1/pe=18.84 rate=1.2 pb=1.97 dividend=17.0 yield=4.9% delta=26.0%
+            "000789",  # 万年青 roi=106.76 roe=49.92 1/pe=17.53 rate=1.22 pb=2.27 dividend=7.0 yield=4.43% delta=25.28%
+            "600132",  # 重庆啤酒 roi=5.29 roe=46.43 1/pe=1.2 rate=0.95 pb=43.64 dividend=14.0 yield=1.29% delta=107.96%
+            "600846",  # 同济科技 roi=143.37 roe=44.1 1/pe=20.84 rate=1.56 pb=1.76 dividend=3.4 yield=4.0% delta=19.21%
+            "300760",  # 迈瑞医疗 roi=7.76 roe=36.21 1/pe=1.51 rate=1.42 pb=19.11 dividend=15.0 yield=0.43% delta=28.6%
+            "600031",  # 三一重工 roi=29.24 roe=34.77 1/pe=6.05 rate=1.39 pb=4.59 dividend=4.2 yield=1.45% delta=24.02%
+            "000951",  # 中国重汽 roi=50.31 roe=34.08 1/pe=8.84 rate=1.67 pb=3.2 dividend=5.5 yield=1.45% delta=16.45%
+            "600153",  # 建发股份 roi=144.86 roe=33.2 1/pe=36.36 rate=1.2 pb=0.79 dividend=5.0 yield=5.55% delta=15.26%
+            "600466",  # 蓝光发展 roi=109.07 roe=32.86 1/pe=28.37 rate=1.17 pb=0.93 dividend=2.87 yield=5.57% delta=19.65%
+            "000876",  # 新 希 望 roi=43.36 roe=32.2 1/pe=7.05 rate=1.91 pb=3.25 dividend=1.5 yield=0.57% delta=8.16%
+            "600801",  # 华新水泥 roi=29.22 roe=30.64 1/pe=11.49 rate=0.83 pb=2.4 dividend=12.1 yield=4.79% delta=41.72%
+            "000656",  # 金科股份 roi=57.87 roe=29.57 1/pe=16.87 rate=1.16 pb=1.46 dividend=4.5 yield=5.58% delta=33.05%
+            "600763",  # 通策医疗 roi=2.13 roe=29.13 1/pe=0.73 rate=1.0 pb=31.63 dividend=0.0 yield=0.0% delta=0.0%
+            "600325",  # 华发股份 roi=94.7 roe=29.05 1/pe=26.72 rate=1.22 pb=0.99 dividend=4.0 yield=6.18% delta=23.14%
+            "000921",  # 海信家电 roi=45.95 roe=28.9 1/pe=10.6 rate=1.5 pb=2.46 dividend=3.95 yield=2.38% delta=22.5%
+            "002372",  # 伟星新材 roi=9.15 roe=28.57 1/pe=3.17 rate=1.01 pb=8.46 dividend=5.0 yield=2.42% delta=76.55%
+            "002032",  # 苏 泊 尔 roi=7.76 roe=27.48 1/pe=2.91 rate=0.97 pb=9.17 dividend=13.3 yield=1.81% delta=62.42%
+            "600298",  # 安琪酵母 roi=13.24 roe=27.21 1/pe=3.31 rate=1.47 pb=7.14 dividend=4.0 yield=0.84% delta=25.24%
+            "000963",  # 华东医药 roi=16.59 roe=26.42 1/pe=5.71 rate=1.1 pb=3.79 dividend=2.8 yield=0.91% delta=15.9%
+            "600720",  # 祁连山 roi=51.8 roe=26.41 1/pe=13.91 rate=1.41 pb=1.6 dividend=5.8 yield=3.59% delta=25.8%
+            "002508",  # 老板电器 roi=11.0 roe=26.01 1/pe=3.99 rate=1.06 pb=5.53 dividend=5.0 yield=1.14% delta=28.62%
+            "600340",  # 华夏幸福 roi=52.67 roe=24.84 1/pe=22.8 rate=0.93 pb=1.16 dividend=15.0 yield=10.42% delta=45.7%
+            "002146",  # 荣盛发展 roi=73.03 roe=24.79 1/pe=28.88 rate=1.02 pb=0.73 dividend=4.8 yield=6.63% delta=22.96%
+            "600872",  # 中炬高新 roi=5.67 roe=24.34 1/pe=1.88 rate=1.24 pb=11.13 dividend=2.8 yield=0.46% delta=24.27%
+            "000671",  # 阳 光 城 roi=38.79 roe=23.99 1/pe=16.01 rate=1.01 pb=1.26 dividend=1.99 yield=2.71% delta=16.96%
         }
 
     def get_stock_list(self):

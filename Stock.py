@@ -426,7 +426,8 @@ class Stock:
         return result
 
     def to_string(self):
-        result = self.mName + " " \
+        result = "\"" + self.mCode + "\"," + " #"\
+                + self.mName + " " \
                 + "roi=" + str(self.mRoi) + " " \
                 + "roe=" + str(self.mRoe) + " " \
                 + "1/pe=" + str(self.mPe) + " " \

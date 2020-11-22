@@ -880,7 +880,7 @@ def select(where=None, order=None, sort=None):
 
         count = count + 1
 
-        print("\"" + stock.mCode + "\"" + ", #" + stock.to_string())
+        print(stock.to_string())
 
     print("select done, count=", count)
 
