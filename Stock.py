@@ -426,15 +426,15 @@ class Stock:
         return result
 
     def to_string(self):
-        result = self.mName + "(" + self.mCode + ")" \
-                + " roi=" + str(self.mRoi) + ", " \
-                + " roe=" + str(self.mRoe) + ", " \
-                + " 1/pe=" + str(self.mPe) + ", " \
-                + " rate=" + str(self.mRate) + ", " \
-                + " pb=" + str(self.mPb) + ", " \
-                + " dividend=" + str(self.mDividend) + ", " \
-                + " yield=" + str(self.mDividendYield) + "% " \
-                + " delta=" + str(self.mDelta) + "% "
+        result = self.mName + " " \
+                + "roi=" + str(self.mRoi) + " " \
+                + "roe=" + str(self.mRoe) + " " \
+                + "1/pe=" + str(self.mPe) + " " \
+                + "rate=" + str(self.mRate) + " " \
+                + "pb=" + str(self.mPb) + " " \
+                + "dividend=" + str(self.mDividend) + " " \
+                + "yield=" + str(self.mDividendYield) + "% " \
+                + "delta=" + str(self.mDelta) + "%"
 
         return result
 

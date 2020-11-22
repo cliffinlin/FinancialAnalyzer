@@ -921,9 +921,6 @@ def in_black_list(stock):
     if black_stock_list is None:
         return result
 
-    if not check_black_list:
-        return result
-
     if stock.mCode in black_stock_list:
         result = True
 
@@ -935,18 +932,10 @@ def check_out(stock):
 
     if favorite_only:
         return in_favorite_list(stock)
+    elif check_black_list:
+        return not in_black_list(stock)
     else:
         if stock.is_special_treatment():
-            return False
-        elif stock.mPe < 0:
-            return False
-        elif stock.mPb < 0:
-            return False
-        elif stock.mDividend < 1:
-            return False
-        elif stock.is_time_to_market_too_short():
-            return False
-        elif in_black_list(stock):
             return False
         else:
             result = True
