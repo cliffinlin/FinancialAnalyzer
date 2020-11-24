@@ -46,6 +46,11 @@ def draw_stock_data(stock, period=Constants.MONTH):
     #
     # MACD = EMA_1 - EMA_2
 
+    financial_data_file_name = Financial.get_financial_data_file_name(stock)
+    if not os.path.exists(financial_data_file_name):
+        print(financial_data_file_name + "not exist, return")
+        return
+
     financial_data_dict = pandas.read_csv(Financial.get_financial_data_file_name(stock), parse_dates=True, index_col=0)
     financial_data_dict.reset_index(inplace=True)
     financial_data_dict['date'] = mdates.date2num(financial_data_dict['date'])
@@ -65,6 +70,7 @@ def draw_stock_data(stock, period=Constants.MONTH):
 
     share_bonus_file_name = Financial.get_share_bonus_file_name(stock)
     if not os.path.exists(share_bonus_file_name):
+        print(share_bonus_file_name + "not exist, return")
         return
 
     share_bonus_dict = pandas.read_csv(share_bonus_file_name, parse_dates=True, index_col=0)
@@ -79,7 +85,7 @@ def draw_stock_data(stock, period=Constants.MONTH):
     fig, (ax1, ax3) = plt.subplots(2, sharex=True, figsize=(10, 12))
 
     # plot candlestick, SAM, EMA in subplot_1
-    candlestick_ohlc(ax1, stock_data_dict.values, width=0.5, colorup='r', colordown='g')
+    # candlestick_ohlc(ax1, stock_data_dict.values, width=0.5, colorup='r', colordown='g')
     # p1 = ax.plot(x, EMA_1, label='EMA(' + str(EMA_1_span) + ')')
     # p2 = ax.plot(x, EMA_2, label='EMA(' + str(EMA_2_span) + ')')
     # p3 = ax.plot(x, SMA_2, label='SMA(' + str(SMA_2_span) + ')')
@@ -116,12 +122,17 @@ def draw_stock_data(stock, period=Constants.MONTH):
     ax3.legend()
 
     # # Pandas 无法显示中文问题 解决方案##
-    plt.rcParams['font.sans-serif'] = ['KaiTi']
-    plt.rcParams['font.serif'] = ['KaiTi']
+    # plt.rcParams['font.sans-serif'] = ['KaiTi']
+    # plt.rcParams['font.serif'] = ['KaiTi']
+
+    plt.rcParams['font.sans-serif'] = ['SimHei']  # 用来正常显示中文标签
+    plt.rcParams['axes.unicode_minus'] = False  # 用来正常显示负号
 
     plt.title(stock.to_string())
 
-    plt.show()
+    # plt.show()
+    fig.savefig(Constants.DATA_STOCK_PATH + stock.mName)
+    plt.close(fig)
 
 
 def draw(where=None, order=None, sort=None):
@@ -140,6 +151,13 @@ def draw(where=None, order=None, sort=None):
 
         if not Financial.check_out(stock):
             continue
+
+        # TODO
+        if stock.is_time_to_market_too_short():
+            continue
+
+        # if Financial.in_favorite_list(stock):
+        #     continue
 
         print(stock.to_string())
 
