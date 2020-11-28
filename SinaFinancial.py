@@ -384,7 +384,7 @@ class SinaFinancial:
                 share_bonus = dict()
 
                 date_string = tds[0].text
-                if date_string is None or "--" in date_string:
+                if date_string is None or "--" in date_string or "1900-01-01" in date_string:
                     continue
 
                 dividend_string = tds[3].text

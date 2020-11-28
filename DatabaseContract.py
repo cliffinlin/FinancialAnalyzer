@@ -2,8 +2,6 @@
 
 from enum import Enum, auto
 
-DATABASE_FILE_NAME = "orion.db"
-
 
 class StockColumn(Enum):
     id = 0

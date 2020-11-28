@@ -10,11 +10,8 @@ import Financial
 
 
 def main():
-    # Financial.setup_database()
-    # Financial.download_stock_list()
     # Financial.download()
-    # Financial.analyze()
-    Draw.draw("roi > 0", "roi", "DESC")
+    Draw.draw(where="1", order="roi", sort="DESC", draw_candle_stick=True, save_fig=True)
     # Draw.draw("roe > 30 AND pe > 0 AND dividend > 0", "roi", "DESC")
     # Draw.draw("roi > 15 AND roe > 10 AND pe > 10", "roi", "DESC")
     # Draw.draw("roe > 15", "roi", "DESC")

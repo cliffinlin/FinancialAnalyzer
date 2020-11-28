@@ -19,11 +19,11 @@ from ShareBonus import ShareBonus
 from Stock import Stock
 from StockData import StockData
 
-favorite_only = False
+favorite_only = True
 Favorite = Favorite()
 
-check_black_list = False
-black_list = BlackList()
+black_list_enabled = True
+BlackList = BlackList()
 
 
 def setup_database():
@@ -31,8 +31,10 @@ def setup_database():
 
     print("setup_database")
 
+    make_data_directory()
+
     try:
-        connect = sqlite3.connect(DatabaseContract.DATABASE_FILE_NAME)
+        connect = sqlite3.connect(Constants.DATA_DATABASE_ORION)
         if connect is not None:
             cursor = connect.cursor()
 
@@ -55,6 +57,7 @@ def setup_directory(directory):
 
 def make_data_directory():
     setup_directory(Constants.DATA_PATH)
+    setup_directory(Constants.DATA_FIGURE_PATH)
     setup_directory(Constants.DATA_FINANCIAL_PATH)
     setup_directory(Constants.DATA_SHARE_BONUS_PATH)
     setup_directory(Constants.DATA_STOCK_PATH)
@@ -76,6 +79,10 @@ def get_time_to_market(stock_data_list):
 
 
 def download():
+    setup_database()
+
+    download_stock_list()
+
     stock_tuple_list = read_stock_tuple_list_from_database()
     if stock_tuple_list is None:
         print("stock_tuple_list is None")
@@ -133,6 +140,8 @@ def download():
         config.write(f)
 
     print("download done")
+
+    analyze()
 
 
 def download_stock_list():
@@ -242,7 +251,7 @@ def write_stock_list_to_database(stock_list):
         return
 
     try:
-        connect = sqlite3.connect(DatabaseContract.DATABASE_FILE_NAME)
+        connect = sqlite3.connect(Constants.DATA_DATABASE_ORION)
         cursor = connect.cursor()
 
         cursor.execute(query_sql)
@@ -312,7 +321,7 @@ def write_stock_data_to_database(code, stock_data_list, period=Constants.MONTH):
         return
 
     try:
-        connect = sqlite3.connect(DatabaseContract.DATABASE_FILE_NAME)
+        connect = sqlite3.connect(Constants.DATA_DATABASE_ORION)
         cursor = connect.cursor()
 
         cursor.execute(sql_delete, (period, code))
@@ -364,7 +373,7 @@ def write_financial_data_to_database(code, financial_data_list):
         return
 
     try:
-        connect = sqlite3.connect(DatabaseContract.DATABASE_FILE_NAME)
+        connect = sqlite3.connect(Constants.DATA_DATABASE_ORION)
         cursor = connect.cursor()
 
         cursor.execute(sql_delete, (code,))
@@ -418,7 +427,7 @@ def write_share_bonus_to_database(code, share_bonus_list):
         return
 
     try:
-        connect = sqlite3.connect(DatabaseContract.DATABASE_FILE_NAME)
+        connect = sqlite3.connect(Constants.DATA_DATABASE_ORION)
         cursor = connect.cursor()
 
         cursor.execute(sql_delete, (code,))
@@ -670,7 +679,7 @@ def read_stock_tuple_list_from_database(where=None, order=None, sort=None):
     sql_query = Stock.get_query_sql(where, order, sort)
 
     try:
-        connect = sqlite3.connect(DatabaseContract.DATABASE_FILE_NAME)
+        connect = sqlite3.connect(Constants.DATA_DATABASE_ORION)
         cursor = connect.cursor()
         cursor.execute(sql_query)
         stock_tuple_list = cursor.fetchall()
@@ -692,7 +701,7 @@ def read_stock_data_from_database(stock, period=Constants.MONTH):
         return None
 
     try:
-        connect = sqlite3.connect(DatabaseContract.DATABASE_FILE_NAME)
+        connect = sqlite3.connect(Constants.DATA_DATABASE_ORION)
         cursor = connect.cursor()
         cursor.execute(sql_query, (stock.mCode, period))
         stock_data_tuple_list = cursor.fetchall()
@@ -713,7 +722,7 @@ def read_financial_data_from_database(stock):
         return None
 
     try:
-        connect = sqlite3.connect(DatabaseContract.DATABASE_FILE_NAME)
+        connect = sqlite3.connect(Constants.DATA_DATABASE_ORION)
         cursor = connect.cursor()
         cursor.execute(sql_query, (stock.mCode,))
         financial_data_tuple_list = cursor.fetchall()
@@ -734,7 +743,7 @@ def read_share_bonus_from_database(stock):
         return None
 
     try:
-        connect = sqlite3.connect(DatabaseContract.DATABASE_FILE_NAME)
+        connect = sqlite3.connect(Constants.DATA_DATABASE_ORION)
         cursor = connect.cursor()
         cursor.execute(sql_query, (stock.mCode,))
         share_bonus_tuple_list = cursor.fetchall()
@@ -901,27 +910,16 @@ def write_to_file(stock):
     write_share_bonus_to_file(stock, share_bonus_tuple_list)
 
 
-def in_favorite_list(stock):
+def in_check_list(stock, check_list):
     result = False
 
-    favorite_stock_list = Favorite.get_stock_list()
-    if favorite_stock_list is None:
+    if stock is None:
         return result
 
-    if stock.mCode in favorite_stock_list:
-        result = True
-
-    return result
-
-
-def in_black_list(stock):
-    result = False
-
-    black_stock_list = black_list.get_stock_list()
-    if black_stock_list is None:
+    if check_list is None:
         return result
 
-    if stock.mCode in black_stock_list:
+    if stock.mCode in check_list:
         result = True
 
     return result
@@ -930,14 +928,22 @@ def in_black_list(stock):
 def check_out(stock):
     result = False
 
+    if stock is None:
+        return result
+
     if favorite_only:
-        return in_favorite_list(stock)
-    elif check_black_list:
-        return not in_black_list(stock)
+        favorite_stock_list = Favorite.get_stock_list()
+        return in_check_list(stock, favorite_stock_list)
+
+    if black_list_enabled:
+        black_stock_list = BlackList.get_stock_list()
+        return not in_check_list(stock, black_stock_list)
+
+    if stock.is_special_treatment():
+        result = False
+    elif stock.is_time_to_market_too_short():
+        result = False
     else:
-        if stock.is_special_treatment():
-            return False
-        else:
-            result = True
+        result = True
 
     return result
