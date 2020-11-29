@@ -6,6 +6,7 @@ import sqlite3
 import time
 from configparser import ConfigParser
 from datetime import datetime
+import xml.etree.ElementTree as ET
 
 import pandas
 
@@ -880,6 +881,8 @@ def select(where=None, order=None, sort=None):
     stock_tuple_list = read_stock_tuple_list_from_database(where, order, sort)
     write_stock_to_file(stock_tuple_list)
 
+    root = ET.Element("root")
+
     count = 0
     for stock_tuple in stock_tuple_list:
         stock = Stock(stock_tuple)
@@ -891,7 +894,26 @@ def select(where=None, order=None, sort=None):
 
         print(stock.to_string())
 
+        stock_element = ET.Element("stock")
+        root.append(stock_element)
+
+        if stock.mSE is not None:
+            stock_se = ET.SubElement(stock_element, "se")
+            stock_se.text = stock.mSE
+
+        if stock.mCode is not None:
+            stock_code = ET.SubElement(stock_element, "code")
+            stock_code.text = stock.mCode
+
+        if stock.mName is not None:
+            stock_name = ET.SubElement(stock_element, "name")
+            stock_name.text = stock.mName
+
     print("select done, count=", count)
+
+    tree = ET.ElementTree(root)
+    with open(Constants.DATA_STOCK_LIST_XML, "wb") as files:
+        tree.write(files)
 
     return stock_tuple_list
 
