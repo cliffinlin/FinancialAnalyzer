@@ -27,6 +27,10 @@ black_list_enabled = True
 BlackList = BlackList()
 
 
+def get_database_connect():
+    return sqlite3.connect(Constants.DATA_DATABASE_ORION_DB)
+
+
 def setup_database():
     connect = None
 
@@ -35,7 +39,7 @@ def setup_database():
     make_data_directory()
 
     try:
-        connect = sqlite3.connect(Constants.DATA_DATABASE_ORION)
+        connect = get_database_connect()
         if connect is not None:
             cursor = connect.cursor()
 
@@ -58,6 +62,7 @@ def setup_directory(directory):
 
 def make_data_directory():
     setup_directory(Constants.DATA_PATH)
+    setup_directory(Constants.DATA_DATABASE_PATH)
     setup_directory(Constants.DATA_FIGURE_PATH)
     setup_directory(Constants.DATA_FINANCIAL_PATH)
     setup_directory(Constants.DATA_SHARE_BONUS_PATH)
@@ -252,7 +257,7 @@ def write_stock_list_to_database(stock_list):
         return
 
     try:
-        connect = sqlite3.connect(Constants.DATA_DATABASE_ORION)
+        connect = get_database_connect()
         cursor = connect.cursor()
 
         cursor.execute(query_sql)
@@ -322,7 +327,7 @@ def write_stock_data_to_database(code, stock_data_list, period=Constants.MONTH):
         return
 
     try:
-        connect = sqlite3.connect(Constants.DATA_DATABASE_ORION)
+        connect = get_database_connect()
         cursor = connect.cursor()
 
         cursor.execute(sql_delete, (period, code))
@@ -374,7 +379,7 @@ def write_financial_data_to_database(code, financial_data_list):
         return
 
     try:
-        connect = sqlite3.connect(Constants.DATA_DATABASE_ORION)
+        connect = get_database_connect()
         cursor = connect.cursor()
 
         cursor.execute(sql_delete, (code,))
@@ -428,7 +433,7 @@ def write_share_bonus_to_database(code, share_bonus_list):
         return
 
     try:
-        connect = sqlite3.connect(Constants.DATA_DATABASE_ORION)
+        connect = get_database_connect()
         cursor = connect.cursor()
 
         cursor.execute(sql_delete, (code,))
@@ -680,7 +685,7 @@ def read_stock_tuple_list_from_database(where=None, order=None, sort=None):
     sql_query = Stock.get_query_sql(where, order, sort)
 
     try:
-        connect = sqlite3.connect(Constants.DATA_DATABASE_ORION)
+        connect = get_database_connect()
         cursor = connect.cursor()
         cursor.execute(sql_query)
         stock_tuple_list = cursor.fetchall()
@@ -702,7 +707,7 @@ def read_stock_data_from_database(stock, period=Constants.MONTH):
         return None
 
     try:
-        connect = sqlite3.connect(Constants.DATA_DATABASE_ORION)
+        connect = get_database_connect()
         cursor = connect.cursor()
         cursor.execute(sql_query, (stock.mCode, period))
         stock_data_tuple_list = cursor.fetchall()
@@ -723,7 +728,7 @@ def read_financial_data_from_database(stock):
         return None
 
     try:
-        connect = sqlite3.connect(Constants.DATA_DATABASE_ORION)
+        connect = get_database_connect()
         cursor = connect.cursor()
         cursor.execute(sql_query, (stock.mCode,))
         financial_data_tuple_list = cursor.fetchall()
@@ -744,7 +749,7 @@ def read_share_bonus_from_database(stock):
         return None
 
     try:
-        connect = sqlite3.connect(Constants.DATA_DATABASE_ORION)
+        connect = get_database_connect()
         cursor = connect.cursor()
         cursor.execute(sql_query, (stock.mCode,))
         share_bonus_tuple_list = cursor.fetchall()
@@ -881,6 +886,8 @@ def select(where=None, order=None, sort=None):
     stock_tuple_list = read_stock_tuple_list_from_database(where, order, sort)
     write_stock_to_file(stock_tuple_list)
 
+    stock_code_file = open(Constants.DATA_STOCK_LIST_CODE, "w")
+
     root = ET.Element("root")
 
     count = 0
@@ -893,6 +900,8 @@ def select(where=None, order=None, sort=None):
         count = count + 1
 
         print(stock.to_string())
+
+        stock_code_file.write(stock.mCode + "\n")
 
         stock_element = ET.Element("stock")
         root.append(stock_element)
@@ -910,6 +919,8 @@ def select(where=None, order=None, sort=None):
             stock_name.text = stock.mName
 
     print("select done, count=", count)
+
+    stock_code_file.close()
 
     tree = ET.ElementTree(root)
     with open(Constants.DATA_STOCK_LIST_XML, "wb") as files:

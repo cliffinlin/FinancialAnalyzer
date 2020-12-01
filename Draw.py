@@ -4,7 +4,9 @@ Created on Thu Mar 21 19:30:56 2019
 
 @author: ADMIN
 """
+import glob
 import os
+import shutil
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -135,9 +137,23 @@ def draw_stock_data(stock, draw_candle_stick=True, period=Constants.MONTH, save_
         plt.show()
 
 
+def delete_figure_files():
+    shutil.rmtree(Constants.DATA_FIGURE_PATH)
+    files = glob.glob(Constants.DATA_FIGURE_PATH + "*.*", recursive=True)
+    for f in files:
+        try:
+            os.remove(f)
+        except OSError as e:
+            print("Error: %s : %s" % (f, e.strerror))
+    return
+
+
 def draw(where=None, order=None, sort=None, draw_candle_stick=True, save_fig=False):
     global stock_index
     global stock_tuple_list
+
+    if save_fig:
+        delete_figure_files()
 
     stock_tuple_list = Financial.select(where, order, sort)
 

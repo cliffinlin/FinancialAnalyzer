@@ -456,7 +456,7 @@ class Stock:
                      " r_date=?, time_to_market=? WHERE code=?"
 
         try:
-            connect = sqlite3.connect(Constants.DATABASE_FILE_NAME)
+            connect = sqlite3.connect(Constants.DATA_DATABASE_ORION_DB)
             cursor = connect.cursor()
             cursor.execute(sql_update, (self.mClasses, self.mPinyin,
                                         self.mMark, self.mOperation,
