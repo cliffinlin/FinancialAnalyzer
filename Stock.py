@@ -106,161 +106,281 @@ class Stock:
             self.set_created(stock[DatabaseContract.StockColumn.created.value])
             self.set_modified(stock[DatabaseContract.StockColumn.modified.value])
 
+    def get_id(self):
+        return self.mID;
+
     def set_id(self, id):
         if id is not None:
             self.mID = id
+
+    def get_classes(self):
+        return self.mClasses
 
     def set_classes(self, classes):
         if classes is not None:
             self.mClasses = classes
 
+    def get_symbol(self):
+        return self.mSymbol
+
     def set_symbol(self, symbol):
         if symbol is not None:
             self.mSymbol = symbol
+
+    def get_se(self):
+        return self.mSE
 
     def set_se(self, se):
         if se is not None:
             self.mSE = se
 
+    def get_code(self):
+        return self.mCode
+
     def set_code(self, code):
         if code is not None:
             self.mCode = code
+
+    def get_name(self):
+        return self.mName
 
     def set_name(self, name):
         if name is not None:
             self.mName = name
 
+    def get_pinyin(self):
+        return self.mPinyin
+
     def set_pinyin(self, pinyin):
         if pinyin is not None:
             self.mPinyin = pinyin
+
+    def get_mark(self):
+        return self.mMark
 
     def set_mark(self, mark):
         if mark is not None:
             self.mMark = mark
 
+    def get_price(self):
+        return self.mPrice
+
     def set_price(self, price):
         if price is not None:
             self.mPrice = price
+
+    def get_change(self):
+        return self.mChange
 
     def set_change(self, change):
         if change is not None:
             self.mChange = change
 
+    def get_net(self):
+        return self.mNet
+
     def set_net(self, net):
         if net is not None:
             self.mNet = net
+
+    def get_volume(self):
+        return self.mVolume
 
     def set_volume(self, volume):
         if volume is not None:
             self.mVolume = volume
 
+    def get_value(self):
+        return self.mValue
+
     def set_value(self, value):
         if value is not None:
             self.mValue = value
+
+    def get_operation(self):
+        return self.mOperation
 
     def set_operation(self, operation):
         if operation is not None:
             self.mOperation = operation
 
+    def get_hold(self):
+        return self.mHold
+
     def set_hold(self, hold):
         if hold is not None:
             self.mHold = hold
+
+    def get_cost(self):
+        return self.mCost
 
     def set_cost(self, cost):
         if cost is not None:
             self.mCost = cost
 
+    def get_profit(self):
+        return self.mProfit
+
     def set_profit(self, profit):
         if profit is not None:
             self.mProfit = profit
+
+    def get_total_share(self):
+        return self.mTotalShare
 
     def set_total_share(self, total_share):
         if total_share is not None:
             self.mTotalShare = total_share
 
+    def get_total_assets(self):
+        return self.mTotalAssets
+
     def set_total_assets(self, total_assets):
         if total_assets is not None:
             self.mTotalAssets = total_assets
+
+    def get_total_long_term_liabilities(self):
+        return self.mTotalLongTermLiabilities
 
     def set_total_long_term_liabilities(self, total_long_term_liabilities):
         if total_long_term_liabilities is not None:
             self.mTotalLongTermLiabilities = total_long_term_liabilities
 
+    def get_debt_to_net_assets_ratio(self):
+        return self.mDebtToNetAssetsRatio
+
     def set_debt_to_net_assets_ratio(self, debt_to_net_assets_ratio):
         if debt_to_net_assets_ratio is not None:
             self.mDebtToNetAssetsRatio = debt_to_net_assets_ratio
+
+    def get_book_value_per_share(self):
+        return self.mBookValuePerShare
 
     def set_book_value_per_share(self, book_value_per_share):
         if book_value_per_share is not None:
             self.mBookValuePerShare = book_value_per_share
 
+    def get_cash_flow_per_share(self):
+        return self.mCashFlowPerShare
+
     def set_cash_flow_per_share(self, cash_flow_per_share):
         if cash_flow_per_share is not None:
             self.mCashFlowPerShare = cash_flow_per_share
+
+    def get_net_profit(self):
+        return self.mNetProfit
 
     def set_net_profit(self, net_profit):
         if net_profit is not None:
             self.mNetProfit = net_profit
 
+    def get_net_profit_per_share(self):
+        return self.mNetProfitPerShare
+
     def set_net_profit_per_share(self, net_profit_per_share):
         if net_profit_per_share is not None:
             self.mNetProfitPerShare = net_profit_per_share
+
+    def get_net_profit_per_share_in_year(self):
+        return self.mNetProfitPerShareInYear
 
     def set_net_profit_per_share_in_year(self, net_profit_per_share_in_year):
         if net_profit_per_share_in_year is not None:
             self.mNetProfitPerShareInYear = net_profit_per_share_in_year
 
+    def get_net_profit_per_share_last_year(self):
+        return self.mNetProfitPerShareLastYear
+
     def set_net_profit_per_share_last_year(self, net_profit_per_share_last_year):
         if net_profit_per_share_last_year is not None:
             self.mNetProfitPerShareLastYear = net_profit_per_share_last_year
+
+    def get_rate(self):
+        return self.mRate
 
     def set_rate(self, rate):
         if rate is not None:
             self.mRate = rate
 
+    def get_roi(self):
+        return self.mRoi
+
     def set_roi(self, roi):
         if roi is not None:
             self.mRoi = roi
+
+    def get_roe(self):
+        return self.mRoe
 
     def set_roe(self, roe):
         if roe is not None:
             self.mRoe = roe
 
+    def get_pe(self):
+        return self.mPe
+
     def set_pe(self, pe):
         if pe is not None:
             self.mPe = pe
+
+    def get_pb(self):
+        return self.mPb
 
     def set_pb(self, pb):
         if pb is not None:
             self.mPb = pb
 
+    def get_date(self):
+        return self.mDate
+
     def set_date(self, date):
         if date is not None:
             self.mDate = date
+
+    def get_dividend(self):
+        return self.mDividend
 
     def set_dividend(self, dividend):
         if dividend is not None:
             self.mDividend = dividend
 
+    def get_dividend_yield(self):
+        return self.mDividendYield
+
     def set_dividend_yield(self, dividend_yield):
         if dividend_yield is not None:
             self.mDividendYield = dividend_yield
+
+    def get_delta(self):
+        return self.mDelta
 
     def set_delta(self, delta):
         if delta is not None:
             self.mDelta = delta
 
+    def get_r_date(self):
+        return self.mRDate
+
     def set_r_date(self, r_date):
         if r_date is not None:
             self.mRDate = r_date
+
+    def get_time_to_market(self):
+        return self.mTimeToMarket
 
     def set_time_to_market(self, time_to_market):
         if time_to_market is not None:
             self.mTimeToMarket = time_to_market
 
+    def get_created(self):
+        return self.mCreated
+
     def set_created(self, created):
         if created is not None:
             self.mCreated = created
+
+    def get_modified(self):
+        return self.mModified
 
     def set_modified(self, modified):
         if modified is not None:
@@ -388,7 +508,8 @@ class Stock:
         if self.mNetProfitPerShareInYear <= 0:
             return
 
-        self.mDelta = round(100.0 * self.mDividend / 10.0 / self.mNetProfitPerShareInYear, Constants.DOUBLE_FIXED_DECIMAL)
+        self.mDelta = round(100.0 * self.mDividend / 10.0 / self.mNetProfitPerShareInYear,
+                            Constants.DOUBLE_FIXED_DECIMAL)
 
     def get_insert_tuple(self):
         return tuple((self.mSymbol, self.mSE, self.mCode, self.mName,
@@ -426,16 +547,16 @@ class Stock:
         return result
 
     def to_string(self):
-        result = "\"" + self.mCode + "\"," + " #"\
-                + self.mName + " " \
-                + "roi=" + str(self.mRoi) + " " \
-                + "roe=" + str(self.mRoe) + " " \
-                + "1/pe=" + str(self.mPe) + " " \
-                + "rate=" + str(self.mRate) + " " \
-                + "pb=" + str(self.mPb) + " " \
-                + "dividend=" + str(self.mDividend) + " " \
-                + "yield=" + str(self.mDividendYield) + "% " \
-                + "delta=" + str(self.mDelta) + "%"
+        result = "\"" + self.mCode + "\"," + " #" \
+                 + self.mName + " " \
+                 + "roi=" + str(self.mRoi) + " " \
+                 + "roe=" + str(self.mRoe) + " " \
+                 + "1/pe=" + str(self.mPe) + " " \
+                 + "rate=" + str(self.mRate) + " " \
+                 + "pb=" + str(self.mPb) + " " \
+                 + "dividend=" + str(self.mDividend) + " " \
+                 + "yield=" + str(self.mDividendYield) + "% " \
+                 + "delta=" + str(self.mDelta) + "%"
 
         return result
 

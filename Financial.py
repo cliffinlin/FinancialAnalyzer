@@ -964,19 +964,23 @@ def check_out(stock):
     if stock is None:
         return result
 
+    if black_list_enabled:
+        black_stock_list = BlackList.get_stock_list()
+        if in_check_list(stock, black_stock_list):
+            # print(stock.mName, " in black_list.")
+            return False
+
     if favorite_only:
         favorite_stock_list = Favorite.get_stock_list()
         return in_check_list(stock, favorite_stock_list)
 
-    if black_list_enabled:
-        black_stock_list = BlackList.get_stock_list()
-        return not in_check_list(stock, black_stock_list)
-
     if stock.is_special_treatment():
+        # print(stock.mName, " is special treatment.")
         result = False
     elif stock.is_time_to_market_too_short():
+        # print(stock.mName, " time to market too short.")
         result = False
-    else:
-        result = True
+
+    result = True
 
     return result
