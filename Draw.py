@@ -138,6 +138,9 @@ def draw_stock_data(stock, draw_candle_stick=True, period=Constants.MONTH, save_
 
 
 def delete_figure_files():
+    if not os.path.exists(Constants.DATA_FIGURE_PATH):
+        return
+
     shutil.rmtree(Constants.DATA_FIGURE_PATH)
     files = glob.glob(Constants.DATA_FIGURE_PATH + "*.*", recursive=True)
     for f in files:
