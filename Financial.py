@@ -523,7 +523,7 @@ def write_stock_to_file(stock_tuple_list):
 
     field_name_tuple = tuple(("id", "classes",
                               "se", "code", "name", "pinyin",
-                              "price", "change", "net", "volume", "value",
+                              "price", "change", "net", "volume", "value", "market_value",
                               "mark", "operation", "hold", "cost", "profit",
                               "roi", "roe", "pe", "rate", "pb",
                               "dividend", "dividend_yield", "delta",
@@ -541,7 +541,7 @@ def write_stock_to_file(stock_tuple_list):
             stock_dict = {"id": stock.mID, "classes": stock.mClasses,
                           "se": stock.mSE, "code": stock.mCode, "name": stock.mName, "pinyin": stock.mPinyin,
                           "price": stock.mPrice, "change": stock.mChange, "net": stock.mNet, "volume": stock.mVolume,
-                          "value": stock.mValue,
+                          "value": stock.mValue, "market_value": stock.mMarketValue,
                           "mark": stock.mMark, "operation": stock.mOperation, "hold": stock.mHold, "cost": stock.mCost,
                           "profit": stock.mProfit,
                           "roi": stock.mRoi, "roe": stock.mRoe, "pe": stock.mPe, "rate": stock.mRate, "pb": stock.mPb,
@@ -791,6 +791,7 @@ def analyze_financial_data(stock, financial_data_tuple_list):
     stock.setup_pe()
     stock.setup_pb()
     stock.setup_roi()
+    stock.setup_market_value()
 
     return stock
 

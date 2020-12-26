@@ -17,6 +17,7 @@ class StockColumn(Enum):
     net = auto()
     volume = auto()
     value = auto()
+    market_value = auto()
     operation = auto()
     hold = auto()
     cost = auto()
@@ -60,6 +61,7 @@ SQL_CREATE_TABLE_STOCK = " CREATE TABLE IF NOT EXISTS stock ( " \
                          + StockColumn.net.name + " DOUBLE," \
                          + StockColumn.volume.name + " DOUBLE," \
                          + StockColumn.value.name + " DOUBLE," \
+                         + StockColumn.market_value.name + " DOUBLE," \
                          + StockColumn.operation.name + " INTEGER," \
                          + StockColumn.hold.name + " INTEGER," \
                          + StockColumn.cost.name + " DOUBLE," \

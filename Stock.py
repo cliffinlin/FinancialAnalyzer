@@ -24,6 +24,7 @@ class Stock:
         self.mNet = 0
         self.mVolume = 0
         self.mValue = 0
+        self.mMarketValue = 0
         self.mOperation = 0
         self.mHold = 0
         self.mCost = 0
@@ -76,6 +77,7 @@ class Stock:
             self.set_net(stock[DatabaseContract.StockColumn.net.value])
             self.set_volume(stock[DatabaseContract.StockColumn.volume.value])
             self.set_value(stock[DatabaseContract.StockColumn.value.value])
+            self.set_market_value(stock[DatabaseContract.StockColumn.market_value.value])
             self.set_operation(stock[DatabaseContract.StockColumn.operation.value])
             self.set_hold(stock[DatabaseContract.StockColumn.hold.value])
             self.set_cost(stock[DatabaseContract.StockColumn.cost.value])
@@ -107,7 +109,7 @@ class Stock:
             self.set_modified(stock[DatabaseContract.StockColumn.modified.value])
 
     def get_id(self):
-        return self.mID;
+        return self.mID
 
     def set_id(self, id):
         if id is not None:
@@ -196,6 +198,13 @@ class Stock:
     def set_value(self, value):
         if value is not None:
             self.mValue = value
+
+    def get_market_value(self):
+        return self.mMarketValue
+
+    def set_market_value(self, market_value):
+        if market_value is not None:
+            self.mMarketValue = market_value
 
     def get_operation(self):
         return self.mOperation
@@ -465,7 +474,6 @@ class Stock:
 
     def setup_roi(self):
         self.mRoi = round(self.mRate * self.mRoe * self.mPe * Constants.ROI_COEFFICIENT, Constants.DOUBLE_FIXED_DECIMAL)
-        # self.mRoi = round(self.mRoe * self.mPe * Constants.ROI_COEFFICIENT, Constants.DOUBLE_FIXED_DECIMAL)
 
     def setup_roe(self, financial_data_tuple_list):
         if financial_data_tuple_list is None:
@@ -483,6 +491,13 @@ class Stock:
             return
 
         self.mRoe = round(100.0 * self.mNetProfitPerShareInYear / book_value_per_share, Constants.DOUBLE_FIXED_DECIMAL)
+
+    def setup_market_value(self):
+        if self.mPrice == 0:
+            self.mMarketValue = 0
+            return
+
+        self.mMarketValue = round(self.mPrice * self.mTotalShare / Constants.DOUBLE_CONSTANT_WAN / Constants.DOUBLE_CONSTANT_WAN, Constants.DOUBLE_FIXED_DECIMAL)
 
     def setup_pe(self):
         if self.mPrice == 0:
@@ -556,7 +571,8 @@ class Stock:
                  + "pb=" + str(self.mPb) + " " \
                  + "dividend=" + str(self.mDividend) + " " \
                  + "yield=" + str(self.mDividendYield) + "% " \
-                 + "delta=" + str(self.mDelta) + "%"
+                 + "delta=" + str(self.mDelta) + "% " \
+                 + "market_value=" + str(self.mMarketValue)
 
         return result
 
@@ -565,6 +581,7 @@ class Stock:
         sql_update = "UPDATE stock SET" \
                      " classes=?, pinyin=?," \
                      " mark=?, operation=?," \
+                     " market_value=?," \
                      " total_share=?, total_assets=?, " \
                      " total_long_term_liabilities=?, debt_to_net_assets_ratio=?, " \
                      " book_value_per_share=?, cash_flow_per_share=?, " \
@@ -581,6 +598,7 @@ class Stock:
             cursor = connect.cursor()
             cursor.execute(sql_update, (self.mClasses, self.mPinyin,
                                         self.mMark, self.mOperation,
+                                        self.mMarketValue,
                                         self.mTotalShare, self.mTotalAssets,
                                         self.mTotalLongTermLiabilities, self.mDebtToNetAssetsRatio,
                                         self.mBookValuePerShare, self.mCashFlowPerShare,
