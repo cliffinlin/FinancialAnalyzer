@@ -179,3 +179,22 @@ SQL_CREATE_TABLE_SHARE_BONUS = " CREATE TABLE IF NOT EXISTS share_bonus ( " \
                                + ShareBonusColumn.created.name + " TEXT," \
                                + ShareBonusColumn.modified.name + " TEXT" \
                                + "); "
+
+
+class TotalShareColumn(Enum):
+    id = 0
+    stock_code = auto()
+    date = auto()
+    total_share = auto()
+    created = auto()
+    modified = auto()
+
+
+SQL_CREATE_TABLE_TOTAL_SHARE = " CREATE TABLE IF NOT EXISTS total_share ( " \
+                               + TotalShareColumn.id.name + " INTEGER PRIMARY KEY AUTOINCREMENT," \
+                               + TotalShareColumn.stock_code.name + " TEXT NOT NULL," \
+                               + TotalShareColumn.date.name + " TEXT NOT NULL," \
+                               + TotalShareColumn.total_share.name + " DOUBLE," \
+                               + TotalShareColumn.created.name + " TEXT," \
+                               + TotalShareColumn.modified.name + " TEXT" \
+                               + "); "

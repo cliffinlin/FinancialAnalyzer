@@ -408,3 +408,79 @@ class SinaFinancial:
                 share_bonus_list.append(share_bonus)
 
         return share_bonus_list[::-1]
+
+    def download_total_share(self, stock):
+        total_share = dict()
+        total_share_list = []
+
+        if stock is None:
+            return None
+
+        url = 'http://vip.stock.finance.sina.com.cn/corp/go.php/vCI_StockStructureHistory/stockid/' \
+              + stock.mCode + '/stocktype/TotalStock.phtml'
+
+        print(url)
+
+        content = self.get_content(url)
+
+        if content is None:
+            return None
+
+        html = BeautifulSoup(content, 'html.parser')
+        if html is None:
+            return None
+
+        tables = html.select('table#StockStructureHistoryTable')
+        if tables is None:
+            return None
+
+        tbodys = html.select("tbody")
+        if tbodys is None:
+            return None
+
+        for tbody in tbodys:
+            if tbody is None:
+                return None
+
+            trs = tbody.select("tr")
+            if trs is None:
+                return None
+
+            for tr in trs:
+                if tr is None:
+                    return None
+
+                tds = tr.select("td")
+                if tds is None:
+                    return None
+
+                if len(tds) != 9:
+                    continue
+
+                total_share = dict()
+
+                date_string = tds[0].text
+                if date_string is None or "--" in date_string or "1900-01-01" in date_string:
+                    continue
+
+                dividend_string = tds[3].text
+                if dividend_string is None or "--" in dividend_string:
+                    continue
+
+                r_date_string = tds[6].text
+                if r_date_string is None:
+                    continue
+
+                total_share["date"] = date_string
+
+                if not dividend_string.strip():
+                    dividend_string = "0.0"
+
+                dividend = float(dividend_string)
+                total_share["dividend"] = dividend
+
+                total_share["r_date"] = r_date_string
+
+                total_share_list.append(total_share)
+
+        return total_share_list[::-1]

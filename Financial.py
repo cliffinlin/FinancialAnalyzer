@@ -47,6 +47,7 @@ def setup_database():
             cursor.execute(DatabaseContract.SQL_CREATE_TABLE_STOCK_DATA)
             cursor.execute(DatabaseContract.SQL_CREATE_TABLE_FINANCIAL_DATA)
             cursor.execute(DatabaseContract.SQL_CREATE_TABLE_SHARE_BONUS)
+            cursor.execute(DatabaseContract.SQL_CREATE_TABLE_TOTAL_SHARE)
             connect.commit()
     except sqlite3.Error as e:
         print('e:', e)
@@ -138,6 +139,8 @@ def download():
         download_financial_data(stock)
 
         download_share_bonus(stock)
+
+        download_total_share(stock)
 
         stock.update_to_database()
 
@@ -235,6 +238,19 @@ def download_share_bonus(stock):
     write_share_bonus_to_database(stock.mCode, share_bonus_list)
 
     return share_bonus_list
+
+
+def download_total_share(stock):
+    if stock is None:
+        return None
+
+    sina = SinaFinancial.SinaFinancial()
+
+    total_share_list = sina.download_total_share(stock)
+
+    write_total_share_to_database(stock.mCode, total_share_list)
+
+    return total_share_list
 
 
 def write_stock_list_to_database(stock_list):
@@ -450,6 +466,49 @@ def write_share_bonus_to_database(code, share_bonus_list):
 
             record = tuple((code, date, dividend, r_date,
                             now, now))
+            record_list.append(record)
+
+        cursor.executemany(sql_insert, record_list)
+        connect.commit()
+    except sqlite3.Error as e:
+        print('e:', e)
+    finally:
+        if connect is not None:
+            connect.close()
+
+
+def write_total_share_to_database(code, total_share_list):
+    connect = None
+    record_list = []
+
+    sql_delete = "DELETE FROM total_share WHERE stock_code = ?"
+    sql_insert = "INSERT INTO total_share (stock_code, date, " \
+                 "total_share, " \
+                 "created, modified)" \
+                 " VALUES(?,?," \
+                 "?," \
+                 "?,?)"
+
+    if total_share_list is None:
+        print("total_share_list is None, return")
+        return
+
+    try:
+        connect = get_database_connect()
+        cursor = connect.cursor()
+
+        cursor.execute(sql_delete, (code,))
+
+        index = -1
+        for total_share in total_share_list:
+            index = index + 1
+
+            date = total_share['date']
+            total_share_value = total_share['total_share']
+
+            now = datetime.now().strftime(Constants.DATE_TIME_FORMAT)
+
+            record = tuple((code, date, total_share_value, now, now))
             record_list.append(record)
 
         cursor.executemany(sql_insert, record_list)
