@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import json
 import random
+import re
 import urllib.request
 from contextlib import closing
 from datetime import datetime
@@ -10,6 +11,7 @@ from bs4 import BeautifulSoup  # pip3 install bs4
 from requests.exceptions import RequestException
 
 import Constants
+import Utility
 
 
 class SinaFinancial:
@@ -243,11 +245,11 @@ class SinaFinancial:
         if content is None:
             return None
 
-        html = BeautifulSoup(content, 'html.parser')
-        if html is None:
+        soup = BeautifulSoup(content, 'html.parser')
+        if soup is None:
             return None
 
-        tables = html.select('table#FundHoldSharesTable')
+        tables = soup.select('table#FundHoldSharesTable')
         if tables is None:
             return None
 
@@ -354,11 +356,11 @@ class SinaFinancial:
         if content is None:
             return None
 
-        html = BeautifulSoup(content, 'html.parser')
-        if html is None:
+        soup = BeautifulSoup(content, 'html.parser')
+        if soup is None:
             return None
 
-        tbodys = html.select("tbody")
+        tbodys = soup.select("tbody")
         if tbodys is None:
             return None
 
@@ -410,7 +412,6 @@ class SinaFinancial:
         return share_bonus_list[::-1]
 
     def download_total_share(self, stock):
-        total_share = dict()
         total_share_list = []
 
         if stock is None:
@@ -423,64 +424,50 @@ class SinaFinancial:
 
         content = self.get_content(url)
 
-        if content is None:
+        if Utility.is_empty(content):
             return None
 
-        html = BeautifulSoup(content, 'html.parser')
-        if html is None:
+        soup = BeautifulSoup(content, 'html.parser')
+        if soup is None:
             return None
 
-        tables = html.select('table#StockStructureHistoryTable')
-        if tables is None:
+        tables = soup.findAll(attrs={'id': re.compile("^historyTable")})
+        if Utility.is_empty(tables):
             return None
 
-        tbodys = html.select("tbody")
-        if tbodys is None:
-            return None
+        for table in tables:
+            if Utility.is_empty(table):
+                continue
 
-        for tbody in tbodys:
-            if tbody is None:
-                return None
-
-            trs = tbody.select("tr")
-            if trs is None:
-                return None
+            trs = table.select("tr")
+            if Utility.is_empty(trs):
+                continue
 
             for tr in trs:
-                if tr is None:
-                    return None
+                if Utility.is_empty(tr):
+                    continue
 
                 tds = tr.select("td")
-                if tds is None:
-                    return None
-
-                if len(tds) != 9:
+                if Utility.is_empty(tds):
                     continue
 
-                total_share = dict()
+                for td in tds:
+                    if Utility.is_empty(td):
+                        continue
 
-                date_string = tds[0].text
-                if date_string is None or "--" in date_string or "1900-01-01" in date_string:
-                    continue
+                    text = td.text
 
-                dividend_string = tds[3].text
-                if dividend_string is None or "--" in dividend_string:
-                    continue
+                    if "-" in text:
+                        date_string = text
+                        continue
+                    elif "万股" in text:
+                        total_share_string = text.replace("万股", "")
 
-                r_date_string = tds[6].text
-                if r_date_string is None:
-                    continue
-
-                total_share["date"] = date_string
-
-                if not dividend_string.strip():
-                    dividend_string = "0.0"
-
-                dividend = float(dividend_string)
-                total_share["dividend"] = dividend
-
-                total_share["r_date"] = r_date_string
-
-                total_share_list.append(total_share)
+                        total_share_dict = dict()
+                        total_share_dict["date"] = date_string
+                        total_share_dict["total_share"] = float(total_share_string) * Constants.DOUBLE_CONSTANT_WAN
+                        total_share_list.append(total_share_dict)
+                        # print(total_share)
+                        continue
 
         return total_share_list[::-1]
