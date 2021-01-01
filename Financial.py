@@ -13,18 +13,16 @@ import pandas
 import Constants
 import DatabaseContract
 import SinaFinancial
-from BlackList import BlackList
-from Favorite import Favorite
+import BlackList
+import Favorite
 from FinancialData import FinancialData
 from ShareBonus import ShareBonus
 from Stock import Stock
 from StockData import StockData
 
 favorite_only = True
-Favorite = Favorite()
 
 black_list_enabled = True
-BlackList = BlackList()
 
 
 def get_database_connect():
@@ -158,7 +156,7 @@ def download_stock_list():
     stock_list = list()
 
     while page:
-        result = SinaFinancial.SinaFinancial().download_stock_list(page)
+        result = SinaFinancial.download_stock_list(page)
         if result is None:
             break
         stock_list += result
@@ -176,15 +174,13 @@ def download_stock_data(stock):
     if stock is None:
         return None
 
-    sina = SinaFinancial.SinaFinancial()
-
     # stock_data_day_list = sina.download_stock_data(stock, -1, DAY)
     # write_stock_data_to_database(DAY, stock.mCode, stock_data_day_list)
     #
     # stock_data_week_list = sina.download_stock_data(stock, -1, WEEK)
     # write_stock_data_to_database(WEEK, stock.mCode, stock_data_week_list)
 
-    stock_data_month_list = sina.download_stock_data(stock, -1)
+    stock_data_month_list = SinaFinancial.download_stock_data(stock, -1)
     write_stock_data_to_database(stock.mCode, stock_data_month_list)
 
     return stock_data_month_list
@@ -194,9 +190,7 @@ def download_information_data(stock):
     if stock is None:
         return None
 
-    sina = SinaFinancial.SinaFinancial()
-
-    information_data_list = sina.download_stock_information(stock)
+    information_data_list = SinaFinancial.download_stock_information(stock)
 
     if information_data_list is not None:
         string = information_data_list[0]
@@ -214,9 +208,7 @@ def download_financial_data(stock):
     if stock is None:
         return None
 
-    sina = SinaFinancial.SinaFinancial()
-
-    financial_data_list = sina.download_financial_data(stock)
+    financial_data_list = SinaFinancial.download_financial_data(stock)
 
     if financial_data_list is None:
         print("download_financial_data", "download_financial_data is None, return")
@@ -231,9 +223,7 @@ def download_share_bonus(stock):
     if stock is None:
         return None
 
-    sina = SinaFinancial.SinaFinancial()
-
-    share_bonus_list = sina.download_share_bonus(stock)
+    share_bonus_list = SinaFinancial.download_share_bonus(stock)
 
     write_share_bonus_to_database(stock.mCode, share_bonus_list)
 
@@ -244,9 +234,7 @@ def download_total_share(stock):
     if stock is None:
         return None
 
-    sina = SinaFinancial.SinaFinancial()
-
-    total_share_list = sina.download_total_share(stock)
+    total_share_list = SinaFinancial.download_total_share(stock)
 
     write_total_share_to_database(stock.mCode, total_share_list)
 
@@ -1025,14 +1013,12 @@ def check_out(stock):
         return result
 
     if black_list_enabled:
-        black_stock_list = BlackList.get_stock_list()
-        if in_check_list(stock, black_stock_list):
+        if in_check_list(stock, BlackList.stock_list):
             # print(stock.mName, " in black_list.")
             return False
 
     if favorite_only:
-        favorite_stock_list = Favorite.get_stock_list()
-        return in_check_list(stock, favorite_stock_list)
+        return in_check_list(stock, Favorite.stock_list)
 
     if stock.is_special_treatment():
         # print(stock.mName, " is special treatment.")
