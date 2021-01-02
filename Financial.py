@@ -70,11 +70,8 @@ def download():
         stock.set_time_to_market(time_to_market)
 
         download_information_data(stock)
-
         download_financial_data(stock)
-
         download_share_bonus(stock)
-
         download_total_share(stock)
 
         stock.update_to_database()
@@ -82,8 +79,6 @@ def download():
     Utility.write_download_index_to_config_ini(0)
 
     print("download done")
-
-    analyze()
 
 
 def download_stock_list():
@@ -674,6 +669,14 @@ def read_share_bonus_from_database(stock):
                                                 (stock.mCode,))
 
 
+def read_total_share_from_database(stock):
+    if stock is None:
+        return None
+
+    return Utility.get_tuple_list_from_database("SELECT * FROM total_share WHERE stock_code = ?  order by date desc",
+                                                (stock.mCode,))
+
+
 def analyze_financial_data(stock, financial_data_tuple_list):
     if stock is None:
         return stock
@@ -685,7 +688,7 @@ def analyze_financial_data(stock, financial_data_tuple_list):
         return stock
 
     financial_data = FinancialData(financial_data_tuple_list[0])
-    if Utility.is_empty(financial_data):
+    if financial_data is None:
         return stock
 
     stock.set_total_assets(financial_data.total_assets)
@@ -726,7 +729,7 @@ def analyze_share_bonus(stock, share_bonus_tuple_list):
             break
 
         share_bonus = ShareBonus(share_bonus_tuple)
-        if Utility.is_empty(share_bonus):
+        if share_bonus is None:
             break
 
         if Utility.is_empty(share_bonus.date):
@@ -759,6 +762,9 @@ def analyze_share_bonus(stock, share_bonus_tuple_list):
 
 def analyze():
     stock_tuple_list = read_stock_tuple_list_from_database()
+    if Utility.is_empty(stock_tuple_list):
+        print("stock_tuple_list is empty, return")
+        return
 
     count = 0
     index = -1
@@ -781,6 +787,7 @@ def analyze():
         stock_data_tuple_list = read_stock_data_from_database(stock)
         financial_data_tuple_list = read_financial_data_from_database(stock)
         share_bonus_tuple_list = read_share_bonus_from_database(stock)
+        total_share_tuple_list = read_total_share_from_database(stock)
 
         stock = analyze_financial_data(stock, financial_data_tuple_list)
         stock = analyze_share_bonus(stock, share_bonus_tuple_list)

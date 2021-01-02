@@ -257,7 +257,7 @@ def download_financial_data(stock):
 
             tds = tr.select("td")
             if Utility.is_empty(tds):
-                return None
+                continue
 
             if len(tds) < 2:
                 continue
@@ -402,7 +402,7 @@ def download_share_bonus(stock):
 
             share_bonus_list.append(share_bonus)
 
-    return share_bonus_list[::-1]
+    return share_bonus_list
 
 
 def download_total_share(stock):
@@ -465,4 +465,4 @@ def download_total_share(stock):
                     # print(total_share)
                     continue
 
-    return total_share_list[::-1]
+    return total_share_list
