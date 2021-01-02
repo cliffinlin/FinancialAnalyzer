@@ -194,7 +194,7 @@ def write_stock_list_to_database(stock_list):
 
         cursor = connect.cursor()
         cursor.execute(query_sql)
-        if cursor.fetchone() is None:
+        if Utility.is_empty(cursor.fetchone()):
             executemany = True
 
         for stock_dict in stock_list:
@@ -209,8 +209,7 @@ def write_stock_list_to_database(stock_list):
             else:
                 sql_check_record_exist = Stock.get_query_sql(where="code=?")
                 cursor.execute(sql_check_record_exist, (stock.mCode,))
-                stock_tuple = cursor.fetchone()
-                if stock_tuple is None:
+                if Utility.is_empty(cursor.fetchone()):
                     stock.set_created(now)
                     stock.set_modified(now)
                     insert_tuple = stock.get_insert_tuple()
@@ -478,10 +477,7 @@ def read_stock_from_file():
 
 
 def write_stock_to_file(stock_tuple_list):
-    if stock_tuple_list is None:
-        return
-
-    if len(stock_tuple_list) == 0:
+    if Utility.is_empty(stock_tuple_list):
         return
 
     file_name = get_stock_file_name()
@@ -520,10 +516,7 @@ def write_stock_data_to_file(stock, stock_data_tuple_list, period=Constants.MONT
     if stock is None:
         return
 
-    if stock_data_tuple_list is None:
-        return
-
-    if len(stock_data_tuple_list) == 0:
+    if Utility.is_empty(stock_data_tuple_list):
         return
 
     file_name = get_stock_data_file_name(stock, period)
@@ -548,10 +541,7 @@ def write_financial_data_to_file(stock, financial_data_tuple_list):
     if stock is None:
         return
 
-    if financial_data_tuple_list is None:
-        return
-
-    if len(financial_data_tuple_list) == 0:
+    if Utility.is_empty(financial_data_tuple_list):
         return
 
     file_name = get_financial_data_file_name(stock)
@@ -594,10 +584,7 @@ def write_share_bonus_to_file(stock, share_bonus_tuple_list):
     if stock is None:
         return
 
-    if share_bonus_tuple_list is None:
-        return
-
-    if len(share_bonus_tuple_list) == 0:
+    if Utility.is_empty(share_bonus_tuple_list):
         return
 
     file_name = get_share_bonus_file_name(stock)
@@ -691,14 +678,14 @@ def analyze_financial_data(stock, financial_data_tuple_list):
     if stock is None:
         return stock
 
-    if financial_data_tuple_list is None:
+    if Utility.is_empty(financial_data_tuple_list):
         return stock
 
     if len(financial_data_tuple_list) < 2 * Constants.SEASONS_IN_A_YEAR + 1:
         return stock
 
     financial_data = FinancialData(financial_data_tuple_list[0])
-    if financial_data is None:
+    if Utility.is_empty(financial_data):
         return stock
 
     stock.set_total_assets(financial_data.total_assets)
@@ -728,26 +715,25 @@ def analyze_share_bonus(stock, share_bonus_tuple_list):
     if stock is None:
         return stock
 
-    if share_bonus_tuple_list is None:
+    if Utility.is_empty(share_bonus_tuple_list):
         return stock
 
     index = -1
     for share_bonus_tuple in share_bonus_tuple_list:
         index = index + 1
 
-        if share_bonus_tuple is None:
+        if Utility.is_empty(share_bonus_tuple):
             break
 
         share_bonus = ShareBonus(share_bonus_tuple)
-        if share_bonus is None:
+        if Utility.is_empty(share_bonus):
             break
 
-        if share_bonus.date is None:
+        if Utility.is_empty(share_bonus.date):
             break
 
         strings = share_bonus.date.split("-")
-
-        if strings is None or len(strings) == 0:
+        if Utility.is_empty(strings):
             break
 
         year = strings[0]
@@ -873,7 +859,7 @@ def in_check_list(stock, check_list):
     if stock is None:
         return result
 
-    if check_list is None:
+    if Utility.is_empty(check_list):
         return result
 
     if stock.mCode in check_list:

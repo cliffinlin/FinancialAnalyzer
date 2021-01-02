@@ -179,8 +179,8 @@ def download_stock_data(stock, length, period=Constants.MONTH):
     except Exception:
         print("urllib.request.urlopen(url).read().decode() error")
 
-    if content is None:
-        print("content is None, return")
+    if Utility.is_empty(content):
+        print("content is empty, return")
         return None
 
     content = content.replace('day', 'date')
@@ -208,8 +208,8 @@ def download_stock_information(stock):
     except Exception:
         print("urllib.request.urlopen(url).read().decode() error")
 
-    if content is None:
-        print("content is None, return")
+    if Utility.is_empty(content):
+        print("content is empty, return")
         return None
 
     value_list = content.split(",")
@@ -232,46 +232,46 @@ def download_financial_data(stock):
 
     content = get_content(url)
 
-    if content is None:
+    if Utility.is_empty(content):
         return None
 
     soup = BeautifulSoup(content, 'html.parser')
-    if soup is None:
+    if Utility.is_empty(soup):
         return None
 
     tables = soup.select('table#FundHoldSharesTable')
-    if tables is None:
+    if Utility.is_empty(tables):
         return None
 
     for table in tables:
-        if table is None:
+        if Utility.is_empty(table):
             return None
 
         trs = table.select("tr")
-        if trs is None:
+        if Utility.is_empty(trs):
             return None
 
         for tr in trs:
-            if tr is None:
+            if Utility.is_empty(tr):
                 return None
 
             tds = tr.select("td")
-            if tds is None:
+            if Utility.is_empty(tds):
                 return None
 
             if len(tds) < 2:
                 continue
 
             key_string = tds[0].text
-            if key_string is None:
+            if Utility.is_empty(key_string):
                 continue
 
             value_string = tds[1].text
-            if value_string is None:
+            if Utility.is_empty(value_string):
                 continue
 
             if '截止日期' in key_string:
-                if value_string is None:
+                if Utility.is_empty(value_string):
                     continue
 
                 # if stock.mTimeToMarket is not None:
@@ -346,27 +346,27 @@ def download_share_bonus(stock):
         return None
 
     soup = BeautifulSoup(content, 'html.parser')
-    if soup is None:
+    if Utility.is_empty(soup):
         return None
 
     tbodys = soup.select("tbody")
-    if tbodys is None:
+    if Utility.is_empty(tbodys):
         return None
 
     for tbody in tbodys:
-        if tbody is None:
+        if Utility.is_empty(tbody):
             return None
 
         trs = tbody.select("tr")
-        if trs is None:
+        if Utility.is_empty(trs):
             return None
 
         for tr in trs:
-            if tr is None:
+            if Utility.is_empty(tr):
                 return None
 
             tds = tr.select("td")
-            if tds is None:
+            if Utility.is_empty(tds):
                 return None
 
             if len(tds) != 9:
@@ -375,15 +375,19 @@ def download_share_bonus(stock):
             share_bonus = dict()
 
             date_string = tds[0].text
-            if date_string is None or "--" in date_string or "1900-01-01" in date_string:
+            if Utility.is_empty(date_string):
+                continue
+            if "--" in date_string or "1900-01-01" in date_string:
                 continue
 
             dividend_string = tds[3].text
-            if dividend_string is None or "--" in dividend_string:
+            if Utility.is_empty(dividend_string):
+                continue
+            if "--" in dividend_string:
                 continue
 
             r_date_string = tds[6].text
-            if r_date_string is None:
+            if Utility.is_empty(r_date_string):
                 continue
 
             share_bonus["date"] = date_string
@@ -419,7 +423,7 @@ def download_total_share(stock):
         return None
 
     soup = BeautifulSoup(content, 'html.parser')
-    if soup is None:
+    if Utility.is_empty(soup):
         return None
 
     tables = soup.findAll(attrs={'id': re.compile("^historyTable")})
