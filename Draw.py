@@ -130,7 +130,7 @@ def draw_stock_data(stock, draw_candle_stick=True, period=Constants.MONTH, save_
     plt.title(stock.to_string())
 
     if save_fig:
-        fig.savefig(Constants.DATA_FIGURE_PATH + stock.mName)
+        fig.savefig(Constants.DATA_FIGURE_PATH + stock.get_name())
         plt.close(fig)
     else:
         plt.show()

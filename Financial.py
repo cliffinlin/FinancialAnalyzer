@@ -62,7 +62,7 @@ def download():
         if not check_out(stock):
             continue
 
-        print(i, stock.mCode, stock.mName)
+        print(i, stock.get_code(), stock.get_name())
 
         stock_data_list = download_stock_data(stock)
 
@@ -106,13 +106,13 @@ def download_stock_data(stock):
         return None
 
     # stock_data_day_list = sina.download_stock_data(stock, -1, DAY)
-    # write_stock_data_to_database(DAY, stock.mCode, stock_data_day_list)
+    # write_stock_data_to_database(DAY, stock.get_code(), stock_data_day_list)
     #
     # stock_data_week_list = sina.download_stock_data(stock, -1, WEEK)
-    # write_stock_data_to_database(WEEK, stock.mCode, stock_data_week_list)
+    # write_stock_data_to_database(WEEK, stock.get_code(), stock_data_week_list)
 
     stock_data_month_list = SinaFinancial.download_stock_data(stock, -1)
-    write_stock_data_to_database(stock.mCode, stock_data_month_list)
+    write_stock_data_to_database(stock.get_code(), stock_data_month_list)
 
     return stock_data_month_list
 
@@ -141,7 +141,7 @@ def download_financial_data(stock):
 
     financial_data_list = SinaFinancial.download_financial_data(stock)
 
-    write_financial_data_to_database(stock.mCode, financial_data_list)
+    write_financial_data_to_database(stock.get_code(), financial_data_list)
 
     return financial_data_list
 
@@ -152,7 +152,7 @@ def download_share_bonus(stock):
 
     share_bonus_list = SinaFinancial.download_share_bonus(stock)
 
-    write_share_bonus_to_database(stock.mCode, share_bonus_list)
+    write_share_bonus_to_database(stock.get_code(), share_bonus_list)
 
     return share_bonus_list
 
@@ -163,7 +163,7 @@ def download_total_share(stock):
 
     total_share_list = SinaFinancial.download_total_share(stock)
 
-    write_total_share_to_database(stock.mCode, total_share_list)
+    write_total_share_to_database(stock.get_code(), total_share_list)
 
     return total_share_list
 
@@ -203,7 +203,7 @@ def write_stock_list_to_database(stock_list):
                 insert_tuple_list.append(insert_tuple)
             else:
                 sql_check_record_exist = Stock.get_query_sql(where="code=?")
-                cursor.execute(sql_check_record_exist, (stock.mCode,))
+                cursor.execute(sql_check_record_exist, (stock.get_code(),))
                 if Utility.is_empty(cursor.fetchone()):
                     stock.set_created(now)
                     stock.set_modified(now)
@@ -428,21 +428,21 @@ def get_stock_data_file_name(stock, period=Constants.MONTH):
     if stock is None:
         return None
     else:
-        return "./data/stock/" + period + "/" + stock.mCode + ".csv"
+        return "./data/stock/" + period + "/" + stock.get_code() + ".csv"
 
 
 def get_financial_data_file_name(stock):
     if stock is None:
         return None
     else:
-        return "./data/financial/" + stock.mCode + ".csv"
+        return "./data/financial/" + stock.get_code() + ".csv"
 
 
 def get_share_bonus_file_name(stock):
     if stock is None:
         return None
     else:
-        return "./data/share_bonus/" + stock.mCode + ".csv"
+        return "./data/share_bonus/" + stock.get_code() + ".csv"
 
 
 def get_value_string_by_key(key, dictionary):
@@ -482,7 +482,7 @@ def write_stock_to_file(stock_tuple_list):
                               "price", "change", "net", "volume", "value", "market_value",
                               "mark", "operation", "hold", "cost", "profit",
                               "roi", "roe", "pe", "rate", "pb",
-                              "dividend", "dividend_yield", "delta",
+                              "dividend", "dividend_yield", "dividend_ratio",
                               "total_share", "time_to_market", "created", "modified"))
 
     with open(file_name, 'w', newline='') as csv_file:
@@ -494,16 +494,16 @@ def write_stock_to_file(stock_tuple_list):
             if stock is None:
                 continue
 
-            stock_dict = {"id": stock.mID, "classes": stock.mClasses,
-                          "se": stock.mSE, "code": stock.mCode, "name": stock.mName, "pinyin": stock.mPinyin,
-                          "price": stock.mPrice, "change": stock.mChange, "net": stock.mNet, "volume": stock.mVolume,
-                          "value": stock.mValue, "market_value": stock.mMarketValue,
-                          "mark": stock.mMark, "operation": stock.mOperation, "hold": stock.mHold, "cost": stock.mCost,
-                          "profit": stock.mProfit,
-                          "roi": stock.mRoi, "roe": stock.mRoe, "pe": stock.mPe, "rate": stock.mRate, "pb": stock.mPb,
-                          "dividend": stock.mDividend, "dividend_yield": stock.mDividendYield, "delta": stock.mDelta,
-                          "total_share": stock.mTotalShare, "time_to_market": stock.mTimeToMarket,
-                          "created": stock.mCreated, "modified": stock.mModified}
+            stock_dict = {"id": stock.get_id(), "classes": stock.get_classes(),
+                          "se": stock.get_se(), "code": stock.get_code(), "name": stock.get_name(), "pinyin": stock.get_pinyin(),
+                          "price": stock.get_price(), "change": stock.get_change(), "net": stock.get_net(), "volume": stock.get_volume(),
+                          "value": stock.get_value(), "market_value": stock.get_market_value(),
+                          "mark": stock.get_mark(), "operation": stock.get_operation(), "hold": stock.get_hold(), "cost": stock.get_cost(),
+                          "profit": stock.get_profit(),
+                          "roi": stock.get_roi(), "roe": stock.get_roe(), "pe": stock.get_pe(), "rate": stock.get_rate(), "pb": stock.get_pb(),
+                          "dividend": stock.get_dividend(), "dividend_yield": stock.get_dividend_yield(), "dividend_ratio": stock.get_dividend_ratio(),
+                          "total_share": stock.get_total_share(), "time_to_market": stock.get_time_to_market(),
+                          "created": stock.get_created(), "modified": stock.get_modified()}
             writer.writerow(stock_dict)
 
 
@@ -650,7 +650,7 @@ def read_stock_data_from_database(stock, period=Constants.MONTH):
         return None
 
     return Utility.get_tuple_list_from_database("SELECT * FROM stock_data WHERE stock_code = ? AND period = ?  order "
-                                                "by date desc", (stock.mCode, period))
+                                                "by date desc", (stock.get_code(), period))
 
 
 def read_financial_data_from_database(stock):
@@ -658,7 +658,7 @@ def read_financial_data_from_database(stock):
         return None
 
     return Utility.get_tuple_list_from_database("SELECT * FROM financial_data WHERE stock_code = ?  order by date desc",
-                                                (stock.mCode,))
+                                                (stock.get_code(),))
 
 
 def read_share_bonus_from_database(stock):
@@ -666,7 +666,7 @@ def read_share_bonus_from_database(stock):
         return None
 
     return Utility.get_tuple_list_from_database("SELECT * FROM share_bonus WHERE stock_code = ?  order by date desc",
-                                                (stock.mCode,))
+                                                (stock.get_code(),))
 
 
 def read_total_share_from_database(stock):
@@ -674,7 +674,7 @@ def read_total_share_from_database(stock):
         return None
 
     return Utility.get_tuple_list_from_database("SELECT * FROM total_share WHERE stock_code = ?  order by date desc",
-                                                (stock.mCode,))
+                                                (stock.get_code(),))
 
 
 def analyze_financial_data(stock, financial_data_tuple_list):
@@ -753,7 +753,7 @@ def analyze_share_bonus(stock, share_bonus_tuple_list):
 
         stock.set_dividend(round(total_divident, Constants.DOUBLE_FIXED_DECIMAL))
         stock.setup_dividend_yield()
-        stock.setup_delta()
+        stock.setup_dividend_ratio()
 
         prev_year = year
 
@@ -782,7 +782,7 @@ def analyze():
 
         count += 1
 
-        print(index, stock.mCode, stock.mName)
+        print(index, stock.get_code(), stock.get_name())
 
         stock_data_tuple_list = read_stock_data_from_database(stock)
         financial_data_tuple_list = read_financial_data_from_database(stock)
@@ -818,22 +818,22 @@ def select(where=None, order=None, sort=None):
 
         print(stock.to_string())
 
-        stock_code_file.write(stock.mCode + "\n")
+        stock_code_file.write(stock.get_code() + "\n")
 
         stock_element = ET.Element("stock")
         root.append(stock_element)
 
-        if stock.mSE is not None:
+        if stock.get_se() is not None:
             stock_se = ET.SubElement(stock_element, "se")
-            stock_se.text = stock.mSE
+            stock_se.text = stock.get_se()
 
-        if stock.mCode is not None:
+        if stock.get_code() is not None:
             stock_code = ET.SubElement(stock_element, "code")
-            stock_code.text = stock.mCode
+            stock_code.text = stock.get_code()
 
-        if stock.mName is not None:
+        if stock.get_name() is not None:
             stock_name = ET.SubElement(stock_element, "name")
-            stock_name.text = stock.mName
+            stock_name.text = stock.get_name()
 
     print("select done, count=", count)
 
@@ -869,7 +869,7 @@ def in_check_list(stock, check_list):
     if Utility.is_empty(check_list):
         return result
 
-    if stock.mCode in check_list:
+    if stock.get_code() in check_list:
         result = True
 
     return result

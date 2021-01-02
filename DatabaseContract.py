@@ -40,7 +40,7 @@ class StockColumn(Enum):
     date = auto()
     dividend = auto()
     dividend_yield = auto()
-    delta = auto()
+    dividend_ratio = auto()
     r_date = auto()
     time_to_market = auto()
     created = auto()
@@ -84,7 +84,7 @@ SQL_CREATE_TABLE_STOCK = " CREATE TABLE IF NOT EXISTS stock ( " \
                          + StockColumn.date.name + " TEXT," \
                          + StockColumn.dividend.name + " DOUBLE," \
                          + StockColumn.dividend_yield.name + " DOUBLE," \
-                         + StockColumn.delta.name + " DOUBLE," \
+                         + StockColumn.dividend_ratio.name + " DOUBLE," \
                          + StockColumn.r_date.name + " TEXT," \
                          + StockColumn.time_to_market.name + " TEXT," \
                          + StockColumn.created.name + " TEXT," \

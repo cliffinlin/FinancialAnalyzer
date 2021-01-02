@@ -153,7 +153,7 @@ def download_stock_data(stock, length, period=Constants.MONTH):
 
     url = "http://money.finance.sina.com.cn/quotes_service/api/json_v2.php/CN_MarketData.getKLineData?"
 
-    symbol = "&symbol=" + stock.mSymbol
+    symbol = "&symbol=" + stock.get_symbol()
 
     # for day 240, week 1680, month 7200
     if period == Constants.DAY:
@@ -197,7 +197,7 @@ def download_stock_information(stock):
     if stock is None:
         return None
 
-    url = 'http://hq.sinajs.cn/list=' + stock.mSymbol + '_i'
+    url = 'http://hq.sinajs.cn/list=' + stock.get_symbol() + '_i'
 
     print(url)
 
@@ -226,7 +226,7 @@ def download_financial_data(stock):
         return None
 
     url = 'http://money.finance.sina.com.cn/corp/go.php/vFD_FinanceSummary/stockid/' \
-          + stock.mCode + '.phtml'
+          + stock.get_code() + '.phtml'
 
     print(url)
 
@@ -274,9 +274,9 @@ def download_financial_data(stock):
                 if Utility.is_empty(value_string):
                     continue
 
-                # if stock.mTimeToMarket is not None:
+                # if stock.get_time_to_market() is not None:
                 #     if datetime.strptime(value_string, Constants.DATE_FORMAT) \
-                #             < datetime.strptime(stock.mTimeToMarket, Constants.DATE_FORMAT):
+                #             < datetime.strptime(stock.get_time_to_market(), Constants.DATE_FORMAT):
                 #         return financial_data_list[::-1]
 
                 financial_data = dict()
@@ -318,9 +318,9 @@ def download_financial_data(stock):
                 elif '净利润' in key_string:
                     financial_data["net_profit"] = value
 
-                    if stock.mTotalShare != 0:
+                    if stock.get_total_share() != 0:
                         financial_data["net_profit_per_share"] = float(value) / float(
-                            stock.mTotalShare)
+                            stock.get_total_share())
                     else:
                         financial_data["net_profit_per_share"] = 0
 
@@ -336,7 +336,7 @@ def download_share_bonus(stock):
         return None
 
     url = 'http://money.finance.sina.com.cn/corp/go.php/vISSUE_ShareBonus/stockid/' \
-          + stock.mCode + '.phtml'
+          + stock.get_code() + '.phtml'
 
     print(url)
 
@@ -413,7 +413,7 @@ def download_total_share(stock):
         return None
 
     url = 'http://vip.stock.finance.sina.com.cn/corp/go.php/vCI_StockStructureHistory/stockid/' \
-          + stock.mCode + '/stocktype/TotalStock.phtml'
+          + stock.get_code() + '/stocktype/TotalStock.phtml'
 
     print(url)
 

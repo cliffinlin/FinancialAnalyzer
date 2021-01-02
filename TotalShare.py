@@ -21,25 +21,43 @@ class TotalShare:
         self.set_created(total_share_tuple[DatabaseContract.TotalShareColumn.created.value])
         self.set_modified(total_share_tuple[DatabaseContract.TotalShareColumn.modified.value])
 
+    def get_id(self):
+        return self.id
+
     def set_id(self, id):
         if id is not None:
             self.id = id
+
+    def get_stock_code(self):
+        return self.stock_code
 
     def set_stock_code(self, stock_code):
         if stock_code is not None:
             self.stock_code = stock_code
 
+    def get_date(self):
+        return self.date
+
     def set_date(self, date):
         if date is not None:
             self.date = date
+
+    def get_total_share(self):
+        return self.total_share
 
     def set_total_share(self, total_share):
         if total_share is not None:
             self.total_share = total_share
 
+    def get_created(self):
+        return self.created
+
     def set_created(self, created):
         if created is not None:
             self.created = created
+
+    def get_modified(self):
+        return self.modified
 
     def set_modified(self, modified):
         if modified is not None:
