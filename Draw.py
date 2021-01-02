@@ -6,7 +6,6 @@ Created on Thu Mar 21 19:30:56 2019
 """
 import glob
 import os
-import shutil
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -138,10 +137,10 @@ def draw_stock_data(stock, draw_candle_stick=True, period=Constants.MONTH, save_
 
 
 def delete_figure_files():
+    print(delete_figure_files.__name__)
     if not os.path.exists(Constants.DATA_FIGURE_PATH):
         return
 
-    shutil.rmtree(Constants.DATA_FIGURE_PATH)
     files = glob.glob(Constants.DATA_FIGURE_PATH + "*.*", recursive=True)
     for f in files:
         try:
@@ -176,88 +175,3 @@ def draw(where=None, order=None, sort=None, draw_candle_stick=True, save_fig=Fal
         Financial.write_to_file(stock)
 
         draw_stock_data(stock, draw_candle_stick=draw_candle_stick, save_fig=save_fig)
-
-
-def draw_line():
-    global stock_index
-    global stock_tuple_list
-
-    if stock_tuple_list is None:
-        return
-
-    stock = Financial.Stock(stock_tuple_list[stock_index])
-    Financial.write_to_file(stock)
-
-    plt.clf()
-
-    # # Pandas 无法显示中文问题 解决方案##
-    plt.rcParams['font.sans-serif'] = ['KaiTi']
-    plt.rcParams['font.serif'] = ['KaiTi']
-
-    title = stock.mName + " " + stock.mCode \
-            + " roi " + str(stock.mRoi) \
-            + " roe " + str(stock.mRoe) \
-            + " pe " + str(stock.mPe) \
-            + " pb " + str(stock.mPb) \
-            + " dividend " + str(stock.mDividend) \
-            + " yield " + str(stock.mDividendYield) + "% " \
-            + " roe " + str(stock.mRoe) \
-            + " rate " + str(stock.mRate)
-    plt.title(title)
-
-    print(title)
-
-    plt.plot(data ** power)
-
-
-def on_keyboard(event):
-    global data
-    global power
-
-    global stock_index
-    global stock_tuple_list
-
-    if event.key == 'right':
-        power += 1
-        if power > len(stock_tuple_list) - 1:
-            power = len(stock_tuple_list) - 1
-
-        stock_index += 1
-        if stock_index > len(stock_tuple_list) - 1:
-            stock_index = len(stock_tuple_list) - 1
-            return
-    elif event.key == 'left':
-        power -= 1
-        if power < 0:
-            power = 0
-
-        stock_index -= 1
-        if stock_index < 0:
-            stock_index = 0
-            return
-
-    draw_line()
-
-    plt.draw()
-
-
-def test(where=None, order=None, sort=None):
-    global data
-    global power
-    global stock_index
-    global stock_tuple_list
-
-    data = np.linspace(1, 100)
-    power = 0
-
-    plt.gcf().canvas.mpl_connect('key_press_event', on_keyboard)
-
-    stock_index = 0
-    stock_tuple_list = Financial.select(where, order, sort)
-
-    if stock_tuple_list is None:
-        return
-
-    draw_line()
-
-    plt.show()

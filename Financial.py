@@ -1,107 +1,51 @@
 # -*- coding: utf-8 -*-
 import csv
-import os
 import random
 import sqlite3
 import time
+import xml.etree.ElementTree as ET
 from configparser import ConfigParser
 from datetime import datetime
-import xml.etree.ElementTree as ET
 
 import pandas
 
-import Constants
-import DatabaseContract
-import SinaFinancial
 import BlackList
+import Constants
 import Favorite
+import SinaFinancial
+import Utility
 from FinancialData import FinancialData
 from ShareBonus import ShareBonus
 from Stock import Stock
 from StockData import StockData
 
 favorite_only = True
-
 black_list_enabled = True
 
 
-def get_database_connect():
-    return sqlite3.connect(Constants.DATA_DATABASE_ORION_DB)
-
-
-def setup_database():
-    connect = None
-
-    print("setup_database")
-
-    make_data_directory()
-
-    try:
-        connect = get_database_connect()
-        if connect is not None:
-            cursor = connect.cursor()
-
-            cursor.execute(DatabaseContract.SQL_CREATE_TABLE_STOCK)
-            cursor.execute(DatabaseContract.SQL_CREATE_TABLE_STOCK_DATA)
-            cursor.execute(DatabaseContract.SQL_CREATE_TABLE_FINANCIAL_DATA)
-            cursor.execute(DatabaseContract.SQL_CREATE_TABLE_SHARE_BONUS)
-            cursor.execute(DatabaseContract.SQL_CREATE_TABLE_TOTAL_SHARE)
-            connect.commit()
-    except sqlite3.Error as e:
-        print('e:', e)
-    finally:
-        if connect is not None:
-            connect.close()
-
-
-def setup_directory(directory):
-    if not os.path.exists(directory):
-        os.makedirs(directory)
-
-
-def make_data_directory():
-    setup_directory(Constants.DATA_PATH)
-    setup_directory(Constants.DATA_DATABASE_PATH)
-    setup_directory(Constants.DATA_FIGURE_PATH)
-    setup_directory(Constants.DATA_FINANCIAL_PATH)
-    setup_directory(Constants.DATA_SHARE_BONUS_PATH)
-    setup_directory(Constants.DATA_STOCK_PATH)
-    setup_directory(Constants.DATA_STOCK_DAY_PATH)
-    setup_directory(Constants.DATA_STOCK_WEEK_PATH)
-    setup_directory(Constants.DATA_STOCK_MONTH_PATH)
-
-
+# TODO stock_data_list
 def get_time_to_market(stock_data_list):
     time_to_market = None
 
-    if stock_data_list is None:
+    if Utility.is_empty(stock_data_list):
         return time_to_market
 
-    if stock_data_list is not None:
-        time_to_market = stock_data_list[0]["date"]
+    time_to_market = stock_data_list[0]["date"]
 
     return time_to_market
 
 
 def download():
-    setup_database()
+    print(download.__name__)
 
     download_stock_list()
 
     stock_tuple_list = read_stock_tuple_list_from_database()
-    if stock_tuple_list is None:
-        print("stock_tuple_list is None")
+    if Utility.is_empty(stock_tuple_list):
+        print("stock_tuple_list is empty, return")
         return
 
-    config = ConfigParser()
-    config.read('config.ini')
-    if not config.has_section("download"):
-        config.add_section('download')
-        config.set('download', 'index', "0")
-        with open('config.ini', 'w') as f:
-            config.write(f)
-
-    index = int(config.get('download', 'index'))
+    index = Utility.read_download_index_from_config_ini()
 
     i = 0
     for stock_tuple in stock_tuple_list:
@@ -109,9 +53,7 @@ def download():
         if i < index:
             continue
 
-        config.set('download', 'index', str(i))
-        with open('config.ini', 'w') as f:
-            config.write(f)
+        Utility.write_download_index_to_config_ini(i)
 
         stock = Stock(stock_tuple)
         if stock is None:
@@ -127,11 +69,6 @@ def download():
         time_to_market = get_time_to_market(stock_data_list)
         stock.set_time_to_market(time_to_market)
 
-        # if stock.is_time_to_market_too_short():
-        #     print("stock.is_time_to_market_too_short()")
-        #     time.sleep(random.random() * 5)
-        #     continue
-
         download_information_data(stock)
 
         download_financial_data(stock)
@@ -142,9 +79,7 @@ def download():
 
         stock.update_to_database()
 
-    config.set('download', 'index', "0")
-    with open('config.ini', 'w') as f:
-        config.write(f)
+    Utility.write_download_index_to_config_ini(0)
 
     print("download done")
 
@@ -157,8 +92,9 @@ def download_stock_list():
 
     while page:
         result = SinaFinancial.download_stock_list(page)
-        if result is None:
+        if Utility.is_empty(result):
             break
+
         stock_list += result
         page += 1
         time.sleep(random.random())
@@ -169,7 +105,7 @@ def download_stock_list():
 def download_stock_data(stock):
     # stock_data_day_list = []
     # stock_data_week_list = []
-    # stock_data_month_list = []
+    stock_data_month_list = []
 
     if stock is None:
         return None
@@ -210,13 +146,9 @@ def download_financial_data(stock):
 
     financial_data_list = SinaFinancial.download_financial_data(stock)
 
-    if financial_data_list is None:
-        print("download_financial_data", "download_financial_data is None, return")
-        return
-
     write_financial_data_to_database(stock.mCode, financial_data_list)
 
-    return financial_data_list[::-1]
+    return financial_data_list
 
 
 def download_share_bonus(stock):
@@ -245,67 +177,53 @@ def write_stock_list_to_database(stock_list):
     connect = None
     executemany = False
     insert_tuple_list = []
+    update_tuple_list = []
 
     query_sql = Stock.get_query_sql()
     insert_sql = Stock.get_insert_sql()
     update_sql = Stock.get_update_sql()
 
-    print("write_stock_list_to_database")
-
-    if stock_list is None:
-        print("stock_list is None, return")
-        return
-
-    if len(stock_list) == 0:
-        print("stock_list len =", len(stock_list), ", return")
+    if Utility.is_empty(stock_list):
+        print("stock_list is empty, return")
         return
 
     try:
-        connect = get_database_connect()
-        cursor = connect.cursor()
+        connect = sqlite3.connect(Constants.DATA_DATABASE_ORION_DB)
+        if connect is None:
+            return
 
+        cursor = connect.cursor()
         cursor.execute(query_sql)
         if cursor.fetchone() is None:
             executemany = True
 
-        for stock_basic in stock_list:
-            stock = Stock(stock_basic)
-
-            if not check_out(stock):
-                continue
-
+        for stock_dict in stock_list:
+            stock = Stock(stock_dict)
             now = datetime.now().strftime(Constants.DATE_TIME_FORMAT)
 
             if executemany:
                 stock.set_created(now)
                 stock.set_modified(now)
-
                 insert_tuple = stock.get_insert_tuple()
                 insert_tuple_list.append(insert_tuple)
             else:
-                sql_check_record_exist = Stock.get_query_sql("code=?")
+                sql_check_record_exist = Stock.get_query_sql(where="code=?")
                 cursor.execute(sql_check_record_exist, (stock.mCode,))
                 stock_tuple = cursor.fetchone()
                 if stock_tuple is None:
                     stock.set_created(now)
                     stock.set_modified(now)
-
                     insert_tuple = stock.get_insert_tuple()
-
-                    cursor.execute(insert_sql, insert_tuple)
-                    connect.commit()
-                    print("write_stock_list_to_database, insert stock:", insert_tuple)
+                    insert_tuple_list.append(insert_tuple)
                 else:
                     stock.set_modified(now)
-
                     update_tuple = stock.get_update_tuple()
-
-                    cursor.execute(update_sql, update_tuple)
-                    connect.commit()
-                    print("write_stock_list_to_database, update stock:", update_tuple)
-        if executemany:
-            print("insert: executemany")
+                    update_tuple_list.append(update_tuple)
+        if not Utility.is_empty(insert_tuple_list):
             cursor.executemany(insert_sql, insert_tuple_list)
+            connect.commit()
+        if not Utility.is_empty(update_tuple_list):
+            cursor.executemany(update_sql, update_tuple_list)
             connect.commit()
     except sqlite3.Error as e:
         print('e:', e)
@@ -326,12 +244,12 @@ def write_stock_data_to_database(code, stock_data_list, period=Constants.MONTH):
 
     # print("write_stock_data_to_database period=", period, " code=", code)
 
-    if stock_data_list is None:
-        print("stock_data_list is None, return")
+    if Utility.is_empty(stock_data_list):
+        print("stock_data_list is empty, return")
         return
 
     try:
-        connect = get_database_connect()
+        connect = sqlite3.connect(Constants.DATA_DATABASE_ORION_DB)
         cursor = connect.cursor()
 
         cursor.execute(sql_delete, (period, code))
@@ -378,12 +296,12 @@ def write_financial_data_to_database(code, financial_data_list):
                  "?,?,?," \
                  "?,?)"
 
-    if financial_data_list is None:
-        print("financial_data_list is None, return")
+    if Utility.is_empty(financial_data_list):
+        print("financial_data_list is empty, return")
         return
 
     try:
-        connect = get_database_connect()
+        connect = sqlite3.connect(Constants.DATA_DATABASE_ORION_DB)
         cursor = connect.cursor()
 
         cursor.execute(sql_delete, (code,))
@@ -432,12 +350,12 @@ def write_share_bonus_to_database(code, share_bonus_list):
                  "?,?," \
                  "?,?)"
 
-    if share_bonus_list is None:
-        print("share_bonus_list is None, return")
+    if Utility.is_empty(share_bonus_list):
+        print("share_bonus_list is empty, return")
         return
 
     try:
-        connect = get_database_connect()
+        connect = sqlite3.connect(Constants.DATA_DATABASE_ORION_DB)
         cursor = connect.cursor()
 
         cursor.execute(sql_delete, (code,))
@@ -477,12 +395,12 @@ def write_total_share_to_database(code, total_share_list):
                  "?," \
                  "?,?)"
 
-    if total_share_list is None:
-        print("total_share_list is None, return")
+    if Utility.is_empty(total_share_list):
+        print("total_share_list is empty, return")
         return
 
     try:
-        connect = get_database_connect()
+        connect = sqlite3.connect(Constants.DATA_DATABASE_ORION_DB)
         cursor = connect.cursor()
 
         cursor.execute(sql_delete, (code,))
@@ -732,7 +650,7 @@ def read_stock_tuple_list_from_database(where=None, order=None, sort=None):
     sql_query = Stock.get_query_sql(where, order, sort)
 
     try:
-        connect = get_database_connect()
+        connect = sqlite3.connect(Constants.DATA_DATABASE_ORION_DB)
         cursor = connect.cursor()
         cursor.execute(sql_query)
         stock_tuple_list = cursor.fetchall()
@@ -746,67 +664,27 @@ def read_stock_tuple_list_from_database(where=None, order=None, sort=None):
 
 
 def read_stock_data_from_database(stock, period=Constants.MONTH):
-    connect = None
-    sql_query = "SELECT * FROM stock_data WHERE stock_code = ? AND period = ?  order by date desc"
-    stock_data_tuple_list = tuple()
-
     if stock is None:
         return None
 
-    try:
-        connect = get_database_connect()
-        cursor = connect.cursor()
-        cursor.execute(sql_query, (stock.mCode, period))
-        stock_data_tuple_list = cursor.fetchall()
-    except sqlite3.Error as e:
-        print('e:', e)
-    finally:
-        if connect is not None:
-            connect.close()
-
-    return stock_data_tuple_list
+    return Utility.get_tuple_list_from_database("SELECT * FROM stock_data WHERE stock_code = ? AND period = ?  order "
+                                                "by date desc", (stock.mCode, period))
 
 
 def read_financial_data_from_database(stock):
-    connect = None
-    financial_data_tuple_list = tuple()
-    sql_query = "SELECT * FROM financial_data WHERE stock_code = ?  order by date desc"
     if stock is None:
         return None
 
-    try:
-        connect = get_database_connect()
-        cursor = connect.cursor()
-        cursor.execute(sql_query, (stock.mCode,))
-        financial_data_tuple_list = cursor.fetchall()
-    except sqlite3.Error as e:
-        print('e:', e)
-    finally:
-        if connect is not None:
-            connect.close()
-
-    return financial_data_tuple_list
+    return Utility.get_tuple_list_from_database("SELECT * FROM financial_data WHERE stock_code = ?  order by date desc",
+                                                (stock.mCode,))
 
 
 def read_share_bonus_from_database(stock):
-    connect = None
-    share_bonus_tuple_list = tuple()
-    sql_query = "SELECT * FROM share_bonus WHERE stock_code = ?  order by date desc"
     if stock is None:
         return None
 
-    try:
-        connect = get_database_connect()
-        cursor = connect.cursor()
-        cursor.execute(sql_query, (stock.mCode,))
-        share_bonus_tuple_list = cursor.fetchall()
-    except sqlite3.Error as e:
-        print('e:', e)
-    finally:
-        if connect is not None:
-            connect.close()
-
-    return share_bonus_tuple_list
+    return Utility.get_tuple_list_from_database("SELECT * FROM share_bonus WHERE stock_code = ?  order by date desc",
+                                                (stock.mCode,))
 
 
 def analyze_financial_data(stock, financial_data_tuple_list):
@@ -912,7 +790,7 @@ def analyze():
 
         count += 1
 
-        print(index, stock.mCode, stock.mName, stock.mMark, stock.mOperation)
+        print(index, stock.mCode, stock.mName)
 
         stock_data_tuple_list = read_stock_data_from_database(stock)
         financial_data_tuple_list = read_financial_data_from_database(stock)
@@ -928,8 +806,6 @@ def analyze():
 
 def select(where=None, order=None, sort=None):
     select_tuple_list = tuple()
-
-    make_data_directory()
 
     stock_tuple_list = read_stock_tuple_list_from_database(where, order, sort)
     write_stock_to_file(stock_tuple_list)

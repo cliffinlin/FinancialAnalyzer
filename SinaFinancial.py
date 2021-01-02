@@ -56,6 +56,7 @@ def get_user_agent():
 
     return user_agent
 
+
 def get_content(url):
     """
     Attempts to get the content at `url` by making an HTTP GET request.
@@ -81,6 +82,7 @@ def get_content(url):
         log_error('Error during requests to {0} : {1}'.format(url, str(e)))
         return None
 
+
 def is_good_response(resp):
     """
     Returns True if the response seems to be HTML, False otherwise.
@@ -90,6 +92,7 @@ def is_good_response(resp):
             and content_type is not None
             and content_type.find('html') > -1)
 
+
 def log_error(e):
     """
     It is always a good idea to log errors.
@@ -97,6 +100,7 @@ def log_error(e):
     make it do anything.
     """
     print(e)
+
 
 def download_stock_list(page):
     url = 'http://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQNodeData?'
@@ -113,12 +117,7 @@ def download_stock_list(page):
     except Exception:
         print("urllib.request.urlopen(url).read().decode() error")
 
-    if content is None:
-        print("content is None, return")
-        return None
-
-    if content == '[]':
-        print("content is [], return")
+    if Utility.is_empty(content):
         return None
 
     # content = content.replace('symbol', '"symbol"')  # 标记
@@ -147,15 +146,12 @@ def download_stock_list(page):
 
     return json.loads(content)
 
+
 def download_stock_data(stock, length, period=Constants.MONTH):
     if stock is None:
         return None
 
     url = "http://money.finance.sina.com.cn/quotes_service/api/json_v2.php/CN_MarketData.getKLineData?"
-
-    # se = "sh"
-    # if code[0] == "0" or code[0] == "3":
-    #     se = "sz"
 
     symbol = "&symbol=" + stock.mSymbol
 
@@ -196,15 +192,10 @@ def download_stock_data(stock, length, period=Constants.MONTH):
 
     return json.loads(content)
 
+
 def download_stock_information(stock):
     if stock is None:
         return None
-
-    # se = "sh"
-    # if code[0] == "0" or code[0] == "3":
-    #     se = "sz"
-
-    # symbol = se + code
 
     url = 'http://hq.sinajs.cn/list=' + stock.mSymbol + '_i'
 
@@ -224,6 +215,7 @@ def download_stock_information(stock):
     value_list = content.split(",")
 
     return value_list
+
 
 def download_financial_data(stock):
     value = 0
@@ -301,7 +293,6 @@ def download_financial_data(stock):
                     value_string = value_string.replace(',', '')
                     try:
                         value = float(value_string)
-                        # value = value / 100000000.0
                     except:
                         value = 0
                 else:
@@ -337,6 +328,7 @@ def download_financial_data(stock):
 
     return financial_data_list
 
+
 def download_share_bonus(stock):
     share_bonus_list = []
 
@@ -350,7 +342,7 @@ def download_share_bonus(stock):
 
     content = get_content(url)
 
-    if content is None:
+    if Utility.is_empty(content):
         return None
 
     soup = BeautifulSoup(content, 'html.parser')
@@ -407,6 +399,7 @@ def download_share_bonus(stock):
             share_bonus_list.append(share_bonus)
 
     return share_bonus_list[::-1]
+
 
 def download_total_share(stock):
     date_string = ""
