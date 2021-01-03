@@ -227,17 +227,12 @@ def write_stock_list_to_database(stock_list):
             connect.close()
 
 
-def write_stock_data_to_database(code, stock_data_list, period=Constants.MONTH):
+def write_stock_data_to_database(stock_code, stock_data_list, period=Constants.MONTH):
     connect = None
     record_list = []
 
-    sql_delete = "DELETE FROM stock_data WHERE period = ? AND stock_code = ?"
-    sql_insert = "INSERT INTO stock_data (stock_code, date, time, period," \
-                 " open, high, low, close, volume," \
-                 " created, modified)" \
-                 " VALUES(?,?,?,?,?,?,?,?,?,?,?)"
-
-    # print("write_stock_data_to_database period=", period, " code=", code)
+    delete_sql = StockData.get_delete_sql()
+    insert_sql = StockData.get_insert_sql()
 
     if Utility.is_empty(stock_data_list):
         print("stock_data_list is empty, return")
@@ -247,26 +242,26 @@ def write_stock_data_to_database(code, stock_data_list, period=Constants.MONTH):
         connect = sqlite3.connect(Constants.DATA_DATABASE_ORION_DB)
         cursor = connect.cursor()
 
-        cursor.execute(sql_delete, (period, code))
+        cursor.execute(delete_sql, (period, stock_code))
 
-        index = -1
         for stock_data in stock_data_list:
-            index = index + 1
-
-            date = stock_data['date']
-            open = stock_data['open']
-            high = stock_data['high']
-            low = stock_data['low']
-            close = stock_data['close']
-            volume = stock_data['volume']
-
-            time = "00:00"
             now = datetime.now().strftime(Constants.DATE_TIME_FORMAT)
 
-            record = tuple((code, date, time, period, open, high, low, close, volume, now, now))
+            stock_data_obj = StockData()
+            stock_data_obj.set_stock_code(stock_code)
+            stock_data_obj.set_date(stock_data['date'])
+            stock_data_obj.set_time("00:00")
+            stock_data_obj.set_period(period)
+            stock_data_obj.set_open(stock_data['open'])
+            stock_data_obj.set_high(stock_data['high'])
+            stock_data_obj.set_low(stock_data['low'])
+            stock_data_obj.set_close(stock_data['close'])
+            stock_data_obj.set_volume(stock_data['volume'])
+
+            record = stock_data_obj.to_tuple(include_id=False)
             record_list.append(record)
 
-        cursor.executemany(sql_insert, record_list)
+        cursor.executemany(insert_sql, record_list)
         connect.commit()
     except sqlite3.Error as e:
         print('e:', e)
@@ -295,24 +290,22 @@ def write_financial_data_to_database(stock_code, financial_data_list):
         for financial_data in financial_data_list:
             now = datetime.now().strftime(Constants.DATE_TIME_FORMAT)
 
-            financial_data_tuple = FinancialData()
+            financial_data_obj = FinancialData()
+            financial_data_obj.set_stock_code(stock_code)
+            financial_data_obj.set_date(financial_data['date'])
+            financial_data_obj.set_book_value_per_share(financial_data['book_value_per_share'])
+            financial_data_obj.set_cash_flow_per_share(financial_data['cash_flow_per_share'])
+            financial_data_obj.set_total_current_assets(financial_data['total_current_assets'])
+            financial_data_obj.set_total_assets(financial_data['total_assets'])
+            financial_data_obj.set_total_long_term_liabilities(financial_data['total_long_term_liabilities'])
+            financial_data_obj.set_main_business_income(financial_data['main_business_income'])
+            financial_data_obj.set_financial_expenses(financial_data['financial_expenses'])
+            financial_data_obj.set_net_profit(financial_data['net_profit'])
+            financial_data_obj.set_net_profit_per_share(financial_data['net_profit_per_share'])
+            financial_data_obj.set_created(now)
+            financial_data_obj.set_modified(now)
 
-            financial_data_tuple.set_stock_code(stock_code)
-            financial_data_tuple.set_date(financial_data['date'])
-            financial_data_tuple.set_book_value_per_share(financial_data['book_value_per_share'])
-            financial_data_tuple.set_cash_flow_per_share(financial_data['cash_flow_per_share'])
-            financial_data_tuple.set_total_current_assets(financial_data['total_current_assets'])
-            financial_data_tuple.set_total_assets(financial_data['total_assets'])
-            financial_data_tuple.set_total_long_term_liabilities(financial_data['total_long_term_liabilities'])
-            financial_data_tuple.set_main_business_income(financial_data['main_business_income'])
-            financial_data_tuple.set_financial_expenses(financial_data['financial_expenses'])
-            financial_data_tuple.set_net_profit(financial_data['net_profit'])
-            financial_data_tuple.set_net_profit_per_share(financial_data['net_profit_per_share'])
-            financial_data_tuple.set_created(now)
-            financial_data_tuple.set_modified(now)
-
-            record = financial_data_tuple.to_tuple(include_id=False)
-
+            record = financial_data_obj.to_tuple(include_id=False)
             record_list.append(record)
 
         cursor.executemany(insert_sql, record_list)
@@ -344,16 +337,15 @@ def write_share_bonus_to_database(stock_code, share_bonus_list):
         for share_bonus in share_bonus_list:
             now = datetime.now().strftime(Constants.DATE_TIME_FORMAT)
 
-            share_bonus_tuple = ShareBonus()
-            share_bonus_tuple.set_stock_code(stock_code)
-            share_bonus_tuple.set_date = share_bonus['date']
-            share_bonus_tuple.set_dividend = share_bonus['dividend']
-            share_bonus_tuple.set_r_date = share_bonus['r_date']
-            share_bonus_tuple.set_created(now)
-            share_bonus_tuple.set_modified(now)
+            share_bonus_obj = ShareBonus()
+            share_bonus_obj.set_stock_code(stock_code)
+            share_bonus_obj.set_date = share_bonus['date']
+            share_bonus_obj.set_dividend = share_bonus['dividend']
+            share_bonus_obj.set_r_date = share_bonus['r_date']
+            share_bonus_obj.set_created(now)
+            share_bonus_obj.set_modified(now)
 
-            record = share_bonus_tuple.to_tuple(include_id=False)
-
+            record = share_bonus_obj.to_tuple(include_id=False)
             record_list.append(record)
 
         cursor.executemany(insert_sql, record_list)
@@ -385,15 +377,14 @@ def write_total_share_to_database(stock_code, total_share_list):
         for total_share in total_share_list:
             now = datetime.now().strftime(Constants.DATE_TIME_FORMAT)
 
-            total_share_tuple = TotalShare()
-            total_share_tuple.set_stock_code(stock_code)
-            total_share_tuple.set_date(total_share['date'])
-            total_share_tuple.set_total_share(total_share['total_share'])
-            total_share_tuple.set_created(now)
-            total_share_tuple.set_modified(now)
+            total_share_obj = TotalShare()
+            total_share_obj.set_stock_code(stock_code)
+            total_share_obj.set_date(total_share['date'])
+            total_share_obj.set_total_share(total_share['total_share'])
+            total_share_obj.set_created(now)
+            total_share_obj.set_modified(now)
 
-            record = total_share_tuple.to_tuple(include_id=False)
-
+            record = total_share_obj.to_tuple(include_id=False)
             record_list.append(record)
 
         cursor.executemany(insert_sql, record_list)

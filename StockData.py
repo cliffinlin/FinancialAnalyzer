@@ -116,3 +116,35 @@ class StockData:
     def set_modified(self, modified):
         if modified is not None:
             self.modified = modified
+
+    def to_tuple(self, include_id=False):
+        if include_id:
+            result = tuple((self.id, self.stock_code, self.date,
+                            self.time, self.period,
+                            self.open, self.high, self.low, self.close, self.volume,
+                            self.created, self.modified))
+        else:
+            result = tuple((self.stock_code, self.date,
+                            self.time, self.period,
+                            self.open, self.high, self.low, self.close, self.volume,
+                            self.created, self.modified))
+        return result
+
+    @staticmethod
+    def get_delete_sql():
+        delete_sql = "DELETE FROM stock_data WHERE period = ? AND stock_code = ?"
+        return delete_sql
+
+    @staticmethod
+    def get_insert_sql():
+        insert_sql = "INSERT INTO stock_data (stock_code, date," \
+                     " time, period," \
+                     " open, high, low, close, volume," \
+                     " created, modified)" \
+                     " VALUES(?,?," \
+                     "?,?," \
+                     "?,?,?,?,?," \
+                     "?,?)"
+        return insert_sql
+
+
