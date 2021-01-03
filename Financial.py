@@ -18,6 +18,7 @@ from FinancialData import FinancialData
 from ShareBonus import ShareBonus
 from Stock import Stock
 from StockData import StockData
+from TotalShare import TotalShare
 
 favorite_only = True
 black_list_enabled = True
@@ -274,21 +275,12 @@ def write_stock_data_to_database(code, stock_data_list, period=Constants.MONTH):
             connect.close()
 
 
-def write_financial_data_to_database(code, financial_data_list):
+def write_financial_data_to_database(stock_code, financial_data_list):
     connect = None
     record_list = []
 
-    sql_delete = "DELETE FROM financial_data WHERE stock_code = ?"
-    sql_insert = "INSERT INTO financial_data (stock_code, date," \
-                 "book_value_per_share, cash_flow_per_share, total_current_assets," \
-                 "total_assets, total_long_term_liabilities, main_business_income," \
-                 "financial_expenses, net_profit, net_profit_per_share," \
-                 "created, modified)" \
-                 " VALUES(?,?," \
-                 "?,?,?," \
-                 "?,?,?," \
-                 "?,?,?," \
-                 "?,?)"
+    delete_sql = FinancialData.get_delete_sql()
+    insert_sql = FinancialData.get_insert_sql()
 
     if Utility.is_empty(financial_data_list):
         print("financial_data_list is empty, return")
@@ -298,32 +290,32 @@ def write_financial_data_to_database(code, financial_data_list):
         connect = sqlite3.connect(Constants.DATA_DATABASE_ORION_DB)
         cursor = connect.cursor()
 
-        cursor.execute(sql_delete, (code,))
+        cursor.execute(delete_sql, (stock_code,))
 
-        index = -1
         for financial_data in financial_data_list:
-            index = index + 1
-
-            date = financial_data['date']
-            book_value_per_share = financial_data['book_value_per_share']
-            cash_flow_per_share = financial_data['cash_flow_per_share']
-            total_current_assets = financial_data['total_current_assets']
-            total_assets = financial_data['total_assets']
-            total_long_term_liabilities = financial_data['total_long_term_liabilities']
-            main_business_income = financial_data['main_business_income']
-            financial_expenses = financial_data['financial_expenses']
-            net_profit = financial_data['net_profit']
-            net_profit_per_share = financial_data['net_profit_per_share']
-
             now = datetime.now().strftime(Constants.DATE_TIME_FORMAT)
 
-            record = tuple((code, date, book_value_per_share, cash_flow_per_share,
-                            total_current_assets, total_assets, total_long_term_liabilities,
-                            main_business_income, financial_expenses, net_profit, net_profit_per_share,
-                            now, now))
+            financial_data_tuple = FinancialData()
+
+            financial_data_tuple.set_stock_code(stock_code)
+            financial_data_tuple.set_date(financial_data['date'])
+            financial_data_tuple.set_book_value_per_share(financial_data['book_value_per_share'])
+            financial_data_tuple.set_cash_flow_per_share(financial_data['cash_flow_per_share'])
+            financial_data_tuple.set_total_current_assets(financial_data['total_current_assets'])
+            financial_data_tuple.set_total_assets(financial_data['total_assets'])
+            financial_data_tuple.set_total_long_term_liabilities(financial_data['total_long_term_liabilities'])
+            financial_data_tuple.set_main_business_income(financial_data['main_business_income'])
+            financial_data_tuple.set_financial_expenses(financial_data['financial_expenses'])
+            financial_data_tuple.set_net_profit(financial_data['net_profit'])
+            financial_data_tuple.set_net_profit_per_share(financial_data['net_profit_per_share'])
+            financial_data_tuple.set_created(now)
+            financial_data_tuple.set_modified(now)
+
+            record = financial_data_tuple.to_tuple(include_id=False)
+
             record_list.append(record)
 
-        cursor.executemany(sql_insert, record_list)
+        cursor.executemany(insert_sql, record_list)
         connect.commit()
     except sqlite3.Error as e:
         print('e:', e)
@@ -332,17 +324,12 @@ def write_financial_data_to_database(code, financial_data_list):
             connect.close()
 
 
-def write_share_bonus_to_database(code, share_bonus_list):
+def write_share_bonus_to_database(stock_code, share_bonus_list):
     connect = None
     record_list = []
 
-    sql_delete = "DELETE FROM share_bonus WHERE stock_code = ?"
-    sql_insert = "INSERT INTO share_bonus (stock_code, date, " \
-                 "dividend, r_date, " \
-                 "created, modified)" \
-                 " VALUES(?,?," \
-                 "?,?," \
-                 "?,?)"
+    delete_sql = ShareBonus.get_delete_sql()
+    insert_sql = ShareBonus.get_insert_sql()
 
     if Utility.is_empty(share_bonus_list):
         print("share_bonus_list is empty, return")
@@ -352,23 +339,24 @@ def write_share_bonus_to_database(code, share_bonus_list):
         connect = sqlite3.connect(Constants.DATA_DATABASE_ORION_DB)
         cursor = connect.cursor()
 
-        cursor.execute(sql_delete, (code,))
+        cursor.execute(delete_sql, (stock_code,))
 
-        index = -1
         for share_bonus in share_bonus_list:
-            index = index + 1
-
-            date = share_bonus['date']
-            dividend = share_bonus['dividend']
-            r_date = share_bonus['r_date']
-
             now = datetime.now().strftime(Constants.DATE_TIME_FORMAT)
 
-            record = tuple((code, date, dividend, r_date,
-                            now, now))
+            share_bonus_tuple = ShareBonus()
+            share_bonus_tuple.set_stock_code(stock_code)
+            share_bonus_tuple.set_date = share_bonus['date']
+            share_bonus_tuple.set_dividend = share_bonus['dividend']
+            share_bonus_tuple.set_r_date = share_bonus['r_date']
+            share_bonus_tuple.set_created(now)
+            share_bonus_tuple.set_modified(now)
+
+            record = share_bonus_tuple.to_tuple(include_id=False)
+
             record_list.append(record)
 
-        cursor.executemany(sql_insert, record_list)
+        cursor.executemany(insert_sql, record_list)
         connect.commit()
     except sqlite3.Error as e:
         print('e:', e)
@@ -377,17 +365,12 @@ def write_share_bonus_to_database(code, share_bonus_list):
             connect.close()
 
 
-def write_total_share_to_database(code, total_share_list):
+def write_total_share_to_database(stock_code, total_share_list):
     connect = None
     record_list = []
 
-    sql_delete = "DELETE FROM total_share WHERE stock_code = ?"
-    sql_insert = "INSERT INTO total_share (stock_code, date, " \
-                 "total_share, " \
-                 "created, modified)" \
-                 " VALUES(?,?," \
-                 "?," \
-                 "?,?)"
+    delete_sql = TotalShare.get_delete_sql()
+    insert_sql = TotalShare.get_insert_sql()
 
     if Utility.is_empty(total_share_list):
         print("total_share_list is empty, return")
@@ -397,21 +380,23 @@ def write_total_share_to_database(code, total_share_list):
         connect = sqlite3.connect(Constants.DATA_DATABASE_ORION_DB)
         cursor = connect.cursor()
 
-        cursor.execute(sql_delete, (code,))
+        cursor.execute(delete_sql, (stock_code,))
 
-        index = -1
         for total_share in total_share_list:
-            index = index + 1
-
-            date = total_share['date']
-            total_share_value = total_share['total_share']
-
             now = datetime.now().strftime(Constants.DATE_TIME_FORMAT)
 
-            record = tuple((code, date, total_share_value, now, now))
+            total_share_tuple = TotalShare()
+            total_share_tuple.set_stock_code(stock_code)
+            total_share_tuple.set_date(total_share['date'])
+            total_share_tuple.set_total_share(total_share['total_share'])
+            total_share_tuple.set_created(now)
+            total_share_tuple.set_modified(now)
+
+            record = total_share_tuple.to_tuple(include_id=False)
+
             record_list.append(record)
 
-        cursor.executemany(sql_insert, record_list)
+        cursor.executemany(insert_sql, record_list)
         connect.commit()
     except sqlite3.Error as e:
         print('e:', e)
@@ -495,13 +480,18 @@ def write_stock_to_file(stock_tuple_list):
                 continue
 
             stock_dict = {"id": stock.get_id(), "classes": stock.get_classes(),
-                          "se": stock.get_se(), "code": stock.get_code(), "name": stock.get_name(), "pinyin": stock.get_pinyin(),
-                          "price": stock.get_price(), "change": stock.get_change(), "net": stock.get_net(), "volume": stock.get_volume(),
+                          "se": stock.get_se(), "code": stock.get_code(), "name": stock.get_name(),
+                          "pinyin": stock.get_pinyin(),
+                          "price": stock.get_price(), "change": stock.get_change(), "net": stock.get_net(),
+                          "volume": stock.get_volume(),
                           "value": stock.get_value(), "market_value": stock.get_market_value(),
-                          "mark": stock.get_mark(), "operation": stock.get_operation(), "hold": stock.get_hold(), "cost": stock.get_cost(),
+                          "mark": stock.get_mark(), "operation": stock.get_operation(), "hold": stock.get_hold(),
+                          "cost": stock.get_cost(),
                           "profit": stock.get_profit(),
-                          "roi": stock.get_roi(), "roe": stock.get_roe(), "pe": stock.get_pe(), "rate": stock.get_rate(), "pb": stock.get_pb(),
-                          "dividend": stock.get_dividend(), "dividend_yield": stock.get_dividend_yield(), "dividend_ratio": stock.get_dividend_ratio(),
+                          "roi": stock.get_roi(), "roe": stock.get_roe(), "pe": stock.get_pe(),
+                          "rate": stock.get_rate(), "pb": stock.get_pb(),
+                          "dividend": stock.get_dividend(), "dividend_yield": stock.get_dividend_yield(),
+                          "dividend_ratio": stock.get_dividend_ratio(),
                           "total_share": stock.get_total_share(), "time_to_market": stock.get_time_to_market(),
                           "created": stock.get_created(), "modified": stock.get_modified()}
             writer.writerow(stock_dict)
@@ -677,6 +667,31 @@ def read_total_share_from_database(stock):
                                                 (stock.get_code(),))
 
 
+def setup_total_share(financial_data_tuple_list, total_share_tuple_list):
+    if Utility.is_empty(financial_data_tuple_list):
+        return
+
+    if len(financial_data_tuple_list) < 2 * Constants.SEASONS_IN_A_YEAR + 1:
+        return
+
+    if Utility.is_empty(total_share_tuple_list):
+        return
+
+    index = 0
+    for i in range(len(financial_data_tuple_list)):
+        financial_data_tuple = financial_data_tuple_list[i]
+        financial_data = FinancialData(financial_data_tuple)
+
+        while index < len(total_share_tuple_list):
+            total_share = TotalShare(total_share_tuple_list[index])
+            if datetime.strptime(financial_data.get_date(), Constants.DATE_FORMAT) >= datetime.strptime(total_share.get_date(), Constants.DATE_FORMAT):
+                financial_data.set_total_share(total_share.get_total_share())
+                financial_data_tuple_list[i] = financial_data.to_tuple(include_id=True)
+                break
+            else:
+                index += 1
+
+
 def analyze_financial_data(stock, financial_data_tuple_list):
     if stock is None:
         return stock
@@ -788,6 +803,8 @@ def analyze():
         financial_data_tuple_list = read_financial_data_from_database(stock)
         share_bonus_tuple_list = read_share_bonus_from_database(stock)
         total_share_tuple_list = read_total_share_from_database(stock)
+
+        setup_total_share(financial_data_tuple_list, total_share_tuple_list)
 
         stock = analyze_financial_data(stock, financial_data_tuple_list)
         stock = analyze_share_bonus(stock, share_bonus_tuple_list)

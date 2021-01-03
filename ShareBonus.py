@@ -71,3 +71,29 @@ class ShareBonus:
     def set_modified(self, modified):
         if modified is not None:
             self.modified = modified
+
+    def to_tuple(self, include_id=False):
+        if include_id:
+            result = tuple((self.id, self.stock_code, self.date,
+                            self.dividend, self.r_date,
+                            self.created, self.modified))
+        else:
+            result = tuple((self.stock_code, self.date,
+                            self.dividend, self.r_date,
+                            self.created, self.modified))
+        return result
+
+    @staticmethod
+    def get_delete_sql():
+        delete_sql = "DELETE FROM share_bonus WHERE stock_code = ?"
+        return delete_sql
+
+    @staticmethod
+    def get_insert_sql():
+        insert_sql = "INSERT INTO share_bonus (stock_code, date, " \
+                     "dividend, r_date, " \
+                     "created, modified)" \
+                     " VALUES(?,?," \
+                     "?,?," \
+                     "?,?)"
+        return insert_sql

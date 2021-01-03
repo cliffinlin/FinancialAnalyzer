@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import DatabaseContract
+import Utility
 
 
 class FinancialData:
@@ -251,3 +252,50 @@ class FinancialData:
     def set_modified(self, modified):
         if modified is not None:
             self.modified = modified
+
+    def to_tuple(self, include_id=False):
+        if include_id:
+            result = tuple((self.id, self.stock_code, self.date,
+                            self.book_value_per_share, self.cash_flow_per_share,
+                            self.total_share, self.total_current_assets, self.total_assets, self.total_long_term_liabilities,
+                            self.debt_to_net_assets_ratio, self.main_business_income, self.financial_expenses,
+                            self.net_profit, self.net_profit_per_share, self.net_profit_per_share_in_year,
+                            self.rate, self.roi, self.roe, self.pe, self.pb,
+                            self.dividend, self.dividend_yield, self.dividend_ratio,
+                            self.created, self.modified))
+        else:
+            result = tuple((self.stock_code, self.date,
+                            self.book_value_per_share, self.cash_flow_per_share,
+                            self.total_share, self.total_current_assets, self.total_assets, self.total_long_term_liabilities,
+                            self.debt_to_net_assets_ratio, self.main_business_income, self.financial_expenses,
+                            self.net_profit, self.net_profit_per_share, self.net_profit_per_share_in_year,
+                            self.rate, self.roi, self.roe, self.pe, self.pb,
+                            self.dividend, self.dividend_yield, self.dividend_ratio,
+                            self.created, self.modified))
+        return result
+
+    @staticmethod
+    def get_delete_sql():
+        delete_sql = "DELETE FROM financial_data WHERE stock_code = ?"
+        return delete_sql
+
+    @staticmethod
+    def get_insert_sql():
+        insert_sql = "INSERT INTO financial_data (stock_code, date," \
+                     "book_value_per_share, cash_flow_per_share," \
+                     "total_share, total_current_assets, total_assets, total_long_term_liabilities," \
+                     "debt_to_net_assets_ratio, main_business_income, financial_expenses," \
+                     "net_profit, net_profit_per_share, net_profit_per_share_in_year," \
+                     "rate, roi, roe, pe, pb," \
+                     "dividend, dividend_yield, dividend_ratio," \
+                     "created, modified)" \
+                     " VALUES(?,?," \
+                     "?,?," \
+                     "?,?,?,?," \
+                     "?,?,?," \
+                     "?,?,?," \
+                     "?,?,?,?,?," \
+                     "?,?,?," \
+                     "?,?)"
+        return insert_sql
+

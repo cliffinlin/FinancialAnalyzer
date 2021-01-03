@@ -62,3 +62,31 @@ class TotalShare:
     def set_modified(self, modified):
         if modified is not None:
             self.modified = modified
+
+    def to_tuple(self, include_id=False):
+        if include_id:
+            result = tuple((self.id, self.stock_code, self.date,
+                            self.total_share,
+                            self.created, self.modified))
+        else:
+            result = tuple((self.stock_code, self.date,
+                            self.total_share,
+                            self.created, self.modified))
+        return result
+
+    @staticmethod
+    def get_delete_sql():
+        delete_sql = "DELETE FROM total_share WHERE stock_code = ?"
+        return delete_sql
+
+    @staticmethod
+    def get_insert_sql():
+        insert_sql = "INSERT INTO total_share (stock_code, date, " \
+                     "total_share, " \
+                     "created, modified)" \
+                     " VALUES(?,?," \
+                     "?," \
+                     "?,?)"
+        return insert_sql
+
+
