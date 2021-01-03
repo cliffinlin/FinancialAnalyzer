@@ -50,7 +50,7 @@ def download():
 
     i = 0
     for stock_tuple in stock_tuple_list:
-        i = i + 1
+        i += 1
         if i < index:
             continue
 
@@ -317,6 +317,41 @@ def write_financial_data_to_database(stock_code, financial_data_list):
             connect.close()
 
 
+def update_financial_data_to_database(stock_code, financial_data_list):
+    connect = None
+    record_list = []
+
+    delete_sql = FinancialData.get_delete_sql()
+    insert_sql = FinancialData.get_insert_sql()
+
+    if Utility.is_empty(financial_data_list):
+        print("financial_data_list is empty, return")
+        return
+
+    try:
+        connect = sqlite3.connect(Constants.DATA_DATABASE_ORION_DB)
+        cursor = connect.cursor()
+
+        cursor.execute(delete_sql, (stock_code,))
+
+        for financial_data in financial_data_list:
+            now = datetime.now().strftime(Constants.DATE_TIME_FORMAT)
+
+            financial_data_obj = FinancialData(financial_data)
+            financial_data_obj.set_modified(now)
+
+            record = financial_data_obj.to_tuple(include_id=False)
+            record_list.append(record)
+
+        cursor.executemany(insert_sql, record_list)
+        connect.commit()
+    except sqlite3.Error as e:
+        print('e:', e)
+    finally:
+        if connect is not None:
+            connect.close()
+
+
 def write_share_bonus_to_database(stock_code, share_bonus_list):
     connect = None
     record_list = []
@@ -339,9 +374,9 @@ def write_share_bonus_to_database(stock_code, share_bonus_list):
 
             share_bonus_obj = ShareBonus()
             share_bonus_obj.set_stock_code(stock_code)
-            share_bonus_obj.set_date = share_bonus['date']
-            share_bonus_obj.set_dividend = share_bonus['dividend']
-            share_bonus_obj.set_r_date = share_bonus['r_date']
+            share_bonus_obj.set_date(share_bonus['date'])
+            share_bonus_obj.set_dividend(share_bonus['dividend'])
+            share_bonus_obj.set_r_date(share_bonus['r_date'])
             share_bonus_obj.set_created(now)
             share_bonus_obj.set_modified(now)
 
@@ -662,25 +697,97 @@ def setup_total_share(financial_data_tuple_list, total_share_tuple_list):
     if Utility.is_empty(financial_data_tuple_list):
         return
 
-    if len(financial_data_tuple_list) < 2 * Constants.SEASONS_IN_A_YEAR + 1:
-        return
-
     if Utility.is_empty(total_share_tuple_list):
         return
 
-    index = 0
+    j = 0
     for i in range(len(financial_data_tuple_list)):
         financial_data_tuple = financial_data_tuple_list[i]
         financial_data = FinancialData(financial_data_tuple)
 
-        while index < len(total_share_tuple_list):
-            total_share = TotalShare(total_share_tuple_list[index])
-            if datetime.strptime(financial_data.get_date(), Constants.DATE_FORMAT) >= datetime.strptime(total_share.get_date(), Constants.DATE_FORMAT):
+        while j < len(total_share_tuple_list):
+            total_share = TotalShare(total_share_tuple_list[j])
+            if datetime.strptime(financial_data.get_date(), Constants.DATE_FORMAT) >= datetime.strptime(
+                    total_share.get_date(), Constants.DATE_FORMAT):
                 financial_data.set_total_share(total_share.get_total_share())
                 financial_data_tuple_list[i] = financial_data.to_tuple(include_id=True)
                 break
             else:
-                index += 1
+                j += 1
+
+
+def setup_net_profit_per_share(financial_data_tuple_list):
+    if Utility.is_empty(financial_data_tuple_list):
+        return
+
+    for i in range(len(financial_data_tuple_list)):
+        financial_data_tuple = financial_data_tuple_list[i]
+        financial_data = FinancialData(financial_data_tuple)
+        financial_data.setup_net_profit_per_share()
+        financial_data_tuple_list[i] = financial_data.to_tuple(include_id=True)
+
+
+def setup_net_profit_per_share_in_year(financial_data_tuple_list):
+    if Utility.is_empty(financial_data_tuple_list):
+        return
+
+    if len(financial_data_tuple_list) < Constants.SEASONS_IN_A_YEAR + 1:
+        return
+
+    for i in range(len(financial_data_tuple_list) - Constants.SEASONS_IN_A_YEAR):
+        net_profit_per_share_in_year = 0
+        for j in range(Constants.SEASONS_IN_A_YEAR):
+            current = FinancialData(financial_data_tuple_list[i + j])
+            prev = FinancialData(financial_data_tuple_list[i + j + 1])
+
+            if current is None or prev is None:
+                continue
+
+            if current.get_total_share() == 0:
+                continue
+
+            if "03-31" in current.date:
+                net_profit_per_share = current.get_net_profit() / current.get_total_share()
+            else:
+                net_profit_per_share = (current.get_net_profit() - prev.get_net_profit()) / current.get_total_share()
+
+            net_profit_per_share_in_year += net_profit_per_share
+
+        financial_data_tuple = financial_data_tuple_list[i]
+        financial_data = FinancialData(financial_data_tuple)
+        financial_data.set_net_profit_per_share_in_year(net_profit_per_share_in_year)
+        financial_data_tuple_list[i] = financial_data.to_tuple(include_id=True)
+
+
+def setup_rate(financial_data_tuple_list):
+    if Utility.is_empty(financial_data_tuple_list):
+        return
+
+    if len(financial_data_tuple_list) < 2:
+        return
+
+    for i in range(len(financial_data_tuple_list) - 1):
+        financial_data = FinancialData(financial_data_tuple_list[i])
+        prev = FinancialData(financial_data_tuple_list[i + 1])
+
+        if prev.get_net_profit_per_share_in_year() == 0:
+            continue
+
+        rate = round(financial_data.get_net_profit_per_share_in_year() / prev.get_net_profit_per_share_in_year(),
+                     Constants.DOUBLE_FIXED_DECIMAL)
+        financial_data.set_rate(rate)
+        financial_data_tuple_list[i] = financial_data.to_tuple(include_id=True)
+
+
+def setup_roe(financial_data_tuple_list):
+    if Utility.is_empty(financial_data_tuple_list):
+        return
+
+    for i in range(len(financial_data_tuple_list)):
+        financial_data = FinancialData(financial_data_tuple_list[i])
+        financial_data.setup_debt_to_net_assets_ratio()
+        financial_data.setup_roe()
+        financial_data_tuple_list[i] = financial_data.to_tuple(include_id=True)
 
 
 def analyze_financial_data(stock, financial_data_tuple_list):
@@ -727,9 +834,9 @@ def analyze_share_bonus(stock, share_bonus_tuple_list):
     if Utility.is_empty(share_bonus_tuple_list):
         return stock
 
-    index = -1
+    i = -1
     for share_bonus_tuple in share_bonus_tuple_list:
-        index = index + 1
+        i += 1
 
         if Utility.is_empty(share_bonus_tuple):
             break
@@ -753,7 +860,7 @@ def analyze_share_bonus(stock, share_bonus_tuple_list):
 
         total_divident += float(share_bonus.dividend)
 
-        if index == 0:
+        if i == 0:
             stock.set_date(share_bonus.date)
             stock.set_r_date(share_bonus.r_date)
 
@@ -796,11 +903,16 @@ def analyze():
         total_share_tuple_list = read_total_share_from_database(stock)
 
         setup_total_share(financial_data_tuple_list, total_share_tuple_list)
+        setup_net_profit_per_share(financial_data_tuple_list)
+        setup_net_profit_per_share_in_year(financial_data_tuple_list)
+        setup_rate(financial_data_tuple_list)
+        setup_roe(financial_data_tuple_list)
 
         stock = analyze_financial_data(stock, financial_data_tuple_list)
         stock = analyze_share_bonus(stock, share_bonus_tuple_list)
 
         stock.update_to_database()
+        update_financial_data_to_database(stock.get_code(), financial_data_tuple_list)
 
     print("analyze done, count=", count)
 

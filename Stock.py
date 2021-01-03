@@ -6,6 +6,7 @@ from dateutil.relativedelta import relativedelta
 
 import Constants
 import DatabaseContract
+import Utility
 from FinancialData import FinancialData
 
 
@@ -405,7 +406,7 @@ class Stock:
         if self.total_share == 0:
             return
 
-        if financial_data_tuple_list is None:
+        if Utility.is_empty(financial_data_tuple_list):
             return
 
         if len(financial_data_tuple_list) < Constants.SEASONS_IN_A_YEAR + 1:
@@ -431,7 +432,7 @@ class Stock:
         if self.total_share == 0:
             return
 
-        if financial_data_tuple_list is None:
+        if Utility.is_empty(financial_data_tuple_list):
             return
 
         if len(financial_data_tuple_list) < 2 * Constants.SEASONS_IN_A_YEAR + 1:
@@ -476,7 +477,7 @@ class Stock:
         self.roi = round(self.rate * self.roe * self.pe * Constants.ROI_COEFFICIENT, Constants.DOUBLE_FIXED_DECIMAL)
 
     def setup_roe(self, financial_data_tuple_list):
-        if financial_data_tuple_list is None:
+        if Utility.is_empty(financial_data_tuple_list):
             return
 
         if len(financial_data_tuple_list) < Constants.SEASONS_IN_A_YEAR + 1:

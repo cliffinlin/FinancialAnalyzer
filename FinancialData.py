@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import Constants
 import DatabaseContract
 import Utility
 
@@ -253,11 +254,28 @@ class FinancialData:
         if modified is not None:
             self.modified = modified
 
+    def setup_roe(self):
+        if self.book_value_per_share == 0:
+            return
+
+        self.roe = round(100.0 * self.net_profit_per_share_in_year / self.book_value_per_share,
+                         Constants.DOUBLE_FIXED_DECIMAL)
+
+    def setup_debt_to_net_assets_ratio(self):
+        if self.total_share == 0:
+            return
+
+        if self.book_value_per_share == 0:
+            return
+
+        self.debt_to_net_assets_ratio = self.total_long_term_liabilities / self.total_share / self.book_value_per_share
+
     def to_tuple(self, include_id=False):
         if include_id:
             result = tuple((self.id, self.stock_code, self.date,
                             self.book_value_per_share, self.cash_flow_per_share,
-                            self.total_share, self.total_current_assets, self.total_assets, self.total_long_term_liabilities,
+                            self.total_share, self.total_current_assets, self.total_assets,
+                            self.total_long_term_liabilities,
                             self.debt_to_net_assets_ratio, self.main_business_income, self.financial_expenses,
                             self.net_profit, self.net_profit_per_share, self.net_profit_per_share_in_year,
                             self.rate, self.roi, self.roe, self.pe, self.pb,
@@ -266,13 +284,20 @@ class FinancialData:
         else:
             result = tuple((self.stock_code, self.date,
                             self.book_value_per_share, self.cash_flow_per_share,
-                            self.total_share, self.total_current_assets, self.total_assets, self.total_long_term_liabilities,
+                            self.total_share, self.total_current_assets, self.total_assets,
+                            self.total_long_term_liabilities,
                             self.debt_to_net_assets_ratio, self.main_business_income, self.financial_expenses,
                             self.net_profit, self.net_profit_per_share, self.net_profit_per_share_in_year,
                             self.rate, self.roi, self.roe, self.pe, self.pb,
                             self.dividend, self.dividend_yield, self.dividend_ratio,
                             self.created, self.modified))
         return result
+
+    def setup_net_profit_per_share(self):
+        if self.total_share == 0:
+            return
+
+        self.net_profit_per_share = round(self.net_profit / self.total_share, Constants.DOUBLE_FIXED_DECIMAL)
 
     @staticmethod
     def get_delete_sql():
@@ -298,4 +323,3 @@ class FinancialData:
                      "?,?,?," \
                      "?,?)"
         return insert_sql
-
