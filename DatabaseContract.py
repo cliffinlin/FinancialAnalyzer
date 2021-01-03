@@ -131,13 +131,24 @@ class FinancialDataColumn(Enum):
     date = auto()
     book_value_per_share = auto()
     cash_flow_per_share = auto()
+    total_share = auto()
     total_current_assets = auto()
     total_assets = auto()
     total_long_term_liabilities = auto()
+    debt_to_net_assets_ratio = auto()
     main_business_income = auto()
     financial_expenses = auto()
     net_profit = auto()
     net_profit_per_share = auto()
+    net_profit_per_share_in_year = auto()
+    rate = auto()
+    roi = auto()
+    roe = auto()
+    pe = auto()
+    pb = auto()
+    dividend = auto()
+    dividend_yield = auto()
+    dividend_ratio = auto()
     created = auto()
     modified = auto()
 
@@ -148,13 +159,24 @@ SQL_CREATE_TABLE_FINANCIAL_DATA = " CREATE TABLE IF NOT EXISTS financial_data ( 
                                   + FinancialDataColumn.date.name + " TEXT NOT NULL," \
                                   + FinancialDataColumn.book_value_per_share.name + " DOUBLE," \
                                   + FinancialDataColumn.cash_flow_per_share.name + " DOUBLE," \
+                                  + FinancialDataColumn.total_share.name + " DOUBLE," \
                                   + FinancialDataColumn.total_current_assets.name + " DOUBLE," \
                                   + FinancialDataColumn.total_assets.name + " DOUBLE," \
                                   + FinancialDataColumn.total_long_term_liabilities.name + " DOUBLE," \
+                                  + FinancialDataColumn.debt_to_net_assets_ratio.name + " DOUBLE," \
                                   + FinancialDataColumn.main_business_income.name + " DOUBLE," \
                                   + FinancialDataColumn.financial_expenses.name + " DOUBLE," \
                                   + FinancialDataColumn.net_profit.name + " DOUBLE," \
                                   + FinancialDataColumn.net_profit_per_share.name + " DOUBLE," \
+                                  + FinancialDataColumn.net_profit_per_share_in_year.name + " DOUBLE," \
+                                  + FinancialDataColumn.rate.name + " DOUBLE," \
+                                  + FinancialDataColumn.roi.name + " DOUBLE," \
+                                  + FinancialDataColumn.roe.name + " DOUBLE," \
+                                  + FinancialDataColumn.pe.name + " DOUBLE," \
+                                  + FinancialDataColumn.pb.name + " DOUBLE," \
+                                  + FinancialDataColumn.dividend.name + " DOUBLE," \
+                                  + FinancialDataColumn.dividend_yield.name + " DOUBLE," \
+                                  + FinancialDataColumn.dividend_ratio.name + " DOUBLE," \
                                   + FinancialDataColumn.created.name + " TEXT," \
                                   + FinancialDataColumn.modified.name + " TEXT" \
                                   + "); "
