@@ -257,6 +257,8 @@ def write_stock_data_to_database(stock_code, stock_data_list, period=Constants.M
             stock_data_obj.set_low(stock_data['low'])
             stock_data_obj.set_close(stock_data['close'])
             stock_data_obj.set_volume(stock_data['volume'])
+            stock_data_obj.set_created(now)
+            stock_data_obj.set_modified(now)
 
             record = stock_data_obj.to_tuple(include_id=False)
             record_list.append(record)

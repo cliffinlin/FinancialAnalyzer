@@ -104,6 +104,10 @@ class StockDataColumn(Enum):
     close = auto()
     volume = auto()
     value = auto()
+    roi = auto()
+    pe = auto()
+    pb = auto()
+    dividend_yield = auto()
     created = auto()
     modified = auto()
 
@@ -120,6 +124,10 @@ SQL_CREATE_TABLE_STOCK_DATA = " CREATE TABLE IF NOT EXISTS stock_data ( " \
                               + StockDataColumn.close.name + " DOUBLE," \
                               + StockDataColumn.volume.name + " DOUBLE," \
                               + StockDataColumn.value.name + " DOUBLE," \
+                              + StockDataColumn.roi.name + " DOUBLE," \
+                              + StockDataColumn.pe.name + " DOUBLE," \
+                              + StockDataColumn.pb.name + " DOUBLE," \
+                              + StockDataColumn.dividend_yield.name + " DOUBLE," \
                               + StockDataColumn.created.name + " TEXT," \
                               + StockDataColumn.modified.name + " TEXT" \
                               + "); "
