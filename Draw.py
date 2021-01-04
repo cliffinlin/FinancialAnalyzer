@@ -34,6 +34,7 @@ def draw_stock_data(stock, draw_candle_stick=True, period=Constants.MONTH, save_
     # setup moving average models
 
     x = stock_data_dict['date']
+    roi = stock_data_dict['roi']
 
     #
     # EMA_1_span = 7
@@ -96,6 +97,7 @@ def draw_stock_data(stock, draw_candle_stick=True, period=Constants.MONTH, save_
     ax1.step(x1, net_profit_per_share, label='NetProfitPerShare')
     ax1.step(x1, book_value_per_share, label='BookValuePerShare')
     ax1.step(x2, dividend, label='Dividend')
+    ax1.step(x, roi, label='ROI')
 
     ax1.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d'))
     ax1.xaxis.set_major_locator(mdates.MonthLocator([1, 4, 7, 10]))
