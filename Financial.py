@@ -699,6 +699,7 @@ def setup_net_profit_per_share(financial_data_tuple_list):
         financial_data_tuple = financial_data_tuple_list[i]
         financial_data = FinancialData(financial_data_tuple)
         financial_data.setup_net_profit_per_share()
+        financial_data.setup_debt_to_net_assets_ratio()
         financial_data_tuple_list[i] = financial_data.to_tuple(include_id=True)
 
 
@@ -738,18 +739,19 @@ def setup_rate(financial_data_tuple_list):
     if Utility.is_empty(financial_data_tuple_list):
         return
 
-    if len(financial_data_tuple_list) < 2:
+    if len(financial_data_tuple_list) < Constants.SEASONS_IN_A_YEAR + 1:
         return
 
-    for i in range(len(financial_data_tuple_list) - 1):
+    for i in range(len(financial_data_tuple_list) - Constants.SEASONS_IN_A_YEAR):
         financial_data = FinancialData(financial_data_tuple_list[i])
-        prev = FinancialData(financial_data_tuple_list[i + 1])
+        prev = FinancialData(financial_data_tuple_list[i + Constants.SEASONS_IN_A_YEAR])
 
         if prev.get_net_profit_per_share_in_year() == 0:
             continue
 
         rate = round(financial_data.get_net_profit_per_share_in_year() / prev.get_net_profit_per_share_in_year(),
                      Constants.DOUBLE_FIXED_DECIMAL)
+
         financial_data.set_rate(rate)
         financial_data_tuple_list[i] = financial_data.to_tuple(include_id=True)
 
@@ -758,10 +760,19 @@ def setup_roe(financial_data_tuple_list):
     if Utility.is_empty(financial_data_tuple_list):
         return
 
-    for i in range(len(financial_data_tuple_list)):
+    if len(financial_data_tuple_list) < Constants.SEASONS_IN_A_YEAR + 1:
+        return
+
+    for i in range(len(financial_data_tuple_list) - Constants.SEASONS_IN_A_YEAR):
         financial_data = FinancialData(financial_data_tuple_list[i])
-        financial_data.setup_debt_to_net_assets_ratio()
-        financial_data.setup_roe()
+
+        book_value_per_share = FinancialData(financial_data_tuple_list[i + Constants.SEASONS_IN_A_YEAR]).get_book_value_per_share()
+
+        if book_value_per_share == 0:
+            continue
+
+        roe = round(100.0 * financial_data.get_net_profit_per_share_in_year() / book_value_per_share, Constants.DOUBLE_FIXED_DECIMAL)
+        financial_data.set_roe(roe)
         financial_data_tuple_list[i] = financial_data.to_tuple(include_id=True)
 
 
@@ -787,8 +798,13 @@ def setup_roi(stock_data_tuple_list, financial_data_tuple_list):
                            Constants.DOUBLE_FIXED_DECIMAL)
                 if financial_data.get_book_value_per_share() != 0:
                     pb = round(price / financial_data.get_book_value_per_share(), Constants.DOUBLE_FIXED_DECIMAL)
-                roi = round(financial_data.rate * financial_data.roe * pe * Constants.ROI_COEFFICIENT,
+                # roi = round(financial_data.rate * financial_data.roe * pe * Constants.ROI_COEFFICIENT,
+                #             Constants.DOUBLE_FIXED_DECIMAL)
+                roi = round(financial_data.roe * pe * Constants.ROI_COEFFICIENT,
                             Constants.DOUBLE_FIXED_DECIMAL)
+                if roi < 0:
+                    roi = 0
+
                 stock_data.set_pe(pe)
                 stock_data.set_pb(pb)
                 stock_data.set_roi(roi)
