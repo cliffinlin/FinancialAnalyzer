@@ -202,7 +202,7 @@ class FinancialData:
         return self.roe
 
     def set_roe(self, roe):
-        if roe is not None:
+        if roe is not None and roe > 0:
             self.roe = roe
 
     def get_pe(self):

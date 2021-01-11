@@ -58,6 +58,7 @@ def draw_stock_data(stock, draw_candle_stick=True, period=Constants.MONTH, save_
     financial_data_dict['date'] = mdates.date2num(financial_data_dict['date'])
 
     x1 = financial_data_dict['date']
+    roe = financial_data_dict['roe']
     book_value_per_share = financial_data_dict['book_value_per_share']
     net_profit_per_share = financial_data_dict['net_profit_per_share'] * 10
     cash_flow_per_share = financial_data_dict['cash_flow_per_share']
@@ -93,6 +94,7 @@ def draw_stock_data(stock, draw_candle_stick=True, period=Constants.MONTH, save_
         # p2 = ax.plot(x, EMA_2, label='EMA(' + str(EMA_2_span) + ')')
         # p3 = ax.plot(x, SMA_2, label='SMA(' + str(SMA_2_span) + ')')
 
+    ax1.step(x1, roe, label='Roe')
     ax1.step(x1, cash_flow_per_share, label='CashFlowPerShare')
     ax1.step(x1, net_profit_per_share, label='NetProfitPerShare')
     ax1.step(x1, book_value_per_share, label='BookValuePerShare')

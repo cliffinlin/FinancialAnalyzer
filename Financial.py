@@ -21,7 +21,7 @@ from StockData import StockData
 from TotalShare import TotalShare
 
 favorite_only = True
-black_list_enabled = True
+black_list_enabled = False
 
 
 # TODO stock_data_list
@@ -541,7 +541,8 @@ def write_financial_data_to_file(stock, financial_data_tuple_list):
                               "main_business_income",
                               "financial_expenses",
                               "net_profit",
-                              "net_profit_per_share"))
+                              "net_profit_per_share",
+                              "roe"))
 
     with open(file_name, 'w', newline='') as csv_file:
         writer = csv.DictWriter(csv_file, fieldnames=field_name_tuple)
@@ -562,6 +563,7 @@ def write_financial_data_to_file(stock, financial_data_tuple_list):
                                    "financial_expenses": financial_data.financial_expenses,
                                    "net_profit": financial_data.net_profit,
                                    "net_profit_per_share": financial_data.net_profit_per_share,
+                                   "roe":financial_data.roe,
                                    }
             writer.writerow(financial_data_dict)
 
