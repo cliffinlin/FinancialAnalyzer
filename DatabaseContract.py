@@ -228,3 +228,28 @@ SQL_CREATE_TABLE_TOTAL_SHARE = " CREATE TABLE IF NOT EXISTS total_share ( " \
                                + TotalShareColumn.created.name + " TEXT," \
                                + TotalShareColumn.modified.name + " TEXT" \
                                + "); "
+
+
+class StockHolderColumn(Enum):
+    id = 0
+    stock_code = auto()
+    date = auto()
+    type = auto()
+    number = auto()
+    hold = auto()
+    ratio = auto()
+    created = auto()
+    modified = auto()
+
+
+SQL_CREATE_TABLE_STOCK_HOLDER = " CREATE TABLE IF NOT EXISTS stock_holder ( " \
+                                + StockHolderColumn.id.name + " INTEGER PRIMARY KEY AUTOINCREMENT," \
+                                + StockHolderColumn.stock_code.name + " TEXT NOT NULL," \
+                                + StockHolderColumn.date.name + " TEXT NOT NULL," \
+                                + StockHolderColumn.type.name + " TEXT NOT NULL," \
+                                + StockHolderColumn.number.name + " INTEGER," \
+                                + StockHolderColumn.hold.name + " DOUBLE," \
+                                + StockHolderColumn.ratio.name + " DOUBLE," \
+                                + StockHolderColumn.created.name + " TEXT," \
+                                + StockHolderColumn.modified.name + " TEXT" \
+                                + "); "

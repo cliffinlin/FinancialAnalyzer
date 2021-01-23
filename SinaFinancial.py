@@ -110,6 +110,7 @@ def download_stock_list(page):
     url += '&sort=symbol&asc=1&node=hs_a&symbol=&_s_r_a=init'
 
     print(url)
+
     content = None
 
     try:

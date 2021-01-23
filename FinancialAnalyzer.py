@@ -13,7 +13,7 @@ import Init
 def main():
     Init.initialize()
 
-    # Financial.download()
+    Financial.download()
     Financial.analyze()
 
     Draw.draw(where="1", order="roi", sort="DESC", draw_candle_stick=True, save_fig=True)

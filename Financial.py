@@ -11,6 +11,7 @@ import pandas
 
 import BlackList
 import Constants
+import EastMoney
 import Favorite
 import SinaFinancial
 import Utility
@@ -18,6 +19,7 @@ from FinancialData import FinancialData
 from ShareBonus import ShareBonus
 from Stock import Stock
 from StockData import StockData
+from StockHolder import StockHolder
 from TotalShare import TotalShare
 
 favorite_only = True
@@ -38,8 +40,8 @@ def get_time_to_market(stock_data_list):
 
 def download():
     print(download.__name__)
-
-    download_stock_list()
+#TEST
+    # download_stock_list()
 
     stock_tuple_list = read_stock_tuple_list_from_database()
     if Utility.is_empty(stock_tuple_list):
@@ -74,6 +76,7 @@ def download():
         download_financial_data(stock)
         download_share_bonus(stock)
         download_total_share(stock)
+        download_stock_holder(stock)
 
         stock.update_to_database()
 
@@ -167,6 +170,30 @@ def download_total_share(stock):
     write_total_share_to_database(stock.get_code(), total_share_list)
 
     return total_share_list
+
+
+def download_stock_holder(stock):
+    stock_holder_list_list = []
+
+    if stock is None:
+        return None
+
+    report_date_list = EastMoney.download_report_date_list(stock)
+    if Utility.is_empty(report_date_list):
+        return None
+
+    for report_date in report_date_list:
+        print(report_date)
+
+        stock_holder_list = EastMoney.download_stock_holder_list(stock, report_date)
+        if stock_holder_list is None:
+            continue
+
+        stock_holder_list_list.append(stock_holder_list)
+
+    write_stock_holder_to_database(stock.get_code(), stock_holder_list_list)
+
+    return stock_holder_list_list
 
 
 def write_stock_list_to_database(stock_list):
@@ -406,6 +433,53 @@ def write_total_share_to_database(stock_code, total_share_list):
             connect.close()
 
 
+def write_stock_holder_to_database(stock_code, stock_holder_list_list):
+    connect = None
+    record_list = []
+
+    delete_sql = StockHolder.get_delete_sql()
+    insert_sql = StockHolder.get_insert_sql()
+
+    if Utility.is_empty(stock_holder_list_list):
+        print("stock_holder_list_list is empty, return")
+        return
+
+    try:
+        connect = sqlite3.connect(Constants.DATA_DATABASE_ORION_DB)
+        cursor = connect.cursor()
+
+        cursor.execute(delete_sql, (stock_code,))
+
+        for stock_holder_list in stock_holder_list_list:
+            if Utility.is_empty(stock_holder_list):
+                print("stock_holder_list is empty, return")
+                continue
+
+            for stock_holder in stock_holder_list:
+                now = datetime.now().strftime(Constants.DATE_TIME_FORMAT)
+
+                stock_holder_obj = StockHolder()
+                stock_holder_obj.set_stock_code(stock_code)
+                stock_holder_obj.set_date(stock_holder['date'])
+                stock_holder_obj.set_type(stock_holder['type'])
+                stock_holder_obj.set_number(stock_holder['number'])
+                stock_holder_obj.set_hold(stock_holder['hold'])
+                stock_holder_obj.set_ratio(stock_holder['ratio'])
+                stock_holder_obj.set_created(now)
+                stock_holder_obj.set_modified(now)
+
+                record = stock_holder_obj.to_tuple(include_id=False)
+                record_list.append(record)
+
+        cursor.executemany(insert_sql, record_list)
+        connect.commit()
+    except sqlite3.Error as e:
+        print('e:', e)
+    finally:
+        if connect is not None:
+            connect.close()
+
+
 def get_stock_file_name():
     return "./data/stock/stock.csv"
 
@@ -519,7 +593,8 @@ def write_stock_data_to_file(stock, stock_data_tuple_list, period=Constants.MONT
                 continue
 
             stock_data_dict = {"date": stock_data.date, "open": stock_data.open, "high": stock_data.high,
-                               "low": stock_data.low, "close": stock_data.close, "volume": stock_data.volume, "roi":stock_data.roi}
+                               "low": stock_data.low, "close": stock_data.close, "volume": stock_data.volume,
+                               "roi": stock_data.roi}
             writer.writerow(stock_data_dict)
 
 
@@ -563,7 +638,7 @@ def write_financial_data_to_file(stock, financial_data_tuple_list):
                                    "financial_expenses": financial_data.financial_expenses,
                                    "net_profit": financial_data.net_profit,
                                    "net_profit_per_share": financial_data.net_profit_per_share,
-                                   "roe":financial_data.roe,
+                                   "roe": financial_data.roe,
                                    }
             writer.writerow(financial_data_dict)
 
@@ -772,7 +847,8 @@ def setup_roe(financial_data_tuple_list):
         if prev is None or prev.get_book_value_per_share() == 0:
             continue
 
-        roe = round(100.0 * financial_data.get_net_profit_per_share_in_year() / prev.get_book_value_per_share(), Constants.DOUBLE_FIXED_DECIMAL)
+        roe = round(100.0 * financial_data.get_net_profit_per_share_in_year() / prev.get_book_value_per_share(),
+                    Constants.DOUBLE_FIXED_DECIMAL)
         financial_data.set_roe(roe)
         financial_data_tuple_list[i] = financial_data.to_tuple(include_id=True)
 
