@@ -40,7 +40,7 @@ def setup_database():
         cursor.execute(DatabaseContract.SQL_CREATE_TABLE_FINANCIAL_DATA)
         cursor.execute(DatabaseContract.SQL_CREATE_TABLE_SHARE_BONUS)
         cursor.execute(DatabaseContract.SQL_CREATE_TABLE_TOTAL_SHARE)
-        cursor.execute(DatabaseContract.SQL_CREATE_TABLE_STOCK_HOLDER)
+        cursor.execute(DatabaseContract.SQL_CREATE_TABLE_SHARE_HOLDER)
 
         connect.commit()
     except sqlite3.Error as e:

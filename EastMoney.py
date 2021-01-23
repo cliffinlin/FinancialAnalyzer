@@ -192,8 +192,8 @@ def download_report_date_list(stock):
     return report_dat_list
 
 
-def download_stock_holder_list(stock, report_date):
-    stock_holder_list = []
+def download_share_holder_list(stock, report_date):
+    share_holder_list = []
 
     if stock is None:
         return None
@@ -245,13 +245,13 @@ def download_stock_holder_list(stock, report_date):
         if Utility.is_empty(itme_list) or len(itme_list) < 7:
             continue
 
-        stock_holder = dict()
-        stock_holder["date"] = itme_list[0]
-        stock_holder["type"] = itme_list[1]
-        stock_holder["number"] = itme_list[2]
-        stock_holder["hold"] = itme_list[3]
-        stock_holder["ratio"] = itme_list[6]
+        share_holder = dict()
+        share_holder["date"] = itme_list[0]
+        share_holder["type"] = itme_list[1]
+        share_holder["number"] = itme_list[2]
+        share_holder["hold"] = itme_list[3]
+        share_holder["ratio"] = itme_list[6]
 
-        stock_holder_list.append(stock_holder)
+        share_holder_list.append(share_holder)
 
-    return stock_holder_list
+    return share_holder_list

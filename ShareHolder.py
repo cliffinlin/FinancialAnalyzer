@@ -2,8 +2,8 @@
 import DatabaseContract
 
 
-class StockHolder:
-    def __init__(self, stock_holder_tuple=None):
+class ShareHolder:
+    def __init__(self, share_holder_tuple=None):
         self.id = 0
         self.stock_code = ""
         self.date = ""
@@ -14,18 +14,18 @@ class StockHolder:
         self.created = ""
         self.modified = ""
 
-        if stock_holder_tuple is None:
+        if share_holder_tuple is None:
             return
 
-        self.set_id(stock_holder_tuple[0])
-        self.set_stock_code(stock_holder_tuple[DatabaseContract.StockHolder.stock_code.value])
-        self.set_date(stock_holder_tuple[DatabaseContract.StockHolder.date.value])
-        self.set_type(stock_holder_tuple[DatabaseContract.StockHolder.type.value])
-        self.set_number(stock_holder_tuple[DatabaseContract.StockHolder.nubmer.value])
-        self.set_hold(stock_holder_tuple[DatabaseContract.StockHolder.hold.value])
-        self.set_ratio(stock_holder_tuple[DatabaseContract.StockHolder.ratio.value])
-        self.set_created(stock_holder_tuple[DatabaseContract.StockHolder.created.value])
-        self.set_modified(stock_holder_tuple[DatabaseContract.StockHolder.modified.value])
+        self.set_id(share_holder_tuple[0])
+        self.set_stock_code(share_holder_tuple[DatabaseContract.ShareHolder.stock_code.value])
+        self.set_date(share_holder_tuple[DatabaseContract.ShareHolder.date.value])
+        self.set_type(share_holder_tuple[DatabaseContract.ShareHolder.type.value])
+        self.set_number(share_holder_tuple[DatabaseContract.ShareHolder.nubmer.value])
+        self.set_hold(share_holder_tuple[DatabaseContract.ShareHolder.hold.value])
+        self.set_ratio(share_holder_tuple[DatabaseContract.ShareHolder.ratio.value])
+        self.set_created(share_holder_tuple[DatabaseContract.ShareHolder.created.value])
+        self.set_modified(share_holder_tuple[DatabaseContract.ShareHolder.modified.value])
 
     def get_id(self):
         return self.id
@@ -103,12 +103,12 @@ class StockHolder:
 
     @staticmethod
     def get_delete_sql():
-        delete_sql = "DELETE FROM stock_holder WHERE stock_code = ?"
+        delete_sql = "DELETE FROM share_holder WHERE stock_code = ?"
         return delete_sql
 
     @staticmethod
     def get_insert_sql():
-        insert_sql = "INSERT INTO stock_holder (stock_code," \
+        insert_sql = "INSERT INTO share_holder (stock_code," \
                      "date, type, number, hold, ratio," \
                      "created, modified)" \
                      " VALUES(?," \

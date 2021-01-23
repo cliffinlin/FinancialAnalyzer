@@ -230,7 +230,7 @@ SQL_CREATE_TABLE_TOTAL_SHARE = " CREATE TABLE IF NOT EXISTS total_share ( " \
                                + "); "
 
 
-class StockHolderColumn(Enum):
+class ShareHolderColumn(Enum):
     id = 0
     stock_code = auto()
     date = auto()
@@ -242,14 +242,14 @@ class StockHolderColumn(Enum):
     modified = auto()
 
 
-SQL_CREATE_TABLE_STOCK_HOLDER = " CREATE TABLE IF NOT EXISTS stock_holder ( " \
-                                + StockHolderColumn.id.name + " INTEGER PRIMARY KEY AUTOINCREMENT," \
-                                + StockHolderColumn.stock_code.name + " TEXT NOT NULL," \
-                                + StockHolderColumn.date.name + " TEXT NOT NULL," \
-                                + StockHolderColumn.type.name + " TEXT NOT NULL," \
-                                + StockHolderColumn.number.name + " INTEGER," \
-                                + StockHolderColumn.hold.name + " DOUBLE," \
-                                + StockHolderColumn.ratio.name + " DOUBLE," \
-                                + StockHolderColumn.created.name + " TEXT," \
-                                + StockHolderColumn.modified.name + " TEXT" \
+SQL_CREATE_TABLE_SHARE_HOLDER = " CREATE TABLE IF NOT EXISTS share_holder ( " \
+                                + ShareHolderColumn.id.name + " INTEGER PRIMARY KEY AUTOINCREMENT," \
+                                + ShareHolderColumn.stock_code.name + " TEXT NOT NULL," \
+                                + ShareHolderColumn.date.name + " TEXT NOT NULL," \
+                                + ShareHolderColumn.type.name + " TEXT NOT NULL," \
+                                + ShareHolderColumn.number.name + " INTEGER," \
+                                + ShareHolderColumn.hold.name + " DOUBLE," \
+                                + ShareHolderColumn.ratio.name + " DOUBLE," \
+                                + ShareHolderColumn.created.name + " TEXT," \
+                                + ShareHolderColumn.modified.name + " TEXT" \
                                 + "); "

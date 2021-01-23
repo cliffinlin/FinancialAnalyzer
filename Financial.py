@@ -19,7 +19,7 @@ from FinancialData import FinancialData
 from ShareBonus import ShareBonus
 from Stock import Stock
 from StockData import StockData
-from StockHolder import StockHolder
+from ShareHolder import ShareHolder
 from TotalShare import TotalShare
 
 favorite_only = True
@@ -40,8 +40,8 @@ def get_time_to_market(stock_data_list):
 
 def download():
     print(download.__name__)
-#TEST
-    # download_stock_list()
+
+    download_stock_list()
 
     stock_tuple_list = read_stock_tuple_list_from_database()
     if Utility.is_empty(stock_tuple_list):
@@ -76,7 +76,7 @@ def download():
         download_financial_data(stock)
         download_share_bonus(stock)
         download_total_share(stock)
-        download_stock_holder(stock)
+        download_share_holder(stock)
 
         stock.update_to_database()
 
@@ -172,8 +172,8 @@ def download_total_share(stock):
     return total_share_list
 
 
-def download_stock_holder(stock):
-    stock_holder_list_list = []
+def download_share_holder(stock):
+    share_holder_list_list = []
 
     if stock is None:
         return None
@@ -185,15 +185,15 @@ def download_stock_holder(stock):
     for report_date in report_date_list:
         print(report_date)
 
-        stock_holder_list = EastMoney.download_stock_holder_list(stock, report_date)
-        if stock_holder_list is None:
+        share_holder_list = EastMoney.download_share_holder_list(stock, report_date)
+        if share_holder_list is None:
             continue
 
-        stock_holder_list_list.append(stock_holder_list)
+        share_holder_list_list.append(share_holder_list)
 
-    write_stock_holder_to_database(stock.get_code(), stock_holder_list_list)
+    write_share_holder_to_database(stock.get_code(), share_holder_list_list)
 
-    return stock_holder_list_list
+    return share_holder_list_list
 
 
 def write_stock_list_to_database(stock_list):
@@ -433,15 +433,15 @@ def write_total_share_to_database(stock_code, total_share_list):
             connect.close()
 
 
-def write_stock_holder_to_database(stock_code, stock_holder_list_list):
+def write_share_holder_to_database(stock_code, share_holder_list_list):
     connect = None
     record_list = []
 
-    delete_sql = StockHolder.get_delete_sql()
-    insert_sql = StockHolder.get_insert_sql()
+    delete_sql = ShareHolder.get_delete_sql()
+    insert_sql = ShareHolder.get_insert_sql()
 
-    if Utility.is_empty(stock_holder_list_list):
-        print("stock_holder_list_list is empty, return")
+    if Utility.is_empty(share_holder_list_list):
+        print("share_holder_list_list is empty, return")
         return
 
     try:
@@ -450,25 +450,25 @@ def write_stock_holder_to_database(stock_code, stock_holder_list_list):
 
         cursor.execute(delete_sql, (stock_code,))
 
-        for stock_holder_list in stock_holder_list_list:
-            if Utility.is_empty(stock_holder_list):
-                print("stock_holder_list is empty, return")
+        for share_holder_list in share_holder_list_list:
+            if Utility.is_empty(share_holder_list):
+                print("share_holder_list is empty, return")
                 continue
 
-            for stock_holder in stock_holder_list:
+            for share_holder in share_holder_list:
                 now = datetime.now().strftime(Constants.DATE_TIME_FORMAT)
 
-                stock_holder_obj = StockHolder()
-                stock_holder_obj.set_stock_code(stock_code)
-                stock_holder_obj.set_date(stock_holder['date'])
-                stock_holder_obj.set_type(stock_holder['type'])
-                stock_holder_obj.set_number(stock_holder['number'])
-                stock_holder_obj.set_hold(stock_holder['hold'])
-                stock_holder_obj.set_ratio(stock_holder['ratio'])
-                stock_holder_obj.set_created(now)
-                stock_holder_obj.set_modified(now)
+                share_holder_obj = ShareHolder()
+                share_holder_obj.set_stock_code(stock_code)
+                share_holder_obj.set_date(share_holder['date'])
+                share_holder_obj.set_type(share_holder['type'])
+                share_holder_obj.set_number(share_holder['number'])
+                share_holder_obj.set_hold(share_holder['hold'])
+                share_holder_obj.set_ratio(share_holder['ratio'])
+                share_holder_obj.set_created(now)
+                share_holder_obj.set_modified(now)
 
-                record = stock_holder_obj.to_tuple(include_id=False)
+                record = share_holder_obj.to_tuple(include_id=False)
                 record_list.append(record)
 
         cursor.executemany(insert_sql, record_list)
@@ -745,6 +745,15 @@ def read_total_share_from_database(stock):
                                                 (stock.get_code(),))
 
 
+def read_share_holder_from_database(stock):
+    if stock is None:
+        return None
+
+    return Utility.get_tuple_list_from_database(
+        "SELECT * FROM share_holder WHERE stock_code = ? AND type='机构汇总'  order by date desc",
+        (stock.get_code(),))
+
+
 def setup_total_share(financial_data_tuple_list, total_share_tuple_list):
     if Utility.is_empty(financial_data_tuple_list):
         return
@@ -1002,6 +1011,7 @@ def analyze():
         financial_data_tuple_list = read_financial_data_from_database(stock)
         share_bonus_tuple_list = read_share_bonus_from_database(stock)
         total_share_tuple_list = read_total_share_from_database(stock)
+        share_holder_tuple_list = read_share_holder_from_database(stock)
 
         setup_total_share(financial_data_tuple_list, total_share_tuple_list)
         setup_net_profit_per_share(financial_data_tuple_list)
