@@ -14,6 +14,7 @@ def make_data_directory():
     Utility.makedir(Constants.DATA_FIGURE_PATH)
     Utility.makedir(Constants.DATA_FINANCIAL_PATH)
     Utility.makedir(Constants.DATA_SHARE_BONUS_PATH)
+    Utility.makedir(Constants.DATA_SHARE_HOLDER_PATH)
     Utility.makedir(Constants.DATA_TOTAL_SHARE_PATH)
     Utility.makedir(Constants.DATA_STOCK_PATH)
     Utility.makedir(Constants.DATA_STOCK_DAY_PATH)

@@ -83,6 +83,19 @@ def draw_stock_data(stock, draw_candle_stick=True, period=Constants.MONTH, save_
     x2 = share_bonus_dict['date']
     dividend = share_bonus_dict['dividend']
 
+    share_holder_file_name = Financial.get_share_holder_file_name(stock)
+    if not os.path.exists(share_holder_file_name):
+        print(share_holder_file_name + " not exist, return")
+        return
+
+    share_holder_dict = pandas.read_csv(share_holder_file_name, parse_dates=True, index_col=0)
+    share_holder_dict.reset_index(inplace=True)
+    share_holder_dict['date'] = mdates.date2num(share_holder_dict['date'])
+
+    x3 = share_holder_dict['date']
+    holder_number = share_holder_dict['number']
+    share_ratio = share_holder_dict['ratio']
+
     # plot
 
     fig, (ax1, ax3) = plt.subplots(2, sharex=True, figsize=(10, 12))
@@ -99,6 +112,8 @@ def draw_stock_data(stock, draw_candle_stick=True, period=Constants.MONTH, save_
     ax1.step(x1, net_profit_per_share, label='NetProfitPerShare')
     ax1.step(x1, book_value_per_share, label='BookValuePerShare')
     ax1.step(x2, dividend, label='Dividend')
+    ax1.step(x3, holder_number, label='HolderNumber')
+    ax1.step(x3, share_ratio, label='ShareRatio')
     ax1.step(x, roi, label='ROI')
 
     ax1.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d'))

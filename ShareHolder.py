@@ -18,14 +18,14 @@ class ShareHolder:
             return
 
         self.set_id(share_holder_tuple[0])
-        self.set_stock_code(share_holder_tuple[DatabaseContract.ShareHolder.stock_code.value])
-        self.set_date(share_holder_tuple[DatabaseContract.ShareHolder.date.value])
-        self.set_type(share_holder_tuple[DatabaseContract.ShareHolder.type.value])
-        self.set_number(share_holder_tuple[DatabaseContract.ShareHolder.nubmer.value])
-        self.set_hold(share_holder_tuple[DatabaseContract.ShareHolder.hold.value])
-        self.set_ratio(share_holder_tuple[DatabaseContract.ShareHolder.ratio.value])
-        self.set_created(share_holder_tuple[DatabaseContract.ShareHolder.created.value])
-        self.set_modified(share_holder_tuple[DatabaseContract.ShareHolder.modified.value])
+        self.set_stock_code(share_holder_tuple[DatabaseContract.ShareHolderColumn.stock_code.value])
+        self.set_date(share_holder_tuple[DatabaseContract.ShareHolderColumn.date.value])
+        self.set_type(share_holder_tuple[DatabaseContract.ShareHolderColumn.type.value])
+        self.set_number(share_holder_tuple[DatabaseContract.ShareHolderColumn.number.value])
+        self.set_hold(share_holder_tuple[DatabaseContract.ShareHolderColumn.hold.value])
+        self.set_ratio(share_holder_tuple[DatabaseContract.ShareHolderColumn.ratio.value])
+        self.set_created(share_holder_tuple[DatabaseContract.ShareHolderColumn.created.value])
+        self.set_modified(share_holder_tuple[DatabaseContract.ShareHolderColumn.modified.value])
 
     def get_id(self):
         return self.id

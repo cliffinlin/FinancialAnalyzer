@@ -505,6 +505,13 @@ def get_share_bonus_file_name(stock):
         return "./data/share_bonus/" + stock.get_code() + ".csv"
 
 
+def get_share_holder_file_name(stock):
+    if stock is None:
+        return None
+    else:
+        return "./data/share_holder/" + stock.get_code() + ".csv"
+
+
 def get_value_string_by_key(key, dictionary):
     value = 0.0
 
@@ -670,6 +677,35 @@ def write_share_bonus_to_file(stock, share_bonus_tuple_list):
                                 "r_date": share_bonus.r_date,
                                 }
             writer.writerow(share_bonus_dict)
+
+
+def write_share_holder_to_file(stock, share_holder_tuple_list):
+    if stock is None:
+        return
+
+    if Utility.is_empty(share_holder_tuple_list):
+        return
+
+    file_name = get_share_holder_file_name(stock)
+
+    field_name_tuple = tuple(("date",
+                              "number",
+                              "ratio"))
+
+    with open(file_name, 'w', newline='') as csv_file:
+        writer = csv.DictWriter(csv_file, fieldnames=field_name_tuple)
+        writer.writeheader()
+
+        for share_holder_tuple in share_holder_tuple_list:
+            share_holder = ShareHolder(share_holder_tuple)
+            if share_holder is None:
+                continue
+
+            share_holder_dict = {"date": share_holder.date,
+                                 "number": share_holder.number,
+                                 "ratio": share_holder.ratio,
+                                 }
+            writer.writerow(share_holder_dict)
 
 
 #
@@ -1092,6 +1128,9 @@ def write_to_file(stock):
 
     share_bonus_tuple_list = read_share_bonus_from_database(stock)
     write_share_bonus_to_file(stock, share_bonus_tuple_list)
+
+    share_holder_tuple_list = read_share_holder_from_database(stock)
+    write_share_holder_to_file(stock, share_holder_tuple_list)
 
 
 def in_check_list(stock, check_list):
