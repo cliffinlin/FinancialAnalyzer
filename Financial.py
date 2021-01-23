@@ -21,7 +21,7 @@ from StockData import StockData
 from TotalShare import TotalShare
 
 favorite_only = True
-black_list_enabled = False
+black_list_enabled = True
 
 
 # TODO stock_data_list
@@ -748,7 +748,7 @@ def setup_rate(financial_data_tuple_list):
         financial_data = FinancialData(financial_data_tuple_list[i])
         prev = FinancialData(financial_data_tuple_list[i + Constants.SEASONS_IN_A_YEAR])
 
-        if prev.get_net_profit_per_share_in_year() == 0:
+        if prev is None or prev.get_net_profit_per_share_in_year() == 0:
             continue
 
         rate = round(financial_data.get_net_profit_per_share_in_year() / prev.get_net_profit_per_share_in_year(),
@@ -767,13 +767,12 @@ def setup_roe(financial_data_tuple_list):
 
     for i in range(len(financial_data_tuple_list) - Constants.SEASONS_IN_A_YEAR):
         financial_data = FinancialData(financial_data_tuple_list[i])
+        prev = FinancialData(financial_data_tuple_list[i + Constants.SEASONS_IN_A_YEAR])
 
-        book_value_per_share = FinancialData(financial_data_tuple_list[i + Constants.SEASONS_IN_A_YEAR]).get_book_value_per_share()
-
-        if book_value_per_share == 0:
+        if prev is None or prev.get_book_value_per_share() == 0:
             continue
 
-        roe = round(100.0 * financial_data.get_net_profit_per_share_in_year() / book_value_per_share, Constants.DOUBLE_FIXED_DECIMAL)
+        roe = round(100.0 * financial_data.get_net_profit_per_share_in_year() / prev.get_book_value_per_share(), Constants.DOUBLE_FIXED_DECIMAL)
         financial_data.set_roe(roe)
         financial_data_tuple_list[i] = financial_data.to_tuple(include_id=True)
 

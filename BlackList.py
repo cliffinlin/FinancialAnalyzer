@@ -124,4 +124,6 @@ stock_list = {
     "600763",  # 通策医疗 roi=1.81 roe=29.13 1/pe=0.62 rate=1.0 pb=37.28 dividend=0.0 yield=0.0% delta=0.0%
     "300015",  # 爱尔眼科 roi=1.71 roe=21.07 1/pe=0.64 rate=1.27 pb=29.87 dividend=1.5 yield=0.22% delta=34.22%
     "002230",  # 科大讯飞 roi=1.59 roe=9.7 1/pe=1.29 rate=1.27 pb=7.0 dividend=1.0 yield=0.26% delta=20.23%
+
+    #非稳定分红
 }
