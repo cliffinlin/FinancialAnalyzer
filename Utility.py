@@ -17,9 +17,9 @@ def is_empty(obj):
     return False
 
 
-def get_tuple_list_from_database(sql, parameters=None):
+def fetchone_from_database(sql, parameters=None):
     connect = None
-    tuple_list = tuple()
+    result = tuple()
 
     if is_empty(sql):
         return None
@@ -34,14 +34,41 @@ def get_tuple_list_from_database(sql, parameters=None):
             return None
 
         cursor.execute(sql, parameters)
-        tuple_list = cursor.fetchall()
+        result = cursor.fetchone()
     except sqlite3.Error as e:
         print('e:', e)
     finally:
         if connect is not None:
             connect.close()
 
-    return tuple_list
+    return result
+
+
+def fetchall_from_database(sql, parameters=None):
+    connect = None
+    result = tuple()
+
+    if is_empty(sql):
+        return None
+
+    try:
+        connect = sqlite3.connect(Constants.DATA_DATABASE_ORION_DB)
+        if connect is None:
+            return None
+
+        cursor = connect.cursor()
+        if cursor is None:
+            return None
+
+        cursor.execute(sql, parameters)
+        result = cursor.fetchall()
+    except sqlite3.Error as e:
+        print('e:', e)
+    finally:
+        if connect is not None:
+            connect.close()
+
+    return result
 
 
 def read_download_index_from_config_ini():

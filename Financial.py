@@ -5,7 +5,7 @@ import sqlite3
 import time
 import xml.etree.ElementTree as ET
 from configparser import ConfigParser
-from datetime import datetime
+from datetime import datetime, date
 
 import pandas
 
@@ -41,24 +41,12 @@ def get_time_to_market(stock_data_list):
     return time_to_market
 
 
-def need_download_stock_list():
-    setting_list = Setting.read_setting_from_database("download_stock_list")
-    if Utility.is_empty(setting_list):
-        return True
-    else:
-        setting = Setting(setting_list[0])
-        if setting is None:
-            return True
-        else:
-            return False
-
-
 def download():
     print(download.__name__)
 
-    if need_download_stock_list():
+    if Setting.need_download_stock_list():
         download_stock_list()
-        Setting.write_setting_to_database("download_stock_list", "")
+        Setting.write_to_database(Constants.SETTING_KEY_DOWNLOAD_STOCK_LIST, "1")
 
     stock_tuple_list = read_stock_tuple_list_from_database()
     if Utility.is_empty(stock_tuple_list):
@@ -761,39 +749,39 @@ def read_stock_data_from_database(stock, period=Constants.MONTH):
     if stock is None:
         return None
 
-    return Utility.get_tuple_list_from_database("SELECT * FROM stock_data WHERE stock_code = ? AND period = ?  order "
-                                                "by date desc", (stock.get_code(), period))
+    return Utility.fetchall_from_database("SELECT * FROM stock_data WHERE stock_code = ? AND period = ?  order "
+                                          "by date desc", (stock.get_code(), period))
 
 
 def read_financial_data_from_database(stock):
     if stock is None:
         return None
 
-    return Utility.get_tuple_list_from_database("SELECT * FROM financial_data WHERE stock_code = ?  order by date desc",
-                                                (stock.get_code(),))
+    return Utility.fetchall_from_database("SELECT * FROM financial_data WHERE stock_code = ?  order by date desc",
+                                          (stock.get_code(),))
 
 
 def read_share_bonus_from_database(stock):
     if stock is None:
         return None
 
-    return Utility.get_tuple_list_from_database("SELECT * FROM share_bonus WHERE stock_code = ?  order by date desc",
-                                                (stock.get_code(),))
+    return Utility.fetchall_from_database("SELECT * FROM share_bonus WHERE stock_code = ?  order by date desc",
+                                          (stock.get_code(),))
 
 
 def read_total_share_from_database(stock):
     if stock is None:
         return None
 
-    return Utility.get_tuple_list_from_database("SELECT * FROM total_share WHERE stock_code = ?  order by date desc",
-                                                (stock.get_code(),))
+    return Utility.fetchall_from_database("SELECT * FROM total_share WHERE stock_code = ?  order by date desc",
+                                          (stock.get_code(),))
 
 
 def read_share_holder_from_database(stock):
     if stock is None:
         return None
 
-    return Utility.get_tuple_list_from_database(
+    return Utility.fetchall_from_database(
         "SELECT * FROM share_holder WHERE stock_code = ? AND type='机构汇总'  order by date desc",
         (stock.get_code(),))
 
