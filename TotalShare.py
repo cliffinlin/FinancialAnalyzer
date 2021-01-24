@@ -81,8 +81,8 @@ class TotalShare:
 
     @staticmethod
     def get_insert_sql():
-        insert_sql = "INSERT INTO total_share (stock_code, date, " \
-                     "total_share, " \
+        insert_sql = "INSERT INTO total_share (stock_code, date," \
+                     "total_share," \
                      "created, modified)" \
                      " VALUES(?,?," \
                      "?," \

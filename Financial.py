@@ -9,13 +9,15 @@ from datetime import datetime
 
 import pandas
 
-import BlackList
+import Favorite
+import PrivateOwner
 import Constants
 import EastMoney
-import Favorite
+import StockPool
 import SinaFinancial
 import Utility
 from FinancialData import FinancialData
+from Setting import Setting
 from ShareBonus import ShareBonus
 from Stock import Stock
 from StockData import StockData
@@ -23,7 +25,8 @@ from ShareHolder import ShareHolder
 from TotalShare import TotalShare
 
 favorite_only = True
-black_list_enabled = True
+exclude_private_owner = True
+stock_pool_only = True
 
 
 # TODO stock_data_list
@@ -38,10 +41,24 @@ def get_time_to_market(stock_data_list):
     return time_to_market
 
 
+def need_download_stock_list():
+    setting_list = Setting.read_setting_from_database("download_stock_list")
+    if Utility.is_empty(setting_list):
+        return True
+    else:
+        setting = Setting(setting_list[0])
+        if setting is None:
+            return True
+        else:
+            return False
+
+
 def download():
     print(download.__name__)
 
-    download_stock_list()
+    if need_download_stock_list():
+        download_stock_list()
+        Setting.write_setting_to_database("download_stock_list", "")
 
     stock_tuple_list = read_stock_tuple_list_from_database()
     if Utility.is_empty(stock_tuple_list):
@@ -510,15 +527,6 @@ def get_share_holder_file_name(stock):
         return None
     else:
         return "./data/share_holder/" + stock.get_code() + ".csv"
-
-
-def get_value_string_by_key(key, dictionary):
-    value = 0.0
-
-    if key in dictionary:
-        value = dictionary[key]
-
-    return str(value)
 
 
 def read_stock_from_file():
@@ -1154,20 +1162,29 @@ def check_out(stock):
     if stock is None:
         return result
 
-    if black_list_enabled:
-        if in_check_list(stock, BlackList.stock_list):
-            # print(stock.mName, " in black_list.")
+    if exclude_private_owner:
+        if in_check_list(stock, PrivateOwner.stock_list):
             return False
 
     if favorite_only:
-        return in_check_list(stock, Favorite.stock_list)
+        if in_check_list(stock, Favorite.stock_list):
+            return True
+        else:
+            return False
+
+    if stock_pool_only:
+        if in_check_list(stock, StockPool.stock_list):
+            return True
+        else:
+            return False
 
     if stock.is_special_treatment():
         # print(stock.mName, " is special treatment.")
-        result = False
-    elif stock.is_time_to_market_too_short():
+        return False
+
+    if stock.is_time_to_market_too_short():
         # print(stock.mName, " time to market too short.")
-        result = False
+        return False
 
     result = True
 

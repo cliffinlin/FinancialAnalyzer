@@ -3,6 +3,23 @@
 from enum import Enum, auto
 
 
+class SettingColumn(Enum):
+    id = 0
+    key = auto()
+    value = auto()
+    created = auto()
+    modified = auto()
+
+
+SQL_CREATE_TABLE_SETTING = " CREATE TABLE IF NOT EXISTS setting ( " \
+                           + SettingColumn.id.name + " INTEGER PRIMARY KEY AUTOINCREMENT," \
+                           + SettingColumn.key.name + " TEXT NOT NULL," \
+                           + SettingColumn.value.name + " TEXT NOT NULL," \
+                           + SettingColumn.created.name + " TEXT," \
+                           + SettingColumn.modified.name + " TEXT" \
+                           + "); "
+
+
 class StockColumn(Enum):
     id = 0
     classes = auto()

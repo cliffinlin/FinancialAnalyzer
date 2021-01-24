@@ -36,6 +36,7 @@ def setup_database():
         if cursor is None:
             return
 
+        cursor.execute(DatabaseContract.SQL_CREATE_TABLE_SETTING)
         cursor.execute(DatabaseContract.SQL_CREATE_TABLE_STOCK)
         cursor.execute(DatabaseContract.SQL_CREATE_TABLE_STOCK_DATA)
         cursor.execute(DatabaseContract.SQL_CREATE_TABLE_FINANCIAL_DATA)

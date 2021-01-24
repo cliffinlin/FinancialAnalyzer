@@ -24,7 +24,8 @@ data = np.linspace(1, 100)
 power = 0
 
 
-def draw_stock_data(stock, draw_candle_stick=True, period=Constants.MONTH, save_fig=False):
+def draw_stock_data(stock, draw_candle_stick=True, draw_roi=True, draw_share_holder=True, period=Constants.MONTH,
+                    save_fig=False):
     # read and reformat data
 
     stock_data_dict = pandas.read_csv(Financial.get_stock_data_file_name(stock), parse_dates=True, index_col=0)
@@ -112,9 +113,13 @@ def draw_stock_data(stock, draw_candle_stick=True, period=Constants.MONTH, save_
     ax1.step(x1, net_profit_per_share, label='NetProfitPerShare')
     ax1.step(x1, book_value_per_share, label='BookValuePerShare')
     ax1.step(x2, dividend, label='Dividend')
-    ax1.step(x3, holder_number, label='HolderNumber')
-    ax1.step(x3, share_ratio, label='ShareRatio')
-    ax1.step(x, roi, label='ROI')
+
+    if draw_roi:
+        ax1.step(x, roi, label='ROI')
+
+    if draw_share_holder:
+        ax1.step(x3, holder_number, label='HolderNumber')
+        ax1.step(x3, share_ratio, label='ShareRatio')
 
     ax1.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d'))
     ax1.xaxis.set_major_locator(mdates.MonthLocator([1, 4, 7, 10]))
@@ -169,7 +174,8 @@ def delete_figure_files():
     return
 
 
-def draw(where=None, order=None, sort=None, draw_candle_stick=True, save_fig=False):
+def draw(where=None, order=None, sort=None, draw_candle_stick=True, draw_roi=True, draw_share_holder=True,
+         save_fig=False):
     global stock_index
     global stock_tuple_list
 
@@ -193,4 +199,5 @@ def draw(where=None, order=None, sort=None, draw_candle_stick=True, save_fig=Fal
 
         Financial.write_to_file(stock)
 
-        draw_stock_data(stock, draw_candle_stick=draw_candle_stick, save_fig=save_fig)
+        draw_stock_data(stock, draw_candle_stick=draw_candle_stick, draw_roi=draw_roi,
+                        draw_share_holder=draw_share_holder, save_fig=save_fig)
