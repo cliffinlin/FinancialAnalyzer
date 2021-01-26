@@ -5,31 +5,26 @@ from datetime import datetime, date
 import Constants
 import DatabaseContract
 import Utility
+from DatabaseTable import DatabaseTable
 
 
-class Setting:
-    def __init__(self, setting_tuple=None):
-        self.id = 0
+class Setting(DatabaseTable):
+    def __init__(self):
+        DatabaseTable.__init__(self)
+
         self.key = ""
         self.value = ""
-        self.created = ""
-        self.modified = ""
 
+    def set(self, setting_tuple):
         if setting_tuple is None:
             return
 
-        self.set_id(setting_tuple[0])
+        DatabaseTable.set(setting_tuple[DatabaseContract.SettingColumn.id.value],
+                          setting_tuple[DatabaseContract.SettingColumn.created.value],
+                          setting_tuple[DatabaseContract.SettingColumn.modified.value])
+
         self.set_key(setting_tuple[DatabaseContract.SettingColumn.key.value])
         self.set_value(setting_tuple[DatabaseContract.SettingColumn.value.value])
-        self.set_created(setting_tuple[DatabaseContract.SettingColumn.created.value])
-        self.set_modified(setting_tuple[DatabaseContract.SettingColumn.modified.value])
-
-    def get_id(self):
-        return self.id
-
-    def set_id(self, id):
-        if id is not None:
-            self.id = id
 
     def get_key(self):
         return self.key
@@ -44,20 +39,6 @@ class Setting:
     def set_value(self, value):
         if value is not None:
             self.value = value
-
-    def get_created(self):
-        return self.created
-
-    def set_created(self, created):
-        if created is not None:
-            self.created = created
-
-    def get_modified(self):
-        return self.modified
-
-    def set_modified(self, modified):
-        if modified is not None:
-            self.modified = modified
 
     def to_tuple(self, include_id=False):
         if include_id:
@@ -146,7 +127,8 @@ class Setting:
         if Utility.is_empty(setting_tuple):
             return True
 
-        setting = Setting(setting_tuple)
+        setting = Setting()
+        setting.set(setting_tuple)
         if Utility.is_empty(setting.get_value()):
             return True
 

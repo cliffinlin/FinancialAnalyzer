@@ -4,7 +4,7 @@ from enum import Enum, auto
 
 
 class SettingColumn(Enum):
-    id = 0
+    id = auto()
     key = auto()
     value = auto()
     created = auto()
