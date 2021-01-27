@@ -28,7 +28,6 @@ favorite_only = True
 exclude_private_owner = True
 stock_pool_only = True
 
-
 # TODO stock_data_list
 def get_time_to_market(stock_data_list):
     time_to_market = None
@@ -376,18 +375,18 @@ def write_share_bonus_to_database(stock_code, share_bonus_list):
 
         cursor.execute(delete_sql, (stock_code,))
 
-        for share_bonus in share_bonus_list:
+        for share_bonus_dic in share_bonus_list:
             now = datetime.now().strftime(Constants.DATE_TIME_FORMAT)
 
-            share_bonus_obj = ShareBonus()
-            share_bonus_obj.set_stock_code(stock_code)
-            share_bonus_obj.set_date(share_bonus['date'])
-            share_bonus_obj.set_dividend(share_bonus['dividend'])
-            share_bonus_obj.set_r_date(share_bonus['r_date'])
-            share_bonus_obj.set_created(now)
-            share_bonus_obj.set_modified(now)
+            share_bonus = ShareBonus()
+            share_bonus.set_stock_code(stock_code)
+            share_bonus.set_date(share_bonus_dic['date'])
+            share_bonus.set_dividend(share_bonus_dic['dividend'])
+            share_bonus.set_r_date(share_bonus_dic['r_date'])
+            share_bonus.set_created(now)
+            share_bonus.set_modified(now)
 
-            record = share_bonus_obj.to_tuple(include_id=False)
+            record = share_bonus.to_tuple(include_id=False)
             record_list.append(record)
 
         cursor.executemany(insert_sql, record_list)
@@ -416,17 +415,17 @@ def write_total_share_to_database(stock_code, total_share_list):
 
         cursor.execute(delete_sql, (stock_code,))
 
-        for total_share in total_share_list:
+        for total_share_dic in total_share_list:
             now = datetime.now().strftime(Constants.DATE_TIME_FORMAT)
 
-            total_share_obj = TotalShare()
-            total_share_obj.set_stock_code(stock_code)
-            total_share_obj.set_date(total_share['date'])
-            total_share_obj.set_total_share(total_share['total_share'])
-            total_share_obj.set_created(now)
-            total_share_obj.set_modified(now)
+            total_share = TotalShare()
+            total_share.set_stock_code(stock_code)
+            total_share.set_date(total_share_dic['date'])
+            total_share.set_total_share(total_share_dic['total_share'])
+            total_share.set_created(now)
+            total_share.set_modified(now)
 
-            record = total_share_obj.to_tuple(include_id=False)
+            record = total_share.to_tuple(include_id=False)
             record_list.append(record)
 
         cursor.executemany(insert_sql, record_list)
@@ -460,20 +459,20 @@ def write_share_holder_to_database(stock_code, share_holder_list_list):
                 print("share_holder_list is empty, return")
                 continue
 
-            for share_holder in share_holder_list:
+            for share_holder_dic in share_holder_list:
                 now = datetime.now().strftime(Constants.DATE_TIME_FORMAT)
 
-                share_holder_obj = ShareHolder()
-                share_holder_obj.set_stock_code(stock_code)
-                share_holder_obj.set_date(share_holder['date'])
-                share_holder_obj.set_type(share_holder['type'])
-                share_holder_obj.set_number(share_holder['number'])
-                share_holder_obj.set_hold(share_holder['hold'])
-                share_holder_obj.set_ratio(share_holder['ratio'])
-                share_holder_obj.set_created(now)
-                share_holder_obj.set_modified(now)
+                share_holder = ShareHolder()
+                share_holder.set_stock_code(stock_code)
+                share_holder.set_date(share_holder_dic['date'])
+                share_holder.set_type(share_holder_dic['type'])
+                share_holder.set_number(share_holder_dic['number'])
+                share_holder.set_hold(share_holder_dic['hold'])
+                share_holder.set_ratio(share_holder_dic['ratio'])
+                share_holder.set_created(now)
+                share_holder.set_modified(now)
 
-                record = share_holder_obj.to_tuple(include_id=False)
+                record = share_holder.to_tuple(include_id=False)
                 record_list.append(record)
 
         cursor.executemany(insert_sql, record_list)
@@ -665,8 +664,6 @@ def write_share_bonus_to_file(stock, share_bonus_tuple_list):
 
         for share_bonus_tuple in share_bonus_tuple_list:
             share_bonus = ShareBonus(share_bonus_tuple)
-            if share_bonus is None:
-                continue
 
             share_bonus_dict = {"date": share_bonus.date,
                                 "dividend": share_bonus.dividend,
@@ -694,8 +691,6 @@ def write_share_holder_to_file(stock, share_holder_tuple_list):
 
         for share_holder_tuple in share_holder_tuple_list:
             share_holder = ShareHolder(share_holder_tuple)
-            if share_holder is None:
-                continue
 
             share_holder_dict = {"date": share_holder.date,
                                  "number": share_holder.number,
@@ -984,8 +979,6 @@ def analyze_share_bonus(stock, share_bonus_tuple_list):
             break
 
         share_bonus = ShareBonus(share_bonus_tuple)
-        if share_bonus is None:
-            break
 
         if Utility.is_empty(share_bonus.date):
             break

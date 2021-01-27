@@ -1,23 +1,26 @@
 # -*- coding: utf-8 -*-
 import DatabaseContract
+from DatabaseTable import DatabaseTable
 
 
-class ShareHolder:
+class ShareHolder(DatabaseTable):
     def __init__(self, share_holder_tuple=None):
-        self.id = 0
+        DatabaseTable.__init__(self)
+
         self.stock_code = ""
         self.date = ""
         self.type = ""
         self.number = 0
         self.hold = 0
         self.ratio = 0
-        self.created = ""
-        self.modified = ""
 
+        self.set(share_holder_tuple)
+
+    def set(self, share_holder_tuple):
         if share_holder_tuple is None:
             return
 
-        self.set_id(share_holder_tuple[0])
+        self.set_id(share_holder_tuple[DatabaseContract.ShareHolderColumn.id.value])
         self.set_stock_code(share_holder_tuple[DatabaseContract.ShareHolderColumn.stock_code.value])
         self.set_date(share_holder_tuple[DatabaseContract.ShareHolderColumn.date.value])
         self.set_type(share_holder_tuple[DatabaseContract.ShareHolderColumn.type.value])
@@ -26,13 +29,6 @@ class ShareHolder:
         self.set_ratio(share_holder_tuple[DatabaseContract.ShareHolderColumn.ratio.value])
         self.set_created(share_holder_tuple[DatabaseContract.ShareHolderColumn.created.value])
         self.set_modified(share_holder_tuple[DatabaseContract.ShareHolderColumn.modified.value])
-
-    def get_id(self):
-        return self.id
-
-    def set_id(self, id):
-        if id is not None:
-            self.id = id
 
     def get_stock_code(self):
         return self.stock_code
@@ -75,20 +71,6 @@ class ShareHolder:
     def set_ratio(self, ratio):
         if ratio is not None:
             self.ratio = ratio
-
-    def get_created(self):
-        return self.created
-
-    def set_created(self, created):
-        if created is not None:
-            self.created = created
-
-    def get_modified(self):
-        return self.modified
-
-    def set_modified(self, modified):
-        if modified is not None:
-            self.modified = modified
 
     def to_tuple(self, include_id=False):
         if include_id:

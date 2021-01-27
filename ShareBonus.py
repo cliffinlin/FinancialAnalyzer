@@ -1,34 +1,30 @@
 # -*- coding: utf-8 -*-
 import DatabaseContract
+from DatabaseTable import DatabaseTable
 
 
-class ShareBonus:
+class ShareBonus(DatabaseTable):
     def __init__(self, share_bonus_tuple=None):
-        self.id = 0
+        DatabaseTable.__init__(self)
+
         self.stock_code = ""
         self.date = ""
         self.dividend = ""
         self.r_date = ""
-        self.created = ""
-        self.modified = ""
 
+        self.set(share_bonus_tuple)
+
+    def set(self, share_bonus_tuple):
         if share_bonus_tuple is None:
             return
 
-        self.set_id(share_bonus_tuple[0])
+        self.set_id(share_bonus_tuple[DatabaseContract.ShareBonusColumn.id.value])
         self.set_stock_code(share_bonus_tuple[DatabaseContract.ShareBonusColumn.stock_code.value])
         self.set_date(share_bonus_tuple[DatabaseContract.ShareBonusColumn.date.value])
         self.set_dividend(share_bonus_tuple[DatabaseContract.ShareBonusColumn.dividend.value])
         self.set_r_date(share_bonus_tuple[DatabaseContract.ShareBonusColumn.r_date.value])
         self.set_created(share_bonus_tuple[DatabaseContract.ShareBonusColumn.created.value])
         self.set_modified(share_bonus_tuple[DatabaseContract.ShareBonusColumn.modified.value])
-
-    def get_id(self):
-        return self.id
-
-    def set_id(self, id):
-        if id is not None:
-            self.id = id
 
     def get_stock_code(self):
         return self.stock_code
@@ -57,20 +53,6 @@ class ShareBonus:
     def set_r_date(self, r_date):
         if r_date is not None:
             self.r_date = r_date
-
-    def get_created(self):
-        return self.created
-
-    def set_created(self, created):
-        if created is not None:
-            self.created = created
-
-    def get_modified(self):
-        return self.modified
-
-    def set_modified(self, modified):
-        if modified is not None:
-            self.modified = modified
 
     def to_tuple(self, include_id=False):
         if include_id:

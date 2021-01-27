@@ -9,22 +9,23 @@ from DatabaseTable import DatabaseTable
 
 
 class Setting(DatabaseTable):
-    def __init__(self):
+    def __init__(self, setting_tuple=None):
         DatabaseTable.__init__(self)
 
         self.key = ""
         self.value = ""
 
+        self.set(setting_tuple)
+
     def set(self, setting_tuple):
         if setting_tuple is None:
             return
 
-        DatabaseTable.set(setting_tuple[DatabaseContract.SettingColumn.id.value],
-                          setting_tuple[DatabaseContract.SettingColumn.created.value],
-                          setting_tuple[DatabaseContract.SettingColumn.modified.value])
-
+        self.set_id(setting_tuple[DatabaseContract.SettingColumn.id.value])
         self.set_key(setting_tuple[DatabaseContract.SettingColumn.key.value])
         self.set_value(setting_tuple[DatabaseContract.SettingColumn.value.value])
+        self.set_created(setting_tuple[DatabaseContract.SettingColumn.created.value])
+        self.set_modified(setting_tuple[DatabaseContract.SettingColumn.modified.value])
 
     def get_key(self):
         return self.key
@@ -127,8 +128,7 @@ class Setting(DatabaseTable):
         if Utility.is_empty(setting_tuple):
             return True
 
-        setting = Setting()
-        setting.set(setting_tuple)
+        setting = Setting(setting_tuple)
         if Utility.is_empty(setting.get_value()):
             return True
 
