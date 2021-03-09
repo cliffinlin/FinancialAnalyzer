@@ -28,6 +28,7 @@ favorite_only = True
 exclude_private_owner = True
 stock_pool_only = True
 
+
 # TODO stock_data_list
 def get_time_to_market(stock_data_list):
     time_to_market = None
@@ -225,7 +226,15 @@ def write_stock_list_to_database(stock_list):
             executemany = True
 
         for stock_dict in stock_list:
-            stock = Stock(stock_dict)
+            stock = Stock()
+            stock.set_symbol(stock_dict['symbol'])
+            stock.set_se(stock_dict["symbol"][0:2])
+            stock.set_code(stock_dict['code'])
+            stock.set_name(stock_dict['name'])
+            stock.set_price(stock_dict['price'])
+            stock.set_change(stock_dict['change'])
+            stock.set_net(stock_dict['net'])
+
             now = datetime.now().strftime(Constants.DATE_TIME_FORMAT)
 
             if executemany:
@@ -514,23 +523,6 @@ def get_share_holder_file_name(stock):
         return None
     else:
         return "./data/share_holder/" + stock.get_code() + ".csv"
-
-
-def read_stock_from_file():
-    file_name = get_stock_file_name()
-
-    stocks = pandas.read_csv(file_name, sep='\t', engine='python')
-    if stocks is None:
-        return None
-
-    stock_list = map(list, stocks.values)
-
-    for stock_item in stock_list:
-        ttt = tuple(str(stock_item).split(", "))
-        stock = Stock(ttt)
-        print(stock)
-
-    return stocks
 
 
 def write_stock_to_file(stock_tuple_list):

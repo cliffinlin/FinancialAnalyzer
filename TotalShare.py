@@ -1,32 +1,30 @@
 # -*- coding: utf-8 -*-
 import DatabaseContract
+from DatabaseTable import DatabaseTable
 
 
-class TotalShare:
+class TotalShare(DatabaseTable):
     def __init__(self, total_share_tuple=None):
-        self.id = 0
+        DatabaseTable.__init__(self)
+
         self.stock_code = ""
         self.date = ""
         self.total_share = ""
-        self.created = ""
-        self.modified = ""
 
+        self.set(total_share_tuple)
+
+    def set(self, total_share_tuple):
         if total_share_tuple is None:
             return
 
-        self.set_id(total_share_tuple[0])
+        DatabaseTable.set(self,
+                          total_share_tuple[DatabaseContract.TotalShareColumn.id.value],
+                          total_share_tuple[DatabaseContract.TotalShareColumn.created.value],
+                          total_share_tuple[DatabaseContract.TotalShareColumn.modified.value])
+
         self.set_stock_code(total_share_tuple[DatabaseContract.TotalShareColumn.stock_code.value])
         self.set_date(total_share_tuple[DatabaseContract.TotalShareColumn.date.value])
         self.set_total_share(total_share_tuple[DatabaseContract.TotalShareColumn.total_share.value])
-        self.set_created(total_share_tuple[DatabaseContract.TotalShareColumn.created.value])
-        self.set_modified(total_share_tuple[DatabaseContract.TotalShareColumn.modified.value])
-
-    def get_id(self):
-        return self.id
-
-    def set_id(self, id):
-        if id is not None:
-            self.id = id
 
     def get_stock_code(self):
         return self.stock_code
@@ -48,20 +46,6 @@ class TotalShare:
     def set_total_share(self, total_share):
         if total_share is not None:
             self.total_share = total_share
-
-    def get_created(self):
-        return self.created
-
-    def set_created(self, created):
-        if created is not None:
-            self.created = created
-
-    def get_modified(self):
-        return self.modified
-
-    def set_modified(self, modified):
-        if modified is not None:
-            self.modified = modified
 
     def to_tuple(self, include_id=False):
         if include_id:
@@ -88,5 +72,3 @@ class TotalShare:
                      "?," \
                      "?,?)"
         return insert_sql
-
-

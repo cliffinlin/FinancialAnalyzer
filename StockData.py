@@ -1,10 +1,12 @@
 # -*- coding: utf-8 -*-
 import DatabaseContract
+from DatabaseTable import DatabaseTable
 
 
-class StockData:
+class StockData(DatabaseTable):
     def __init__(self, stock_data_tuple=None):
-        self.id = 0
+        DatabaseTable.__init__(self)
+
         self.stock_code = ""
         self.date = ""
         self.time = ""
@@ -19,13 +21,17 @@ class StockData:
         self.pe = 0
         self.pb = 0
         self.dividend_yield = 0
-        self.created = ""
-        self.modified = ""
 
+        self.set(stock_data_tuple)
+
+    def set(self, stock_data_tuple):
         if stock_data_tuple is None:
             return
 
-        self.set_id(stock_data_tuple[0])
+        DatabaseTable.set(self, stock_data_tuple[DatabaseContract.StockDataColumn.id.value],
+                          stock_data_tuple[DatabaseContract.StockDataColumn.created.value],
+                          stock_data_tuple[DatabaseContract.StockDataColumn.modified.value])
+
         self.set_stock_code(stock_data_tuple[DatabaseContract.StockDataColumn.stock_code.value])
         self.set_date(stock_data_tuple[DatabaseContract.StockDataColumn.date.value])
         self.set_time(stock_data_tuple[DatabaseContract.StockDataColumn.time.value])
@@ -40,15 +46,6 @@ class StockData:
         self.set_pe(stock_data_tuple[DatabaseContract.StockDataColumn.pe.value])
         self.set_pb(stock_data_tuple[DatabaseContract.StockDataColumn.pb.value])
         self.set_dividend_yield(stock_data_tuple[DatabaseContract.StockDataColumn.dividend_yield.value])
-        self.set_created(stock_data_tuple[DatabaseContract.StockDataColumn.created.value])
-        self.set_modified(stock_data_tuple[DatabaseContract.StockDataColumn.modified.value])
-
-    def get_id(self):
-        return self.id
-
-    def set_id(self, id):
-        if id is not None:
-            self.id = id
 
     def get_stock_code(self):
         return self.stock_code
@@ -148,20 +145,6 @@ class StockData:
         if dividend_yield is not None:
             self.dividend_yield = dividend_yield
 
-    def get_created(self):
-        return self.created
-
-    def set_created(self, created):
-        if created is not None:
-            self.created = created
-
-    def get_modified(self):
-        return self.modified
-
-    def set_modified(self, modified):
-        if modified is not None:
-            self.modified = modified
-
     def to_tuple(self, include_id=False):
         if include_id:
             result = tuple((self.id, self.stock_code, self.date,
@@ -195,5 +178,3 @@ class StockData:
                      "?,?,?,?," \
                      "?,?)"
         return insert_sql
-
-

@@ -18,13 +18,14 @@ class ShareBonus(DatabaseTable):
         if share_bonus_tuple is None:
             return
 
-        self.set_id(share_bonus_tuple[DatabaseContract.ShareBonusColumn.id.value])
+        DatabaseTable.set(self, share_bonus_tuple[DatabaseContract.ShareBonusColumn.id.value],
+                          share_bonus_tuple[DatabaseContract.ShareBonusColumn.created.value],
+                          share_bonus_tuple[DatabaseContract.ShareBonusColumn.modified.value])
+
         self.set_stock_code(share_bonus_tuple[DatabaseContract.ShareBonusColumn.stock_code.value])
         self.set_date(share_bonus_tuple[DatabaseContract.ShareBonusColumn.date.value])
         self.set_dividend(share_bonus_tuple[DatabaseContract.ShareBonusColumn.dividend.value])
         self.set_r_date(share_bonus_tuple[DatabaseContract.ShareBonusColumn.r_date.value])
-        self.set_created(share_bonus_tuple[DatabaseContract.ShareBonusColumn.created.value])
-        self.set_modified(share_bonus_tuple[DatabaseContract.ShareBonusColumn.modified.value])
 
     def get_stock_code(self):
         return self.stock_code

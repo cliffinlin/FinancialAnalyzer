@@ -1,12 +1,13 @@
 # -*- coding: utf-8 -*-
 import Constants
 import DatabaseContract
-import Utility
+from DatabaseTable import DatabaseTable
 
 
-class FinancialData:
+class FinancialData(DatabaseTable):
     def __init__(self, financial_data_tuple=None):
-        self.id = 0
+        DatabaseTable.__init__(self)
+
         self.stock_code = ""
         self.date = ""
         self.book_value_per_share = 0
@@ -29,13 +30,17 @@ class FinancialData:
         self.dividend = 0
         self.dividend_yield = 0
         self.dividend_ratio = 0
-        self.created = ""
-        self.modified = ""
 
+        self.set(financial_data_tuple)
+
+    def set(self, financial_data_tuple):
         if financial_data_tuple is None:
             return
 
-        self.set_id(financial_data_tuple[0])
+        DatabaseTable.set(self, financial_data_tuple[DatabaseContract.FinancialDataColumn.id.value],
+                          financial_data_tuple[DatabaseContract.FinancialDataColumn.created.value],
+                          financial_data_tuple[DatabaseContract.FinancialDataColumn.modified.value])
+
         self.set_stock_code(financial_data_tuple[DatabaseContract.FinancialDataColumn.stock_code.value])
         self.set_date(financial_data_tuple[DatabaseContract.FinancialDataColumn.date.value])
         self.set_book_value_per_share(
@@ -76,15 +81,6 @@ class FinancialData:
             financial_data_tuple[DatabaseContract.FinancialDataColumn.dividend_yield.value])
         self.set_dividend_ratio(
             financial_data_tuple[DatabaseContract.FinancialDataColumn.dividend_ratio.value])
-        self.set_created(financial_data_tuple[DatabaseContract.FinancialDataColumn.created.value])
-        self.set_modified(financial_data_tuple[DatabaseContract.FinancialDataColumn.modified.value])
-
-    def get_id(self):
-        return self.id
-
-    def set_id(self, id):
-        if id is not None:
-            self.id = id
 
     def get_stock_code(self):
         return self.stock_code
@@ -239,20 +235,6 @@ class FinancialData:
     def set_dividend_ratio(self, dividend_ratio):
         if dividend_ratio is not None:
             self.dividend_ratio = dividend_ratio
-
-    def get_created(self):
-        return self.created
-
-    def set_created(self, created):
-        if created is not None:
-            self.created = created
-
-    def get_modified(self):
-        return self.modified
-
-    def set_modified(self, modified):
-        if modified is not None:
-            self.modified = modified
 
     def to_tuple(self, include_id=False):
         if include_id:

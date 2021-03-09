@@ -21,11 +21,12 @@ class Setting(DatabaseTable):
         if setting_tuple is None:
             return
 
-        self.set_id(setting_tuple[DatabaseContract.SettingColumn.id.value])
+        DatabaseTable.set(self, setting_tuple[DatabaseContract.SettingColumn.id.value],
+                          setting_tuple[DatabaseContract.SettingColumn.created.value],
+                          setting_tuple[DatabaseContract.SettingColumn.modified.value])
+
         self.set_key(setting_tuple[DatabaseContract.SettingColumn.key.value])
         self.set_value(setting_tuple[DatabaseContract.SettingColumn.value.value])
-        self.set_created(setting_tuple[DatabaseContract.SettingColumn.created.value])
-        self.set_modified(setting_tuple[DatabaseContract.SettingColumn.modified.value])
 
     def get_key(self):
         return self.key
