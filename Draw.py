@@ -84,18 +84,19 @@ def draw_stock_data(stock, draw_candle_stick=True, draw_roi=True, draw_share_hol
     x2 = share_bonus_dict['date']
     dividend = share_bonus_dict['dividend']
 
-    share_holder_file_name = Financial.get_share_holder_file_name(stock)
-    if not os.path.exists(share_holder_file_name):
-        print(share_holder_file_name + " not exist, return")
-        return
+    if draw_share_holder:
+        share_holder_file_name = Financial.get_share_holder_file_name(stock)
+        if not os.path.exists(share_holder_file_name):
+            print(share_holder_file_name + " not exist, return")
+            return
 
-    share_holder_dict = pandas.read_csv(share_holder_file_name, parse_dates=True, index_col=0)
-    share_holder_dict.reset_index(inplace=True)
-    share_holder_dict['date'] = mdates.date2num(share_holder_dict['date'])
+        share_holder_dict = pandas.read_csv(share_holder_file_name, parse_dates=True, index_col=0)
+        share_holder_dict.reset_index(inplace=True)
+        share_holder_dict['date'] = mdates.date2num(share_holder_dict['date'])
 
-    x3 = share_holder_dict['date']
-    holder_number = share_holder_dict['number']
-    share_ratio = share_holder_dict['ratio']
+        x3 = share_holder_dict['date']
+        holder_number = share_holder_dict['number']
+        share_ratio = share_holder_dict['ratio']
 
     # plot
 

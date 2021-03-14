@@ -81,7 +81,7 @@ def download():
         download_financial_data(stock)
         download_share_bonus(stock)
         download_total_share(stock)
-        download_share_holder(stock)
+        # download_share_holder(stock)
 
         stock.update_to_database()
 
