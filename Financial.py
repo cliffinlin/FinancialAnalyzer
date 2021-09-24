@@ -901,6 +901,7 @@ def setup_roi(stock_data_tuple_list, financial_data_tuple_list):
                     financial_data.get_date(), Constants.DATE_FORMAT):
                 pe = round(100.0 * financial_data.get_net_profit_per_share_in_year() / price,
                            Constants.DOUBLE_FIXED_DECIMAL)
+                pb = 0
                 if financial_data.get_book_value_per_share() != 0:
                     pb = round(price / financial_data.get_book_value_per_share(), Constants.DOUBLE_FIXED_DECIMAL)
                 # roi = round(financial_data.rate * financial_data.roe * pe * Constants.ROI_COEFFICIENT,
