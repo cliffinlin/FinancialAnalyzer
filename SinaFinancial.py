@@ -205,7 +205,9 @@ def download_stock_information(stock):
     content = None
 
     try:
-        content = urllib.request.urlopen(url).read().decode('gbk')
+        request = urllib.request.Request(url)
+        request.add_header("Referer", 'https://finance.sina.com.cn');
+        content = urllib.request.urlopen(request).read().decode('gbk')
     except Exception:
         print("urllib.request.urlopen(url).read().decode() error")
 
