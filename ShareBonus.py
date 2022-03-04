@@ -7,7 +7,7 @@ class ShareBonus(DatabaseTable):
     def __init__(self, share_bonus_tuple=None):
         DatabaseTable.__init__(self)
 
-        self.stock_code = ""
+        self.stock_id = ""
         self.date = ""
         self.dividend = ""
         self.r_date = ""
@@ -22,17 +22,17 @@ class ShareBonus(DatabaseTable):
                           share_bonus_tuple[DatabaseContract.ShareBonusColumn.created.value],
                           share_bonus_tuple[DatabaseContract.ShareBonusColumn.modified.value])
 
-        self.set_stock_code(share_bonus_tuple[DatabaseContract.ShareBonusColumn.stock_code.value])
+        self.set_stock_id(share_bonus_tuple[DatabaseContract.ShareBonusColumn.stock_id.value])
         self.set_date(share_bonus_tuple[DatabaseContract.ShareBonusColumn.date.value])
         self.set_dividend(share_bonus_tuple[DatabaseContract.ShareBonusColumn.dividend.value])
         self.set_r_date(share_bonus_tuple[DatabaseContract.ShareBonusColumn.r_date.value])
 
-    def get_stock_code(self):
-        return self.stock_code
+    def get_stock_id(self):
+        return self.stock_id
 
-    def set_stock_code(self, stock_code):
-        if stock_code is not None:
-            self.stock_code = stock_code
+    def set_stock_id(self, stock_id):
+        if stock_id is not None:
+            self.stock_id = stock_id
 
     def get_date(self):
         return self.date
@@ -57,23 +57,23 @@ class ShareBonus(DatabaseTable):
 
     def to_tuple(self, include_id=False):
         if include_id:
-            result = tuple((self.id, self.stock_code, self.date,
+            result = tuple((self.id, self.stock_id, self.date,
                             self.dividend, self.r_date,
                             self.created, self.modified))
         else:
-            result = tuple((self.stock_code, self.date,
+            result = tuple((self.stock_id, self.date,
                             self.dividend, self.r_date,
                             self.created, self.modified))
         return result
 
     @staticmethod
     def get_delete_sql():
-        delete_sql = "DELETE FROM share_bonus WHERE stock_code = ?"
+        delete_sql = "DELETE FROM share_bonus WHERE stock_id = ?"
         return delete_sql
 
     @staticmethod
     def get_insert_sql():
-        insert_sql = "INSERT INTO share_bonus (stock_code, date, " \
+        insert_sql = "INSERT INTO share_bonus (stock_id, date, " \
                      "dividend, r_date, " \
                      "created, modified)" \
                      " VALUES(?,?," \

@@ -161,7 +161,7 @@ def download_share_bonus(stock):
 
     share_bonus_list = SinaFinancial.download_share_bonus(stock)
 
-    write_share_bonus_to_database(stock.get_code(), share_bonus_list)
+    write_share_bonus_to_database(stock.get_id(), share_bonus_list)
 
     return share_bonus_list
 
@@ -172,7 +172,7 @@ def download_total_share(stock):
 
     total_share_list = SinaFinancial.download_total_share(stock)
 
-    write_total_share_to_database(stock.get_code(), total_share_list)
+    write_total_share_to_database(stock.get_id(), total_share_list)
 
     return total_share_list
 
@@ -196,7 +196,7 @@ def download_share_holder(stock):
 
         share_holder_list_list.append(share_holder_list)
 
-    write_share_holder_to_database(stock.get_code(), share_holder_list_list)
+    write_share_holder_to_database(stock.get_id(), share_holder_list_list)
 
     return share_holder_list_list
 
@@ -367,7 +367,7 @@ def write_financial_data_to_database(stock_code, financial_data_list):
             connect.close()
 
 
-def write_share_bonus_to_database(stock_code, share_bonus_list):
+def write_share_bonus_to_database(stock_id, share_bonus_list):
     connect = None
     record_list = []
 
@@ -382,13 +382,13 @@ def write_share_bonus_to_database(stock_code, share_bonus_list):
         connect = sqlite3.connect(Constants.DATA_DATABASE_ORION_DB)
         cursor = connect.cursor()
 
-        cursor.execute(delete_sql, (stock_code,))
+        cursor.execute(delete_sql, (stock_id,))
 
         for share_bonus_dic in share_bonus_list:
             now = datetime.now().strftime(Constants.DATE_TIME_FORMAT)
 
             share_bonus = ShareBonus()
-            share_bonus.set_stock_code(stock_code)
+            share_bonus.set_stock_id(stock_id)
             share_bonus.set_date(share_bonus_dic['date'])
             share_bonus.set_dividend(share_bonus_dic['dividend'])
             share_bonus.set_r_date(share_bonus_dic['r_date'])
@@ -407,7 +407,7 @@ def write_share_bonus_to_database(stock_code, share_bonus_list):
             connect.close()
 
 
-def write_total_share_to_database(stock_code, total_share_list):
+def write_total_share_to_database(stock_id, total_share_list):
     connect = None
     record_list = []
 
@@ -422,13 +422,13 @@ def write_total_share_to_database(stock_code, total_share_list):
         connect = sqlite3.connect(Constants.DATA_DATABASE_ORION_DB)
         cursor = connect.cursor()
 
-        cursor.execute(delete_sql, (stock_code,))
+        cursor.execute(delete_sql, (stock_id,))
 
         for total_share_dic in total_share_list:
             now = datetime.now().strftime(Constants.DATE_TIME_FORMAT)
 
             total_share = TotalShare()
-            total_share.set_stock_code(stock_code)
+            total_share.set_stock_id(stock_id)
             total_share.set_date(total_share_dic['date'])
             total_share.set_total_share(total_share_dic['total_share'])
             total_share.set_created(now)
@@ -446,7 +446,7 @@ def write_total_share_to_database(stock_code, total_share_list):
             connect.close()
 
 
-def write_share_holder_to_database(stock_code, share_holder_list_list):
+def write_share_holder_to_database(stock_id, share_holder_list_list):
     connect = None
     record_list = []
 
@@ -461,7 +461,7 @@ def write_share_holder_to_database(stock_code, share_holder_list_list):
         connect = sqlite3.connect(Constants.DATA_DATABASE_ORION_DB)
         cursor = connect.cursor()
 
-        cursor.execute(delete_sql, (stock_code,))
+        cursor.execute(delete_sql, (stock_id,))
 
         for share_holder_list in share_holder_list_list:
             if Utility.is_empty(share_holder_list):
@@ -472,7 +472,7 @@ def write_share_holder_to_database(stock_code, share_holder_list_list):
                 now = datetime.now().strftime(Constants.DATE_TIME_FORMAT)
 
                 share_holder = ShareHolder()
-                share_holder.set_stock_code(stock_code)
+                share_holder.set_stock_id(stock_id)
                 share_holder.set_date(share_holder_dic['date'])
                 share_holder.set_type(share_holder_dic['type'])
                 share_holder.set_number(share_holder_dic['number'])
@@ -752,16 +752,16 @@ def read_share_bonus_from_database(stock):
     if stock is None:
         return None
 
-    return Utility.fetchall_from_database("SELECT * FROM share_bonus WHERE stock_code = ?  order by date desc",
-                                          (stock.get_code(),))
+    return Utility.fetchall_from_database("SELECT * FROM share_bonus WHERE stock_id = ?  order by date desc",
+                                          (stock.get_id(),))
 
 
 def read_total_share_from_database(stock):
     if stock is None:
         return None
 
-    return Utility.fetchall_from_database("SELECT * FROM total_share WHERE stock_code = ?  order by date desc",
-                                          (stock.get_code(),))
+    return Utility.fetchall_from_database("SELECT * FROM total_share WHERE stock_id = ?  order by date desc",
+                                          (stock.get_id(),))
 
 
 def read_share_holder_from_database(stock):
@@ -769,7 +769,7 @@ def read_share_holder_from_database(stock):
         return None
 
     return Utility.fetchall_from_database(
-        "SELECT * FROM share_holder WHERE stock_code = ? AND type='机构汇总'  order by date desc",
+        "SELECT * FROM share_holder WHERE stock_id = ? AND type='机构汇总'  order by date desc",
         (stock.get_code(),))
 
 

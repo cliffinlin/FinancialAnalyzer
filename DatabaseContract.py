@@ -209,7 +209,7 @@ SQL_CREATE_TABLE_FINANCIAL_DATA = " CREATE TABLE IF NOT EXISTS financial_data ( 
 
 class ShareBonusColumn(Enum):
     id = 0
-    stock_code = auto()
+    stock_id = auto()
     date = auto()
     dividend = auto()
     r_date = auto()
@@ -219,7 +219,7 @@ class ShareBonusColumn(Enum):
 
 SQL_CREATE_TABLE_SHARE_BONUS = " CREATE TABLE IF NOT EXISTS share_bonus ( " \
                                + ShareBonusColumn.id.name + " INTEGER PRIMARY KEY AUTOINCREMENT," \
-                               + ShareBonusColumn.stock_code.name + " TEXT NOT NULL," \
+                               + ShareBonusColumn.stock_id.name + " TEXT NOT NULL," \
                                + ShareBonusColumn.date.name + " TEXT NOT NULL," \
                                + ShareBonusColumn.dividend.name + " TEXT NOT NULL," \
                                + ShareBonusColumn.r_date.name + " TEXT NOT NULL," \
@@ -230,7 +230,7 @@ SQL_CREATE_TABLE_SHARE_BONUS = " CREATE TABLE IF NOT EXISTS share_bonus ( " \
 
 class TotalShareColumn(Enum):
     id = 0
-    stock_code = auto()
+    stock_id = auto()
     date = auto()
     total_share = auto()
     created = auto()
@@ -239,7 +239,7 @@ class TotalShareColumn(Enum):
 
 SQL_CREATE_TABLE_TOTAL_SHARE = " CREATE TABLE IF NOT EXISTS total_share ( " \
                                + TotalShareColumn.id.name + " INTEGER PRIMARY KEY AUTOINCREMENT," \
-                               + TotalShareColumn.stock_code.name + " TEXT NOT NULL," \
+                               + TotalShareColumn.stock_id.name + " TEXT NOT NULL," \
                                + TotalShareColumn.date.name + " TEXT NOT NULL," \
                                + TotalShareColumn.total_share.name + " DOUBLE," \
                                + TotalShareColumn.created.name + " TEXT," \
@@ -249,7 +249,7 @@ SQL_CREATE_TABLE_TOTAL_SHARE = " CREATE TABLE IF NOT EXISTS total_share ( " \
 
 class ShareHolderColumn(Enum):
     id = 0
-    stock_code = auto()
+    stock_id = auto()
     date = auto()
     type = auto()
     number = auto()
@@ -261,7 +261,7 @@ class ShareHolderColumn(Enum):
 
 SQL_CREATE_TABLE_SHARE_HOLDER = " CREATE TABLE IF NOT EXISTS share_holder ( " \
                                 + ShareHolderColumn.id.name + " INTEGER PRIMARY KEY AUTOINCREMENT," \
-                                + ShareHolderColumn.stock_code.name + " TEXT NOT NULL," \
+                                + ShareHolderColumn.stock_id.name + " TEXT NOT NULL," \
                                 + ShareHolderColumn.date.name + " TEXT NOT NULL," \
                                 + ShareHolderColumn.type.name + " TEXT NOT NULL," \
                                 + ShareHolderColumn.number.name + " INTEGER," \

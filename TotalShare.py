@@ -7,7 +7,7 @@ class TotalShare(DatabaseTable):
     def __init__(self, total_share_tuple=None):
         DatabaseTable.__init__(self)
 
-        self.stock_code = ""
+        self.stock_id = ""
         self.date = ""
         self.total_share = ""
 
@@ -22,16 +22,16 @@ class TotalShare(DatabaseTable):
                           total_share_tuple[DatabaseContract.TotalShareColumn.created.value],
                           total_share_tuple[DatabaseContract.TotalShareColumn.modified.value])
 
-        self.set_stock_code(total_share_tuple[DatabaseContract.TotalShareColumn.stock_code.value])
+        self.set_stock_id(total_share_tuple[DatabaseContract.TotalShareColumn.stock_id.value])
         self.set_date(total_share_tuple[DatabaseContract.TotalShareColumn.date.value])
         self.set_total_share(total_share_tuple[DatabaseContract.TotalShareColumn.total_share.value])
 
-    def get_stock_code(self):
-        return self.stock_code
+    def get_stock_id(self):
+        return self.stock_id
 
-    def set_stock_code(self, stock_code):
-        if stock_code is not None:
-            self.stock_code = stock_code
+    def set_stock_id(self, stock_id):
+        if stock_id is not None:
+            self.stock_id = stock_id
 
     def get_date(self):
         return self.date
@@ -49,23 +49,23 @@ class TotalShare(DatabaseTable):
 
     def to_tuple(self, include_id=False):
         if include_id:
-            result = tuple((self.id, self.stock_code, self.date,
+            result = tuple((self.id, self.stock_id, self.date,
                             self.total_share,
                             self.created, self.modified))
         else:
-            result = tuple((self.stock_code, self.date,
+            result = tuple((self.stock_id, self.date,
                             self.total_share,
                             self.created, self.modified))
         return result
 
     @staticmethod
     def get_delete_sql():
-        delete_sql = "DELETE FROM total_share WHERE stock_code = ?"
+        delete_sql = "DELETE FROM total_share WHERE stock_id = ?"
         return delete_sql
 
     @staticmethod
     def get_insert_sql():
-        insert_sql = "INSERT INTO total_share (stock_code, date," \
+        insert_sql = "INSERT INTO total_share (stock_id, date," \
                      "total_share," \
                      "created, modified)" \
                      " VALUES(?,?," \
