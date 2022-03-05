@@ -24,8 +24,7 @@ data = np.linspace(1, 100)
 power = 0
 
 
-def draw_stock_data(stock, draw_candle_stick=True, draw_roi=True, draw_share_holder=True, period=Constants.MONTH,
-                    save_fig=False):
+def draw_stock_data(stock, draw_candle_stick=True, draw_roi=True, period=Constants.MONTH, save_fig=False):
     # read and reformat data
 
     stock_data_dict = pandas.read_csv(Financial.get_stock_data_file_name(stock), parse_dates=True, index_col=0)
@@ -49,28 +48,28 @@ def draw_stock_data(stock, draw_candle_stick=True, draw_roi=True, draw_share_hol
     #
     # MACD = EMA_1 - EMA_2
 
-    financial_data_file_name = Financial.get_financial_data_file_name(stock)
-    if not os.path.exists(financial_data_file_name):
-        print(financial_data_file_name + " not exist, return")
+    stock_financial_file_name = Financial.get_stock_financial_file_name(stock)
+    if not os.path.exists(stock_financial_file_name):
+        print(stock_financial_file_name + " not exist, return")
         return
 
-    financial_data_dict = pandas.read_csv(Financial.get_financial_data_file_name(stock), parse_dates=True, index_col=0)
-    financial_data_dict.reset_index(inplace=True)
-    financial_data_dict['date'] = mdates.date2num(financial_data_dict['date'])
+    stock_financial_dict = pandas.read_csv(Financial.get_stock_financial_file_name(stock), parse_dates=True, index_col=0)
+    stock_financial_dict.reset_index(inplace=True)
+    stock_financial_dict['date'] = mdates.date2num(stock_financial_dict['date'])
 
-    x1 = financial_data_dict['date']
-    roe = financial_data_dict['roe']
-    book_value_per_share = financial_data_dict['book_value_per_share']
-    net_profit_per_share = financial_data_dict['net_profit_per_share'] * 10
-    cash_flow_per_share = financial_data_dict['cash_flow_per_share']
+    x1 = stock_financial_dict['date']
+    roe = stock_financial_dict['roe']
+    book_value_per_share = stock_financial_dict['book_value_per_share']
+    net_profit_per_share = stock_financial_dict['net_profit_per_share'] * 10
+    cash_flow_per_share = stock_financial_dict['cash_flow_per_share']
 
-    total_current_assets = financial_data_dict['total_current_assets']
-    total_assets = financial_data_dict['total_assets']
-    total_long_term_liabilities = financial_data_dict['total_long_term_liabilities']
-    main_business_income = financial_data_dict['main_business_income']
-    financial_expenses = financial_data_dict['financial_expenses']
-    net_profit = financial_data_dict['net_profit']
-    # roe = financial_data_dict['roe']
+    total_current_assets = stock_financial_dict['total_current_assets']
+    total_assets = stock_financial_dict['total_assets']
+    total_long_term_liabilities = stock_financial_dict['total_long_term_liabilities']
+    main_business_income = stock_financial_dict['main_business_income']
+    financial_expenses = stock_financial_dict['financial_expenses']
+    net_profit = stock_financial_dict['net_profit']
+    # roe = stock_financial_dict['roe']
 
     share_bonus_file_name = Financial.get_share_bonus_file_name(stock)
     if not os.path.exists(share_bonus_file_name):
@@ -83,20 +82,6 @@ def draw_stock_data(stock, draw_candle_stick=True, draw_roi=True, draw_share_hol
 
     x2 = share_bonus_dict['date']
     dividend = share_bonus_dict['dividend']
-
-    if draw_share_holder:
-        share_holder_file_name = Financial.get_share_holder_file_name(stock)
-        if not os.path.exists(share_holder_file_name):
-            print(share_holder_file_name + " not exist, return")
-            return
-
-        share_holder_dict = pandas.read_csv(share_holder_file_name, parse_dates=True, index_col=0)
-        share_holder_dict.reset_index(inplace=True)
-        share_holder_dict['date'] = mdates.date2num(share_holder_dict['date'])
-
-        x3 = share_holder_dict['date']
-        holder_number = share_holder_dict['number']
-        share_ratio = share_holder_dict['ratio']
 
     # plot
 
@@ -117,10 +102,6 @@ def draw_stock_data(stock, draw_candle_stick=True, draw_roi=True, draw_share_hol
 
     if draw_roi:
         ax1.step(x, roi, label='ROI')
-
-    if draw_share_holder:
-        ax1.step(x3, holder_number, label='HolderNumber')
-        ax1.step(x3, share_ratio, label='ShareRatio')
 
     ax1.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d'))
     ax1.xaxis.set_major_locator(mdates.MonthLocator([1, 4, 7, 10]))
@@ -175,8 +156,7 @@ def delete_figure_files():
     return
 
 
-def draw(where=None, order=None, sort=None, draw_candle_stick=True, draw_roi=True, draw_share_holder=True,
-         save_fig=False):
+def draw(where=None, order=None, sort=None, draw_candle_stick=True, draw_roi=True, save_fig=False):
     global stock_index
     global stock_tuple_list
 
@@ -200,5 +180,4 @@ def draw(where=None, order=None, sort=None, draw_candle_stick=True, draw_roi=Tru
 
         Financial.write_to_file(stock)
 
-        draw_stock_data(stock, draw_candle_stick=draw_candle_stick, draw_roi=draw_roi,
-                        draw_share_holder=draw_share_holder, save_fig=save_fig)
+        draw_stock_data(stock, draw_candle_stick=draw_candle_stick, draw_roi=draw_roi, save_fig=save_fig)

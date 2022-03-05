@@ -7,7 +7,7 @@ class StockData(DatabaseTable):
     def __init__(self, stock_data_tuple=None):
         DatabaseTable.__init__(self)
 
-        self.stock_code = ""
+        self.stock_id = ""
         self.date = ""
         self.time = ""
         self.period = ""
@@ -32,7 +32,7 @@ class StockData(DatabaseTable):
                           stock_data_tuple[DatabaseContract.StockDataColumn.created.value],
                           stock_data_tuple[DatabaseContract.StockDataColumn.modified.value])
 
-        self.set_stock_code(stock_data_tuple[DatabaseContract.StockDataColumn.stock_code.value])
+        self.set_stock_id(stock_data_tuple[DatabaseContract.StockDataColumn.stock_id.value])
         self.set_date(stock_data_tuple[DatabaseContract.StockDataColumn.date.value])
         self.set_time(stock_data_tuple[DatabaseContract.StockDataColumn.time.value])
         self.set_period(stock_data_tuple[DatabaseContract.StockDataColumn.period.value])
@@ -47,12 +47,12 @@ class StockData(DatabaseTable):
         self.set_pb(stock_data_tuple[DatabaseContract.StockDataColumn.pb.value])
         self.set_dividend_yield(stock_data_tuple[DatabaseContract.StockDataColumn.dividend_yield.value])
 
-    def get_stock_code(self):
-        return self.stock_code
+    def get_stock_id(self):
+        return self.stock_id
 
-    def set_stock_code(self, stock_code):
-        if stock_code is not None:
-            self.stock_code = stock_code
+    def set_stock_id(self, stock_id):
+        if stock_id is not None:
+            self.stock_id = stock_id
 
     def get_date(self):
         return self.date
@@ -147,13 +147,13 @@ class StockData(DatabaseTable):
 
     def to_tuple(self, include_id=False):
         if include_id:
-            result = tuple((self.id, self.stock_code, self.date,
+            result = tuple((self.id, self.stock_id, self.date,
                             self.time, self.period,
                             self.open, self.high, self.low, self.close, self.volume, self.value,
                             self.roi, self.pe, self.pb, self.dividend_yield,
                             self.created, self.modified))
         else:
-            result = tuple((self.stock_code, self.date,
+            result = tuple((self.stock_id, self.date,
                             self.time, self.period,
                             self.open, self.high, self.low, self.close, self.volume, self.value,
                             self.roi, self.pe, self.pb, self.dividend_yield,
@@ -162,12 +162,12 @@ class StockData(DatabaseTable):
 
     @staticmethod
     def get_delete_sql():
-        delete_sql = "DELETE FROM stock_data WHERE period = ? AND stock_code = ?"
+        delete_sql = "DELETE FROM stock_data WHERE period = ? AND stock_id = ?"
         return delete_sql
 
     @staticmethod
     def get_insert_sql():
-        insert_sql = "INSERT INTO stock_data (stock_code, date," \
+        insert_sql = "INSERT INTO stock_data (stock_id, date," \
                      " time, period," \
                      " open, high, low, close, volume, value," \
                      " roi, pe, pb, dividend_yield," \

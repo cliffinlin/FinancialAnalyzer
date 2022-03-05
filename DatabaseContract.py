@@ -111,7 +111,7 @@ SQL_CREATE_TABLE_STOCK = " CREATE TABLE IF NOT EXISTS stock ( " \
 
 class StockDataColumn(Enum):
     id = 0
-    stock_code = auto()
+    stock_id = auto()
     date = auto()
     time = auto()
     period = auto()
@@ -131,7 +131,7 @@ class StockDataColumn(Enum):
 
 SQL_CREATE_TABLE_STOCK_DATA = " CREATE TABLE IF NOT EXISTS stock_data ( " \
                               + StockDataColumn.id.name + " INTEGER PRIMARY KEY AUTOINCREMENT," \
-                              + StockDataColumn.stock_code.name + " TEXT NOT NULL," \
+                              + StockDataColumn.stock_id.name + " TEXT NOT NULL," \
                               + StockDataColumn.date.name + " TEXT NOT NULL," \
                               + StockDataColumn.time.name + " TEXT NOT NULL," \
                               + StockDataColumn.period.name + " TEXT NOT NULL," \
@@ -150,9 +150,9 @@ SQL_CREATE_TABLE_STOCK_DATA = " CREATE TABLE IF NOT EXISTS stock_data ( " \
                               + "); "
 
 
-class FinancialDataColumn(Enum):
+class StockFinancialColumn(Enum):
     id = 0
-    stock_code = auto()
+    stock_id = auto()
     date = auto()
     book_value_per_share = auto()
     cash_flow_per_share = auto()
@@ -178,32 +178,32 @@ class FinancialDataColumn(Enum):
     modified = auto()
 
 
-SQL_CREATE_TABLE_FINANCIAL_DATA = " CREATE TABLE IF NOT EXISTS financial_data ( " \
-                                  + FinancialDataColumn.id.name + " INTEGER PRIMARY KEY AUTOINCREMENT," \
-                                  + FinancialDataColumn.stock_code.name + " TEXT NOT NULL," \
-                                  + FinancialDataColumn.date.name + " TEXT NOT NULL," \
-                                  + FinancialDataColumn.book_value_per_share.name + " DOUBLE," \
-                                  + FinancialDataColumn.cash_flow_per_share.name + " DOUBLE," \
-                                  + FinancialDataColumn.total_share.name + " DOUBLE," \
-                                  + FinancialDataColumn.total_current_assets.name + " DOUBLE," \
-                                  + FinancialDataColumn.total_assets.name + " DOUBLE," \
-                                  + FinancialDataColumn.total_long_term_liabilities.name + " DOUBLE," \
-                                  + FinancialDataColumn.debt_to_net_assets_ratio.name + " DOUBLE," \
-                                  + FinancialDataColumn.main_business_income.name + " DOUBLE," \
-                                  + FinancialDataColumn.financial_expenses.name + " DOUBLE," \
-                                  + FinancialDataColumn.net_profit.name + " DOUBLE," \
-                                  + FinancialDataColumn.net_profit_per_share.name + " DOUBLE," \
-                                  + FinancialDataColumn.net_profit_per_share_in_year.name + " DOUBLE," \
-                                  + FinancialDataColumn.rate.name + " DOUBLE," \
-                                  + FinancialDataColumn.roi.name + " DOUBLE," \
-                                  + FinancialDataColumn.roe.name + " DOUBLE," \
-                                  + FinancialDataColumn.pe.name + " DOUBLE," \
-                                  + FinancialDataColumn.pb.name + " DOUBLE," \
-                                  + FinancialDataColumn.dividend.name + " DOUBLE," \
-                                  + FinancialDataColumn.dividend_yield.name + " DOUBLE," \
-                                  + FinancialDataColumn.dividend_ratio.name + " DOUBLE," \
-                                  + FinancialDataColumn.created.name + " TEXT," \
-                                  + FinancialDataColumn.modified.name + " TEXT" \
+SQL_CREATE_TABLE_STOCK_FINANCIAL = " CREATE TABLE IF NOT EXISTS stock_financial ( " \
+                                  + StockFinancialColumn.id.name + " INTEGER PRIMARY KEY AUTOINCREMENT," \
+                                  + StockFinancialColumn.stock_id.name + " TEXT NOT NULL," \
+                                  + StockFinancialColumn.date.name + " TEXT NOT NULL," \
+                                  + StockFinancialColumn.book_value_per_share.name + " DOUBLE," \
+                                  + StockFinancialColumn.cash_flow_per_share.name + " DOUBLE," \
+                                  + StockFinancialColumn.total_share.name + " DOUBLE," \
+                                  + StockFinancialColumn.total_current_assets.name + " DOUBLE," \
+                                  + StockFinancialColumn.total_assets.name + " DOUBLE," \
+                                  + StockFinancialColumn.total_long_term_liabilities.name + " DOUBLE," \
+                                  + StockFinancialColumn.debt_to_net_assets_ratio.name + " DOUBLE," \
+                                  + StockFinancialColumn.main_business_income.name + " DOUBLE," \
+                                  + StockFinancialColumn.financial_expenses.name + " DOUBLE," \
+                                  + StockFinancialColumn.net_profit.name + " DOUBLE," \
+                                  + StockFinancialColumn.net_profit_per_share.name + " DOUBLE," \
+                                  + StockFinancialColumn.net_profit_per_share_in_year.name + " DOUBLE," \
+                                  + StockFinancialColumn.rate.name + " DOUBLE," \
+                                  + StockFinancialColumn.roi.name + " DOUBLE," \
+                                  + StockFinancialColumn.roe.name + " DOUBLE," \
+                                  + StockFinancialColumn.pe.name + " DOUBLE," \
+                                  + StockFinancialColumn.pb.name + " DOUBLE," \
+                                  + StockFinancialColumn.dividend.name + " DOUBLE," \
+                                  + StockFinancialColumn.dividend_yield.name + " DOUBLE," \
+                                  + StockFinancialColumn.dividend_ratio.name + " DOUBLE," \
+                                  + StockFinancialColumn.created.name + " TEXT," \
+                                  + StockFinancialColumn.modified.name + " TEXT" \
                                   + "); "
 
 
@@ -247,26 +247,3 @@ SQL_CREATE_TABLE_TOTAL_SHARE = " CREATE TABLE IF NOT EXISTS total_share ( " \
                                + "); "
 
 
-class ShareHolderColumn(Enum):
-    id = 0
-    stock_id = auto()
-    date = auto()
-    type = auto()
-    number = auto()
-    hold = auto()
-    ratio = auto()
-    created = auto()
-    modified = auto()
-
-
-SQL_CREATE_TABLE_SHARE_HOLDER = " CREATE TABLE IF NOT EXISTS share_holder ( " \
-                                + ShareHolderColumn.id.name + " INTEGER PRIMARY KEY AUTOINCREMENT," \
-                                + ShareHolderColumn.stock_id.name + " TEXT NOT NULL," \
-                                + ShareHolderColumn.date.name + " TEXT NOT NULL," \
-                                + ShareHolderColumn.type.name + " TEXT NOT NULL," \
-                                + ShareHolderColumn.number.name + " INTEGER," \
-                                + ShareHolderColumn.hold.name + " DOUBLE," \
-                                + ShareHolderColumn.ratio.name + " DOUBLE," \
-                                + ShareHolderColumn.created.name + " TEXT," \
-                                + ShareHolderColumn.modified.name + " TEXT" \
-                                + "); "

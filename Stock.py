@@ -8,7 +8,7 @@ import Constants
 import DatabaseContract
 import Utility
 from DatabaseTable import DatabaseTable
-from FinancialData import FinancialData
+from StockFinancial import StockFinancial
 
 
 class Stock(DatabaseTable):
@@ -456,56 +456,56 @@ class Stock(DatabaseTable):
         self.net_profit_per_share = round(self.net_profit / self.total_share, Constants.DOUBLE_FIXED_DECIMAL)
 
 
-    def setup_net_profit_per_share_in_year(self, financial_data_tuple_list):
+    def setup_net_profit_per_share_in_year(self, stock_financial_tuple_list):
         if self.total_share == 0:
             return
 
-        if Utility.is_empty(financial_data_tuple_list):
+        if Utility.is_empty(stock_financial_tuple_list):
             return
 
-        if len(financial_data_tuple_list) < Constants.SEASONS_IN_A_YEAR + 1:
+        if len(stock_financial_tuple_list) < Constants.SEASONS_IN_A_YEAR + 1:
             return
 
         self.net_profit_per_share_in_year = 0
 
         for i in range(0, Constants.SEASONS_IN_A_YEAR):
-            financial_data = FinancialData(financial_data_tuple_list[i])
-            prev = FinancialData(financial_data_tuple_list[i + 1])
+            stock_financial = StockFinancial(stock_financial_tuple_list[i])
+            prev = StockFinancial(stock_financial_tuple_list[i + 1])
 
-            if financial_data is None or prev is None:
+            if stock_financial is None or prev is None:
                 break
 
-            if "03-31" in financial_data.date:
-                net_profit_per_share = financial_data.net_profit / self.total_share
+            if "03-31" in stock_financial.date:
+                net_profit_per_share = stock_financial.net_profit / self.total_share
             else:
-                net_profit_per_share = (financial_data.net_profit - prev.net_profit) / self.total_share
+                net_profit_per_share = (stock_financial.net_profit - prev.net_profit) / self.total_share
 
             self.net_profit_per_share_in_year += net_profit_per_share
 
 
-    def setup_net_profit_per_share_last_year(self, financial_data_tuple_list):
+    def setup_net_profit_per_share_last_year(self, stock_financial_tuple_list):
         if self.total_share == 0:
             return
 
-        if Utility.is_empty(financial_data_tuple_list):
+        if Utility.is_empty(stock_financial_tuple_list):
             return
 
-        if len(financial_data_tuple_list) < 2 * Constants.SEASONS_IN_A_YEAR + 1:
+        if len(stock_financial_tuple_list) < 2 * Constants.SEASONS_IN_A_YEAR + 1:
             return
 
         self.net_profit_per_share_last_year = 0
 
         for i in range(Constants.SEASONS_IN_A_YEAR, 2 * Constants.SEASONS_IN_A_YEAR):
-            financial_data = FinancialData(financial_data_tuple_list[i])
-            prev = FinancialData(financial_data_tuple_list[i + 1])
+            stock_financial = StockFinancial(stock_financial_tuple_list[i])
+            prev = StockFinancial(stock_financial_tuple_list[i + 1])
 
-            if financial_data is None or prev is None:
+            if stock_financial is None or prev is None:
                 break
 
-            if "03-31" in financial_data.date:
-                net_profit_per_share = financial_data.net_profit / self.total_share
+            if "03-31" in stock_financial.date:
+                net_profit_per_share = stock_financial.net_profit / self.total_share
             else:
-                net_profit_per_share = (financial_data.net_profit - prev.net_profit) / self.total_share
+                net_profit_per_share = (stock_financial.net_profit - prev.net_profit) / self.total_share
 
             self.net_profit_per_share_last_year += net_profit_per_share
 
@@ -535,18 +535,18 @@ class Stock(DatabaseTable):
         self.roi = round(self.rate * self.roe * self.pe * Constants.ROI_COEFFICIENT, Constants.DOUBLE_FIXED_DECIMAL)
 
 
-    def setup_roe(self, financial_data_tuple_list):
-        if Utility.is_empty(financial_data_tuple_list):
+    def setup_roe(self, stock_financial_tuple_list):
+        if Utility.is_empty(stock_financial_tuple_list):
             return
 
-        if len(financial_data_tuple_list) < Constants.SEASONS_IN_A_YEAR + 1:
+        if len(stock_financial_tuple_list) < Constants.SEASONS_IN_A_YEAR + 1:
             return
 
-        financial_data = FinancialData(financial_data_tuple_list[Constants.SEASONS_IN_A_YEAR])
-        if financial_data is None:
+        stock_financial = StockFinancial(stock_financial_tuple_list[Constants.SEASONS_IN_A_YEAR])
+        if stock_financial is None:
             return
 
-        book_value_per_share = financial_data.book_value_per_share
+        book_value_per_share = stock_financial.book_value_per_share
         if book_value_per_share == 0:
             return
 

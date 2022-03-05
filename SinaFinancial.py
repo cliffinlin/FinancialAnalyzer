@@ -220,10 +220,10 @@ def download_stock_information(stock):
     return value_list
 
 
-def download_financial_data(stock):
+def download_stock_financial(stock):
     value = 0
-    financial_data = dict()
-    financial_data_list = []
+    stock_financial = dict()
+    stock_financial_list = []
 
     if stock is None:
         return None
@@ -280,11 +280,11 @@ def download_financial_data(stock):
                 # if stock.get_time_to_market() is not None:
                 #     if datetime.strptime(value_string, Constants.DATE_FORMAT) \
                 #             < datetime.strptime(stock.get_time_to_market(), Constants.DATE_FORMAT):
-                #         return financial_data_list[::-1]
+                #         return stock_financial_list[::-1]
 
-                financial_data = dict()
+                stock_financial = dict()
 
-                financial_data["date"] = value_string
+                stock_financial["date"] = value_string
             else:
                 if not value_string.strip():
                     value_string = "0.0"
@@ -305,31 +305,31 @@ def download_financial_data(stock):
                         value = 0
 
                 if '每股净资产-摊薄/期末股数' in key_string:
-                    financial_data["book_value_per_share"] = value
+                    stock_financial["book_value_per_share"] = value
                 elif '每股现金流' in key_string:
-                    financial_data["cash_flow_per_share"] = value
+                    stock_financial["cash_flow_per_share"] = value
                 elif '流动资产合计' in key_string:
-                    financial_data["total_current_assets"] = value
+                    stock_financial["total_current_assets"] = value
                 elif '资产总计' in key_string:
-                    financial_data["total_assets"] = value
+                    stock_financial["total_assets"] = value
                 elif '长期负债合计' in key_string:
-                    financial_data["total_long_term_liabilities"] = value
+                    stock_financial["total_long_term_liabilities"] = value
                 elif '主营业务收入' in key_string:
-                    financial_data["main_business_income"] = value
+                    stock_financial["main_business_income"] = value
                 elif '财务费用' in key_string:
-                    financial_data["financial_expenses"] = value
+                    stock_financial["financial_expenses"] = value
                 elif '净利润' in key_string:
-                    financial_data["net_profit"] = value
+                    stock_financial["net_profit"] = value
 
                     if stock.get_total_share() != 0:
-                        financial_data["net_profit_per_share"] = float(value) / float(
+                        stock_financial["net_profit_per_share"] = float(value) / float(
                             stock.get_total_share())
                     else:
-                        financial_data["net_profit_per_share"] = 0
+                        stock_financial["net_profit_per_share"] = 0
 
-                    financial_data_list.append(financial_data)
+                    stock_financial_list.append(stock_financial)
 
-    return financial_data_list
+    return stock_financial_list
 
 
 def download_share_bonus(stock):

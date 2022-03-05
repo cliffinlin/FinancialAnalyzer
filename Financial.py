@@ -12,16 +12,14 @@ import pandas
 import Favorite
 import PrivateOwner
 import Constants
-import EastMoney
 import StockPool
 import SinaFinancial
 import Utility
-from FinancialData import FinancialData
+from StockFinancial import StockFinancial
 from Setting import Setting
 from ShareBonus import ShareBonus
 from Stock import Stock
 from StockData import StockData
-from ShareHolder import ShareHolder
 from TotalShare import TotalShare
 
 favorite_only = True
@@ -78,10 +76,9 @@ def download():
         stock.set_time_to_market(time_to_market)
 
         download_information_data(stock)
-        download_financial_data(stock)
+        download_stock_financial(stock)
         download_share_bonus(stock)
         download_total_share(stock)
-        # download_share_holder(stock)
 
         stock.update_to_database()
 
@@ -121,7 +118,7 @@ def download_stock_data(stock):
     # write_stock_data_to_database(WEEK, stock.get_code(), stock_data_week_list)
 
     stock_data_month_list = SinaFinancial.download_stock_data(stock, -1)
-    write_stock_data_to_database(stock.get_code(), stock_data_month_list)
+    write_stock_data_to_database(stock.get_id(), stock_data_month_list)
 
     return stock_data_month_list
 
@@ -144,15 +141,15 @@ def download_information_data(stock):
     return information_data_list
 
 
-def download_financial_data(stock):
+def download_stock_financial(stock):
     if stock is None:
         return None
 
-    financial_data_list = SinaFinancial.download_financial_data(stock)
+    stock_financial_list = SinaFinancial.download_stock_financial(stock)
 
-    write_financial_data_to_database(stock.get_code(), financial_data_list)
+    write_stock_financial_to_database(stock.get_id(), stock_financial_list)
 
-    return financial_data_list
+    return stock_financial_list
 
 
 def download_share_bonus(stock):
@@ -175,30 +172,6 @@ def download_total_share(stock):
     write_total_share_to_database(stock.get_id(), total_share_list)
 
     return total_share_list
-
-
-def download_share_holder(stock):
-    share_holder_list_list = []
-
-    if stock is None:
-        return None
-
-    report_date_list = EastMoney.download_report_date_list(stock)
-    if Utility.is_empty(report_date_list):
-        return None
-
-    for report_date in report_date_list:
-        print(report_date)
-
-        share_holder_list = EastMoney.download_share_holder_list(stock, report_date)
-        if share_holder_list is None:
-            continue
-
-        share_holder_list_list.append(share_holder_list)
-
-    write_share_holder_to_database(stock.get_id(), share_holder_list_list)
-
-    return share_holder_list_list
 
 
 def write_stock_list_to_database(stock_list):
@@ -267,7 +240,7 @@ def write_stock_list_to_database(stock_list):
             connect.close()
 
 
-def write_stock_data_to_database(stock_code, stock_data_list, period=Constants.MONTH):
+def write_stock_data_to_database(stock_id, stock_data_list, period=Constants.MONTH):
     connect = None
     record_list = []
 
@@ -282,14 +255,14 @@ def write_stock_data_to_database(stock_code, stock_data_list, period=Constants.M
         connect = sqlite3.connect(Constants.DATA_DATABASE_ORION_DB)
         cursor = connect.cursor()
 
-        cursor.execute(delete_sql, (period, stock_code))
+        cursor.execute(delete_sql, (period, stock_id))
 
         for stock_data in stock_data_list:
             now = datetime.now().strftime(Constants.DATE_TIME_FORMAT)
 
             if isinstance(stock_data, dict):
                 stock_data_obj = StockData()
-                stock_data_obj.set_stock_code(stock_code)
+                stock_data_obj.set_stock_id(stock_id)
                 stock_data_obj.set_date(stock_data['date'])
                 stock_data_obj.set_time("00:00")
                 stock_data_obj.set_period(period)
@@ -316,46 +289,46 @@ def write_stock_data_to_database(stock_code, stock_data_list, period=Constants.M
             connect.close()
 
 
-def write_financial_data_to_database(stock_code, financial_data_list):
+def write_stock_financial_to_database(stock_id, stock_financial_list):
     connect = None
     record_list = []
 
-    delete_sql = FinancialData.get_delete_sql()
-    insert_sql = FinancialData.get_insert_sql()
+    delete_sql = StockFinancial.get_delete_sql()
+    insert_sql = StockFinancial.get_insert_sql()
 
-    if Utility.is_empty(financial_data_list):
-        print("financial_data_list is empty, return")
+    if Utility.is_empty(stock_financial_list):
+        print("stock_financial_list is empty, return")
         return
 
     try:
         connect = sqlite3.connect(Constants.DATA_DATABASE_ORION_DB)
         cursor = connect.cursor()
 
-        cursor.execute(delete_sql, (stock_code,))
+        cursor.execute(delete_sql, (stock_id,))
 
-        for financial_data in financial_data_list:
+        for stock_financial in stock_financial_list:
             now = datetime.now().strftime(Constants.DATE_TIME_FORMAT)
 
-            if isinstance(financial_data, dict):
-                financial_data_obj = FinancialData()
-                financial_data_obj.set_stock_code(stock_code)
-                financial_data_obj.set_date(financial_data['date'])
-                financial_data_obj.set_book_value_per_share(financial_data['book_value_per_share'])
-                financial_data_obj.set_cash_flow_per_share(financial_data['cash_flow_per_share'])
-                financial_data_obj.set_total_current_assets(financial_data['total_current_assets'])
-                financial_data_obj.set_total_assets(financial_data['total_assets'])
-                financial_data_obj.set_total_long_term_liabilities(financial_data['total_long_term_liabilities'])
-                financial_data_obj.set_main_business_income(financial_data['main_business_income'])
-                financial_data_obj.set_financial_expenses(financial_data['financial_expenses'])
-                financial_data_obj.set_net_profit(financial_data['net_profit'])
-                financial_data_obj.set_net_profit_per_share(financial_data['net_profit_per_share'])
-                financial_data_obj.set_created(now)
-                financial_data_obj.set_modified(now)
-            elif isinstance(financial_data, tuple):
-                financial_data_obj = FinancialData(financial_data)
-                financial_data_obj.set_modified(now)
+            if isinstance(stock_financial, dict):
+                stock_financial_obj = StockFinancial()
+                stock_financial_obj.set_stock_id(stock_id)
+                stock_financial_obj.set_date(stock_financial['date'])
+                stock_financial_obj.set_book_value_per_share(stock_financial['book_value_per_share'])
+                stock_financial_obj.set_cash_flow_per_share(stock_financial['cash_flow_per_share'])
+                stock_financial_obj.set_total_current_assets(stock_financial['total_current_assets'])
+                stock_financial_obj.set_total_assets(stock_financial['total_assets'])
+                stock_financial_obj.set_total_long_term_liabilities(stock_financial['total_long_term_liabilities'])
+                stock_financial_obj.set_main_business_income(stock_financial['main_business_income'])
+                stock_financial_obj.set_financial_expenses(stock_financial['financial_expenses'])
+                stock_financial_obj.set_net_profit(stock_financial['net_profit'])
+                stock_financial_obj.set_net_profit_per_share(stock_financial['net_profit_per_share'])
+                stock_financial_obj.set_created(now)
+                stock_financial_obj.set_modified(now)
+            elif isinstance(stock_financial, tuple):
+                stock_financial_obj = StockFinancial(stock_financial)
+                stock_financial_obj.set_modified(now)
 
-            record = financial_data_obj.to_tuple(include_id=False)
+            record = stock_financial_obj.to_tuple(include_id=False)
             record_list.append(record)
 
         cursor.executemany(insert_sql, record_list)
@@ -446,53 +419,6 @@ def write_total_share_to_database(stock_id, total_share_list):
             connect.close()
 
 
-def write_share_holder_to_database(stock_id, share_holder_list_list):
-    connect = None
-    record_list = []
-
-    delete_sql = ShareHolder.get_delete_sql()
-    insert_sql = ShareHolder.get_insert_sql()
-
-    if Utility.is_empty(share_holder_list_list):
-        print("share_holder_list_list is empty, return")
-        return
-
-    try:
-        connect = sqlite3.connect(Constants.DATA_DATABASE_ORION_DB)
-        cursor = connect.cursor()
-
-        cursor.execute(delete_sql, (stock_id,))
-
-        for share_holder_list in share_holder_list_list:
-            if Utility.is_empty(share_holder_list):
-                print("share_holder_list is empty, return")
-                continue
-
-            for share_holder_dic in share_holder_list:
-                now = datetime.now().strftime(Constants.DATE_TIME_FORMAT)
-
-                share_holder = ShareHolder()
-                share_holder.set_stock_id(stock_id)
-                share_holder.set_date(share_holder_dic['date'])
-                share_holder.set_type(share_holder_dic['type'])
-                share_holder.set_number(share_holder_dic['number'])
-                share_holder.set_hold(share_holder_dic['hold'])
-                share_holder.set_ratio(share_holder_dic['ratio'])
-                share_holder.set_created(now)
-                share_holder.set_modified(now)
-
-                record = share_holder.to_tuple(include_id=False)
-                record_list.append(record)
-
-        cursor.executemany(insert_sql, record_list)
-        connect.commit()
-    except sqlite3.Error as e:
-        print('e:', e)
-    finally:
-        if connect is not None:
-            connect.close()
-
-
 def get_stock_file_name():
     return "./data/stock/stock.csv"
 
@@ -504,7 +430,7 @@ def get_stock_data_file_name(stock, period=Constants.MONTH):
         return "./data/stock/" + period + "/" + stock.get_code() + ".csv"
 
 
-def get_financial_data_file_name(stock):
+def get_stock_financial_file_name(stock):
     if stock is None:
         return None
     else:
@@ -516,13 +442,6 @@ def get_share_bonus_file_name(stock):
         return None
     else:
         return "./data/share_bonus/" + stock.get_code() + ".csv"
-
-
-def get_share_holder_file_name(stock):
-    if stock is None:
-        return None
-    else:
-        return "./data/share_holder/" + stock.get_code() + ".csv"
 
 
 def write_stock_to_file(stock_tuple_list):
@@ -592,14 +511,14 @@ def write_stock_data_to_file(stock, stock_data_tuple_list, period=Constants.MONT
             writer.writerow(stock_data_dict)
 
 
-def write_financial_data_to_file(stock, financial_data_tuple_list):
+def write_stock_financial_to_file(stock, stock_financial_tuple_list):
     if stock is None:
         return
 
-    if Utility.is_empty(financial_data_tuple_list):
+    if Utility.is_empty(stock_financial_tuple_list):
         return
 
-    file_name = get_financial_data_file_name(stock)
+    file_name = get_stock_financial_file_name(stock)
 
     field_name_tuple = tuple(("date",
                               "book_value_per_share",
@@ -617,24 +536,24 @@ def write_financial_data_to_file(stock, financial_data_tuple_list):
         writer = csv.DictWriter(csv_file, fieldnames=field_name_tuple)
         writer.writeheader()
 
-        for financial_data_tuple in financial_data_tuple_list:
-            financial_data = FinancialData(financial_data_tuple)
-            if financial_data is None:
+        for stock_financial_tuple in stock_financial_tuple_list:
+            stock_financial = StockFinancial(stock_financial_tuple)
+            if stock_financial is None:
                 continue
 
-            financial_data_dict = {"date": financial_data.date,
-                                   "book_value_per_share": financial_data.book_value_per_share,
-                                   "cash_flow_per_share": financial_data.cash_flow_per_share,
-                                   "total_current_assets": financial_data.total_current_assets,
-                                   "total_assets": financial_data.total_assets,
-                                   "total_long_term_liabilities": financial_data.total_long_term_liabilities,
-                                   "main_business_income": financial_data.main_business_income,
-                                   "financial_expenses": financial_data.financial_expenses,
-                                   "net_profit": financial_data.net_profit,
-                                   "net_profit_per_share": financial_data.net_profit_per_share,
-                                   "roe": financial_data.roe,
+            stock_financial_dict = {"date": stock_financial.date,
+                                   "book_value_per_share": stock_financial.book_value_per_share,
+                                   "cash_flow_per_share": stock_financial.cash_flow_per_share,
+                                   "total_current_assets": stock_financial.total_current_assets,
+                                   "total_assets": stock_financial.total_assets,
+                                   "total_long_term_liabilities": stock_financial.total_long_term_liabilities,
+                                   "main_business_income": stock_financial.main_business_income,
+                                   "financial_expenses": stock_financial.financial_expenses,
+                                   "net_profit": stock_financial.net_profit,
+                                   "net_profit_per_share": stock_financial.net_profit_per_share,
+                                   "roe": stock_financial.roe,
                                    }
-            writer.writerow(financial_data_dict)
+            writer.writerow(stock_financial_dict)
 
 
 def write_share_bonus_to_file(stock, share_bonus_tuple_list):
@@ -662,33 +581,6 @@ def write_share_bonus_to_file(stock, share_bonus_tuple_list):
                                 "r_date": share_bonus.r_date,
                                 }
             writer.writerow(share_bonus_dict)
-
-
-def write_share_holder_to_file(stock, share_holder_tuple_list):
-    if stock is None:
-        return
-
-    if Utility.is_empty(share_holder_tuple_list):
-        return
-
-    file_name = get_share_holder_file_name(stock)
-
-    field_name_tuple = tuple(("date",
-                              "number",
-                              "ratio"))
-
-    with open(file_name, 'w', newline='') as csv_file:
-        writer = csv.DictWriter(csv_file, fieldnames=field_name_tuple)
-        writer.writeheader()
-
-        for share_holder_tuple in share_holder_tuple_list:
-            share_holder = ShareHolder(share_holder_tuple)
-
-            share_holder_dict = {"date": share_holder.date,
-                                 "number": share_holder.number,
-                                 "ratio": share_holder.ratio,
-                                 }
-            writer.writerow(share_holder_dict)
 
 
 #
@@ -736,16 +628,16 @@ def read_stock_data_from_database(stock, period=Constants.MONTH):
     if stock is None:
         return None
 
-    return Utility.fetchall_from_database("SELECT * FROM stock_data WHERE stock_code = ? AND period = ?  order "
-                                          "by date desc", (stock.get_code(), period))
+    return Utility.fetchall_from_database("SELECT * FROM stock_data WHERE stock_id = ? AND period = ?  order "
+                                          "by date desc", (stock.get_id(), period))
 
 
-def read_financial_data_from_database(stock):
+def read_stock_financial_from_database(stock):
     if stock is None:
         return None
 
-    return Utility.fetchall_from_database("SELECT * FROM financial_data WHERE stock_code = ?  order by date desc",
-                                          (stock.get_code(),))
+    return Utility.fetchall_from_database("SELECT * FROM stock_financial WHERE stock_id = ?  order by date desc",
+                                          (stock.get_id(),))
 
 
 def read_share_bonus_from_database(stock):
@@ -764,62 +656,53 @@ def read_total_share_from_database(stock):
                                           (stock.get_id(),))
 
 
-def read_share_holder_from_database(stock):
-    if stock is None:
-        return None
-
-    return Utility.fetchall_from_database(
-        "SELECT * FROM share_holder WHERE stock_id = ? AND type='机构汇总'  order by date desc",
-        (stock.get_code(),))
-
-
-def setup_total_share(financial_data_tuple_list, total_share_tuple_list):
-    if Utility.is_empty(financial_data_tuple_list):
+def setup_total_share(stock_financial_tuple_list, total_share_tuple_list):
+    if Utility.is_empty(stock_financial_tuple_list):
         return
 
     if Utility.is_empty(total_share_tuple_list):
         return
 
     j = 0
-    for i in range(len(financial_data_tuple_list)):
-        financial_data_tuple = financial_data_tuple_list[i]
-        financial_data = FinancialData(financial_data_tuple)
+    for i in range(len(stock_financial_tuple_list)):
+        stock_financial_tuple = stock_financial_tuple_list[i]
+        stock_financial = StockFinancial(stock_financial_tuple)
 
         while j < len(total_share_tuple_list):
             total_share = TotalShare(total_share_tuple_list[j])
-            if datetime.strptime(financial_data.get_date(), Constants.DATE_FORMAT) >= datetime.strptime(
+            if datetime.strptime(stock_financial.get_date(), Constants.DATE_FORMAT) >= datetime.strptime(
                     total_share.get_date(), Constants.DATE_FORMAT):
-                financial_data.set_total_share(total_share.get_total_share())
-                financial_data_tuple_list[i] = financial_data.to_tuple(include_id=True)
+                stock_financial.set_total_share(total_share.get_total_share())
+                stock_financial_tuple_list[i] = stock_financial.to_tuple(include_id=True)
                 break
             else:
                 j += 1
 
 
-def setup_net_profit_per_share(financial_data_tuple_list):
-    if Utility.is_empty(financial_data_tuple_list):
+def setup_net_profit_per_share(stock_financial_tuple_list):
+    if Utility.is_empty(stock_financial_tuple_list):
         return
 
-    for i in range(len(financial_data_tuple_list)):
-        financial_data_tuple = financial_data_tuple_list[i]
-        financial_data = FinancialData(financial_data_tuple)
-        financial_data.setup_net_profit_per_share()
-        financial_data.setup_debt_to_net_assets_ratio()
-        financial_data_tuple_list[i] = financial_data.to_tuple(include_id=True)
+    for i in range(len(stock_financial_tuple_list)):
+        stock_financial_tuple = stock_financial_tuple_list[i]
+        stock_financial = StockFinancial(stock_financial_tuple)
+        stock_financial.setup_net_profit_per_share()
+        stock_financial.setup_debt_to_net_assets_ratio()
+        stock_financial_tuple_list[i] = stock_financial.to_tuple(include_id=True)
 
 
-def setup_net_profit_per_share_in_year(financial_data_tuple_list):
-    if Utility.is_empty(financial_data_tuple_list):
+def setup_net_profit_per_share_in_year(stock_financial_tuple_list):
+    if Utility.is_empty(stock_financial_tuple_list):
         return
 
-    if len(financial_data_tuple_list) < Constants.SEASONS_IN_A_YEAR + 1:
+    if len(stock_financial_tuple_list) < Constants.SEASONS_IN_A_YEAR + 1:
         return
 
-    for i in range(len(financial_data_tuple_list) - Constants.SEASONS_IN_A_YEAR):
+    for i in range(len(stock_financial_tuple_list) - Constants.SEASONS_IN_A_YEAR):
         net_profit_per_share_in_year = 0
         for j in range(Constants.SEASONS_IN_A_YEAR):
-            current = FinancialData(financial_data_tuple_list[i + j])
-            prev = FinancialData(financial_data_tuple_list[i + j + 1])
+            current = StockFinancial(stock_financial_tuple_list[i + j])
+            prev = StockFinancial(stock_financial_tuple_list[i + j + 1])
 
             if current is None or prev is None:
                 continue
@@ -834,58 +717,58 @@ def setup_net_profit_per_share_in_year(financial_data_tuple_list):
 
             net_profit_per_share_in_year += net_profit_per_share
 
-        financial_data_tuple = financial_data_tuple_list[i]
-        financial_data = FinancialData(financial_data_tuple)
-        financial_data.set_net_profit_per_share_in_year(net_profit_per_share_in_year)
-        financial_data_tuple_list[i] = financial_data.to_tuple(include_id=True)
+        stock_financial_tuple = stock_financial_tuple_list[i]
+        stock_financial = StockFinancial(stock_financial_tuple)
+        stock_financial.set_net_profit_per_share_in_year(net_profit_per_share_in_year)
+        stock_financial_tuple_list[i] = stock_financial.to_tuple(include_id=True)
 
 
-def setup_rate(financial_data_tuple_list):
-    if Utility.is_empty(financial_data_tuple_list):
+def setup_rate(stock_financial_tuple_list):
+    if Utility.is_empty(stock_financial_tuple_list):
         return
 
-    if len(financial_data_tuple_list) < Constants.SEASONS_IN_A_YEAR + 1:
+    if len(stock_financial_tuple_list) < Constants.SEASONS_IN_A_YEAR + 1:
         return
 
-    for i in range(len(financial_data_tuple_list) - Constants.SEASONS_IN_A_YEAR):
-        financial_data = FinancialData(financial_data_tuple_list[i])
-        prev = FinancialData(financial_data_tuple_list[i + Constants.SEASONS_IN_A_YEAR])
+    for i in range(len(stock_financial_tuple_list) - Constants.SEASONS_IN_A_YEAR):
+        stock_financial = StockFinancial(stock_financial_tuple_list[i])
+        prev = StockFinancial(stock_financial_tuple_list[i + Constants.SEASONS_IN_A_YEAR])
 
         if prev is None or prev.get_net_profit_per_share_in_year() == 0:
             continue
 
-        rate = round(financial_data.get_net_profit_per_share_in_year() / prev.get_net_profit_per_share_in_year(),
+        rate = round(stock_financial.get_net_profit_per_share_in_year() / prev.get_net_profit_per_share_in_year(),
                      Constants.DOUBLE_FIXED_DECIMAL)
 
-        financial_data.set_rate(rate)
-        financial_data_tuple_list[i] = financial_data.to_tuple(include_id=True)
+        stock_financial.set_rate(rate)
+        stock_financial_tuple_list[i] = stock_financial.to_tuple(include_id=True)
 
 
-def setup_roe(financial_data_tuple_list):
-    if Utility.is_empty(financial_data_tuple_list):
+def setup_roe(stock_financial_tuple_list):
+    if Utility.is_empty(stock_financial_tuple_list):
         return
 
-    if len(financial_data_tuple_list) < Constants.SEASONS_IN_A_YEAR + 1:
+    if len(stock_financial_tuple_list) < Constants.SEASONS_IN_A_YEAR + 1:
         return
 
-    for i in range(len(financial_data_tuple_list) - Constants.SEASONS_IN_A_YEAR):
-        financial_data = FinancialData(financial_data_tuple_list[i])
-        prev = FinancialData(financial_data_tuple_list[i + Constants.SEASONS_IN_A_YEAR])
+    for i in range(len(stock_financial_tuple_list) - Constants.SEASONS_IN_A_YEAR):
+        stock_financial = StockFinancial(stock_financial_tuple_list[i])
+        prev = StockFinancial(stock_financial_tuple_list[i + Constants.SEASONS_IN_A_YEAR])
 
         if prev is None or prev.get_book_value_per_share() == 0:
             continue
 
-        roe = round(100.0 * financial_data.get_net_profit_per_share_in_year() / prev.get_book_value_per_share(),
+        roe = round(100.0 * stock_financial.get_net_profit_per_share_in_year() / prev.get_book_value_per_share(),
                     Constants.DOUBLE_FIXED_DECIMAL)
-        financial_data.set_roe(roe)
-        financial_data_tuple_list[i] = financial_data.to_tuple(include_id=True)
+        stock_financial.set_roe(roe)
+        stock_financial_tuple_list[i] = stock_financial.to_tuple(include_id=True)
 
 
-def setup_roi(stock_data_tuple_list, financial_data_tuple_list):
+def setup_roi(stock_data_tuple_list, stock_financial_tuple_list):
     if Utility.is_empty(stock_data_tuple_list):
         return
 
-    if Utility.is_empty(financial_data_tuple_list):
+    if Utility.is_empty(stock_financial_tuple_list):
         return
 
     j = 0
@@ -895,18 +778,18 @@ def setup_roi(stock_data_tuple_list, financial_data_tuple_list):
         if price == 0:
             continue
 
-        while j < len(financial_data_tuple_list):
-            financial_data = FinancialData(financial_data_tuple_list[j])
+        while j < len(stock_financial_tuple_list):
+            stock_financial = StockFinancial(stock_financial_tuple_list[j])
             if datetime.strptime(stock_data.get_date(), Constants.DATE_FORMAT) >= datetime.strptime(
-                    financial_data.get_date(), Constants.DATE_FORMAT):
-                pe = round(100.0 * financial_data.get_net_profit_per_share_in_year() / price,
+                    stock_financial.get_date(), Constants.DATE_FORMAT):
+                pe = round(100.0 * stock_financial.get_net_profit_per_share_in_year() / price,
                            Constants.DOUBLE_FIXED_DECIMAL)
                 pb = 0
-                if financial_data.get_book_value_per_share() != 0:
-                    pb = round(price / financial_data.get_book_value_per_share(), Constants.DOUBLE_FIXED_DECIMAL)
-                # roi = round(financial_data.rate * financial_data.roe * pe * Constants.ROI_COEFFICIENT,
+                if stock_financial.get_book_value_per_share() != 0:
+                    pb = round(price / stock_financial.get_book_value_per_share(), Constants.DOUBLE_FIXED_DECIMAL)
+                # roi = round(stock_financial.rate * stock_financial.roe * pe * Constants.ROI_COEFFICIENT,
                 #             Constants.DOUBLE_FIXED_DECIMAL)
-                roi = round(financial_data.roe * pe * Constants.ROI_COEFFICIENT,
+                roi = round(stock_financial.roe * pe * Constants.ROI_COEFFICIENT,
                             Constants.DOUBLE_FIXED_DECIMAL)
                 if roi < 0:
                     roi = 0
@@ -920,32 +803,32 @@ def setup_roi(stock_data_tuple_list, financial_data_tuple_list):
                 j += 1
 
 
-def analyze_financial_data(stock, financial_data_tuple_list):
+def analyze_stock_financial(stock, stock_financial_tuple_list):
     if stock is None:
         return stock
 
-    if Utility.is_empty(financial_data_tuple_list):
+    if Utility.is_empty(stock_financial_tuple_list):
         return stock
 
-    if len(financial_data_tuple_list) < 2 * Constants.SEASONS_IN_A_YEAR + 1:
+    if len(stock_financial_tuple_list) < 2 * Constants.SEASONS_IN_A_YEAR + 1:
         return stock
 
-    financial_data = FinancialData(financial_data_tuple_list[0])
-    if financial_data is None:
+    stock_financial = StockFinancial(stock_financial_tuple_list[0])
+    if stock_financial is None:
         return stock
 
-    stock.set_total_assets(financial_data.total_assets)
-    stock.set_total_long_term_liabilities(financial_data.total_long_term_liabilities)
-    stock.set_book_value_per_share(financial_data.book_value_per_share)
-    stock.set_cash_flow_per_share(financial_data.cash_flow_per_share)
-    stock.set_net_profit(financial_data.net_profit)
+    stock.set_total_assets(stock_financial.total_assets)
+    stock.set_total_long_term_liabilities(stock_financial.total_long_term_liabilities)
+    stock.set_book_value_per_share(stock_financial.book_value_per_share)
+    stock.set_cash_flow_per_share(stock_financial.cash_flow_per_share)
+    stock.set_net_profit(stock_financial.net_profit)
 
     stock.setup_net_profit_per_share()
-    stock.setup_net_profit_per_share_in_year(financial_data_tuple_list)
-    stock.setup_net_profit_per_share_last_year(financial_data_tuple_list)
+    stock.setup_net_profit_per_share_in_year(stock_financial_tuple_list)
+    stock.setup_net_profit_per_share_last_year(stock_financial_tuple_list)
     stock.setup_rate()
     stock.setup_debt_to_net_assets_ratio()
-    stock.setup_roe(financial_data_tuple_list)
+    stock.setup_roe(stock_financial_tuple_list)
     stock.setup_pe()
     stock.setup_pb()
     stock.setup_roi()
@@ -1026,25 +909,24 @@ def analyze():
         print(index, stock.get_code(), stock.get_name())
 
         stock_data_tuple_list = read_stock_data_from_database(stock)
-        financial_data_tuple_list = read_financial_data_from_database(stock)
+        stock_financial_tuple_list = read_stock_financial_from_database(stock)
         share_bonus_tuple_list = read_share_bonus_from_database(stock)
         total_share_tuple_list = read_total_share_from_database(stock)
-        share_holder_tuple_list = read_share_holder_from_database(stock)
 
-        setup_total_share(financial_data_tuple_list, total_share_tuple_list)
-        setup_net_profit_per_share(financial_data_tuple_list)
-        setup_net_profit_per_share_in_year(financial_data_tuple_list)
-        setup_rate(financial_data_tuple_list)
-        setup_roe(financial_data_tuple_list)
+        setup_total_share(stock_financial_tuple_list, total_share_tuple_list)
+        setup_net_profit_per_share(stock_financial_tuple_list)
+        setup_net_profit_per_share_in_year(stock_financial_tuple_list)
+        setup_rate(stock_financial_tuple_list)
+        setup_roe(stock_financial_tuple_list)
 
-        setup_roi(stock_data_tuple_list, financial_data_tuple_list)
+        setup_roi(stock_data_tuple_list, stock_financial_tuple_list)
 
-        stock = analyze_financial_data(stock, financial_data_tuple_list)
+        stock = analyze_stock_financial(stock, stock_financial_tuple_list)
         stock = analyze_share_bonus(stock, share_bonus_tuple_list)
 
         stock.update_to_database()
-        write_financial_data_to_database(stock.get_code(), financial_data_tuple_list)
-        write_stock_data_to_database(stock.get_code(), stock_data_tuple_list)
+        write_stock_financial_to_database(stock.get_id(), stock_financial_tuple_list)
+        write_stock_data_to_database(stock.get_id(), stock_data_tuple_list)
 
     print("analyze done, count=", count)
 
@@ -1105,14 +987,11 @@ def write_to_file(stock):
     stock_data_tuple_list = read_stock_data_from_database(stock)
     write_stock_data_to_file(stock, stock_data_tuple_list)
 
-    financial_data_tuple_list = read_financial_data_from_database(stock)
-    write_financial_data_to_file(stock, financial_data_tuple_list)
+    stock_financial_tuple_list = read_stock_financial_from_database(stock)
+    write_stock_financial_to_file(stock, stock_financial_tuple_list)
 
     share_bonus_tuple_list = read_share_bonus_from_database(stock)
     write_share_bonus_to_file(stock, share_bonus_tuple_list)
-
-    share_holder_tuple_list = read_share_holder_from_database(stock)
-    write_share_holder_to_file(stock, share_holder_tuple_list)
 
 
 def in_check_list(stock, check_list):

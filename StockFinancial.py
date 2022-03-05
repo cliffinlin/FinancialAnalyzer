@@ -4,11 +4,11 @@ import DatabaseContract
 from DatabaseTable import DatabaseTable
 
 
-class FinancialData(DatabaseTable):
-    def __init__(self, financial_data_tuple=None):
+class StockFinancial(DatabaseTable):
+    def __init__(self, stock_financial_tuple=None):
         DatabaseTable.__init__(self)
 
-        self.stock_code = ""
+        self.stock_id = ""
         self.date = ""
         self.book_value_per_share = 0
         self.cash_flow_per_share = 0
@@ -31,63 +31,63 @@ class FinancialData(DatabaseTable):
         self.dividend_yield = 0
         self.dividend_ratio = 0
 
-        self.set(financial_data_tuple)
+        self.set(stock_financial_tuple)
 
-    def set(self, financial_data_tuple):
-        if financial_data_tuple is None:
+    def set(self, stock_financial_tuple):
+        if stock_financial_tuple is None:
             return
 
-        DatabaseTable.set(self, financial_data_tuple[DatabaseContract.FinancialDataColumn.id.value],
-                          financial_data_tuple[DatabaseContract.FinancialDataColumn.created.value],
-                          financial_data_tuple[DatabaseContract.FinancialDataColumn.modified.value])
+        DatabaseTable.set(self, stock_financial_tuple[DatabaseContract.StockFinancialColumn.id.value],
+                          stock_financial_tuple[DatabaseContract.StockFinancialColumn.created.value],
+                          stock_financial_tuple[DatabaseContract.StockFinancialColumn.modified.value])
 
-        self.set_stock_code(financial_data_tuple[DatabaseContract.FinancialDataColumn.stock_code.value])
-        self.set_date(financial_data_tuple[DatabaseContract.FinancialDataColumn.date.value])
+        self.set_stock_id(stock_financial_tuple[DatabaseContract.StockFinancialColumn.stock_id.value])
+        self.set_date(stock_financial_tuple[DatabaseContract.StockFinancialColumn.date.value])
         self.set_book_value_per_share(
-            financial_data_tuple[DatabaseContract.FinancialDataColumn.book_value_per_share.value])
+            stock_financial_tuple[DatabaseContract.StockFinancialColumn.book_value_per_share.value])
         self.set_cash_flow_per_share(
-            financial_data_tuple[DatabaseContract.FinancialDataColumn.cash_flow_per_share.value])
+            stock_financial_tuple[DatabaseContract.StockFinancialColumn.cash_flow_per_share.value])
         self.set_total_share(
-            financial_data_tuple[DatabaseContract.FinancialDataColumn.total_share.value])
+            stock_financial_tuple[DatabaseContract.StockFinancialColumn.total_share.value])
         self.set_total_current_assets(
-            financial_data_tuple[DatabaseContract.FinancialDataColumn.total_current_assets.value])
-        self.set_total_assets(financial_data_tuple[DatabaseContract.FinancialDataColumn.total_assets.value])
+            stock_financial_tuple[DatabaseContract.StockFinancialColumn.total_current_assets.value])
+        self.set_total_assets(stock_financial_tuple[DatabaseContract.StockFinancialColumn.total_assets.value])
         self.set_total_long_term_liabilities(
-            financial_data_tuple[DatabaseContract.FinancialDataColumn.total_long_term_liabilities.value])
+            stock_financial_tuple[DatabaseContract.StockFinancialColumn.total_long_term_liabilities.value])
         self.set_debt_to_net_assets_ratio(
-            financial_data_tuple[DatabaseContract.FinancialDataColumn.debt_to_net_assets_ratio.value])
+            stock_financial_tuple[DatabaseContract.StockFinancialColumn.debt_to_net_assets_ratio.value])
         self.set_main_business_income(
-            financial_data_tuple[DatabaseContract.FinancialDataColumn.main_business_income.value])
+            stock_financial_tuple[DatabaseContract.StockFinancialColumn.main_business_income.value])
         self.set_financial_expenses(
-            financial_data_tuple[DatabaseContract.FinancialDataColumn.financial_expenses.value])
-        self.set_net_profit(financial_data_tuple[DatabaseContract.FinancialDataColumn.net_profit.value])
+            stock_financial_tuple[DatabaseContract.StockFinancialColumn.financial_expenses.value])
+        self.set_net_profit(stock_financial_tuple[DatabaseContract.StockFinancialColumn.net_profit.value])
         self.set_net_profit_per_share(
-            financial_data_tuple[DatabaseContract.FinancialDataColumn.net_profit_per_share.value])
+            stock_financial_tuple[DatabaseContract.StockFinancialColumn.net_profit_per_share.value])
         self.set_net_profit_per_share_in_year(
-            financial_data_tuple[DatabaseContract.FinancialDataColumn.net_profit_per_share_in_year.value])
+            stock_financial_tuple[DatabaseContract.StockFinancialColumn.net_profit_per_share_in_year.value])
         self.set_rate(
-            financial_data_tuple[DatabaseContract.FinancialDataColumn.rate.value])
+            stock_financial_tuple[DatabaseContract.StockFinancialColumn.rate.value])
         self.set_roi(
-            financial_data_tuple[DatabaseContract.FinancialDataColumn.roi.value])
+            stock_financial_tuple[DatabaseContract.StockFinancialColumn.roi.value])
         self.set_roe(
-            financial_data_tuple[DatabaseContract.FinancialDataColumn.roe.value])
+            stock_financial_tuple[DatabaseContract.StockFinancialColumn.roe.value])
         self.set_pe(
-            financial_data_tuple[DatabaseContract.FinancialDataColumn.pe.value])
+            stock_financial_tuple[DatabaseContract.StockFinancialColumn.pe.value])
         self.set_pb(
-            financial_data_tuple[DatabaseContract.FinancialDataColumn.pb.value])
+            stock_financial_tuple[DatabaseContract.StockFinancialColumn.pb.value])
         self.set_dividend(
-            financial_data_tuple[DatabaseContract.FinancialDataColumn.dividend.value])
+            stock_financial_tuple[DatabaseContract.StockFinancialColumn.dividend.value])
         self.set_dividend_yield(
-            financial_data_tuple[DatabaseContract.FinancialDataColumn.dividend_yield.value])
+            stock_financial_tuple[DatabaseContract.StockFinancialColumn.dividend_yield.value])
         self.set_dividend_ratio(
-            financial_data_tuple[DatabaseContract.FinancialDataColumn.dividend_ratio.value])
+            stock_financial_tuple[DatabaseContract.StockFinancialColumn.dividend_ratio.value])
 
-    def get_stock_code(self):
-        return self.stock_code
+    def get_stock_id(self):
+        return self.stock_id
 
-    def set_stock_code(self, stock_code):
-        if stock_code is not None:
-            self.stock_code = stock_code
+    def set_stock_id(self, stock_id):
+        if stock_id is not None:
+            self.stock_id = stock_id
 
     def get_date(self):
         return self.date
@@ -238,7 +238,7 @@ class FinancialData(DatabaseTable):
 
     def to_tuple(self, include_id=False):
         if include_id:
-            result = tuple((self.id, self.stock_code, self.date,
+            result = tuple((self.id, self.stock_id, self.date,
                             self.book_value_per_share, self.cash_flow_per_share,
                             self.total_share, self.total_current_assets, self.total_assets,
                             self.total_long_term_liabilities,
@@ -248,7 +248,7 @@ class FinancialData(DatabaseTable):
                             self.dividend, self.dividend_yield, self.dividend_ratio,
                             self.created, self.modified))
         else:
-            result = tuple((self.stock_code, self.date,
+            result = tuple((self.stock_id, self.date,
                             self.book_value_per_share, self.cash_flow_per_share,
                             self.total_share, self.total_current_assets, self.total_assets,
                             self.total_long_term_liabilities,
@@ -276,12 +276,12 @@ class FinancialData(DatabaseTable):
 
     @staticmethod
     def get_delete_sql():
-        delete_sql = "DELETE FROM financial_data WHERE stock_code = ?"
+        delete_sql = "DELETE FROM stock_financial WHERE stock_id = ?"
         return delete_sql
 
     @staticmethod
     def get_insert_sql():
-        insert_sql = "INSERT INTO financial_data (stock_code, date," \
+        insert_sql = "INSERT INTO stock_financial (stock_id, date," \
                      "book_value_per_share, cash_flow_per_share," \
                      "total_share, total_current_assets, total_assets, total_long_term_liabilities," \
                      "debt_to_net_assets_ratio, main_business_income, financial_expenses," \

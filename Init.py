@@ -14,7 +14,6 @@ def make_data_directory():
     Utility.makedir(Constants.DATA_FIGURE_PATH)
     Utility.makedir(Constants.DATA_FINANCIAL_PATH)
     Utility.makedir(Constants.DATA_SHARE_BONUS_PATH)
-    Utility.makedir(Constants.DATA_SHARE_HOLDER_PATH)
     Utility.makedir(Constants.DATA_TOTAL_SHARE_PATH)
     Utility.makedir(Constants.DATA_STOCK_PATH)
     Utility.makedir(Constants.DATA_STOCK_DAY_PATH)
@@ -39,10 +38,9 @@ def setup_database():
         cursor.execute(DatabaseContract.SQL_CREATE_TABLE_SETTING)
         cursor.execute(DatabaseContract.SQL_CREATE_TABLE_STOCK)
         cursor.execute(DatabaseContract.SQL_CREATE_TABLE_STOCK_DATA)
-        cursor.execute(DatabaseContract.SQL_CREATE_TABLE_FINANCIAL_DATA)
+        cursor.execute(DatabaseContract.SQL_CREATE_TABLE_STOCK_FINANCIAL)
         cursor.execute(DatabaseContract.SQL_CREATE_TABLE_SHARE_BONUS)
         cursor.execute(DatabaseContract.SQL_CREATE_TABLE_TOTAL_SHARE)
-        cursor.execute(DatabaseContract.SQL_CREATE_TABLE_SHARE_HOLDER)
 
         connect.commit()
     except sqlite3.Error as e:
