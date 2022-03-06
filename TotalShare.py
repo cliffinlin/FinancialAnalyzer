@@ -49,13 +49,17 @@ class TotalShare(DatabaseTable):
 
     def to_tuple(self, include_id=False):
         if include_id:
-            result = tuple((self.id, self.stock_id, self.date,
+            result = tuple((self.id,
+                            self.stock_id, self.date,
                             self.total_share,
-                            self.created, self.modified))
+                            self.created, self.modified
+                            ))
         else:
-            result = tuple((self.stock_id, self.date,
+            result = tuple((
+                            self.stock_id, self.date,
                             self.total_share,
-                            self.created, self.modified))
+                            self.created, self.modified
+                            ))
         return result
 
     @staticmethod
@@ -65,10 +69,13 @@ class TotalShare(DatabaseTable):
 
     @staticmethod
     def get_insert_sql():
-        insert_sql = "INSERT INTO total_share (stock_id, date," \
+        insert_sql = "INSERT INTO total_share (" \
+                     "stock_id, date," \
                      "total_share," \
-                     "created, modified)" \
-                     " VALUES(?,?," \
+                     "created, modified" \
+                     ") VALUES (" \
+                     "?,?," \
                      "?," \
-                     "?,?)"
+                     "?,?" \
+                     ")"
         return insert_sql

@@ -119,12 +119,27 @@ class StockDataColumn(Enum):
     high = auto()
     low = auto()
     close = auto()
-    volume = auto()
-    value = auto()
+    amplitude = auto()
+    vertex_high = auto()
+    vertex_low = auto()
+    overlap = auto()
+    overlap_high = auto()
+    overlap_low = auto()
+    average5 = auto()
+    average10 = auto()
+    dif = auto()
+    dea = auto()
+    histogram = auto()
+    sigma_histogram = auto()
     roi = auto()
     pe = auto()
     pb = auto()
     dividend_yield = auto()
+    level = auto()
+    direction = auto()
+    vertex = auto()
+    divergence = auto()
+    action = auto()
     created = auto()
     modified = auto()
 
@@ -139,12 +154,27 @@ SQL_CREATE_TABLE_STOCK_DATA = " CREATE TABLE IF NOT EXISTS stock_data ( " \
                               + StockDataColumn.high.name + " DOUBLE," \
                               + StockDataColumn.low.name + " DOUBLE," \
                               + StockDataColumn.close.name + " DOUBLE," \
-                              + StockDataColumn.volume.name + " DOUBLE," \
-                              + StockDataColumn.value.name + " DOUBLE," \
+                              + StockDataColumn.amplitude.name + " DOUBLE," \
+                              + StockDataColumn.vertex_high.name + " DOUBLE," \
+                              + StockDataColumn.vertex_low.name + " DOUBLE," \
+                              + StockDataColumn.overlap.name + " DOUBLE," \
+                              + StockDataColumn.overlap_high.name + " DOUBLE," \
+                              + StockDataColumn.overlap_low.name + " DOUBLE," \
+                              + StockDataColumn.average5.name + " DOUBLE," \
+                              + StockDataColumn.average10.name + " DOUBLE," \
+                              + StockDataColumn.dif.name + " DOUBLE," \
+                              + StockDataColumn.dea.name + " DOUBLE," \
+                              + StockDataColumn.histogram.name + " DOUBLE," \
+                              + StockDataColumn.sigma_histogram.name + " DOUBLE," \
                               + StockDataColumn.roi.name + " DOUBLE," \
                               + StockDataColumn.pe.name + " DOUBLE," \
                               + StockDataColumn.pb.name + " DOUBLE," \
                               + StockDataColumn.dividend_yield.name + " DOUBLE," \
+                              + StockDataColumn.level.name + " INTEGER," \
+                              + StockDataColumn.direction.name + " INTEGER," \
+                              + StockDataColumn.vertex.name + " INTEGER," \
+                              + StockDataColumn.divergence.name + " INTEGER," \
+                              + StockDataColumn.action.name + " TEXT," \
                               + StockDataColumn.created.name + " TEXT," \
                               + StockDataColumn.modified.name + " TEXT" \
                               + "); "
@@ -179,32 +209,32 @@ class StockFinancialColumn(Enum):
 
 
 SQL_CREATE_TABLE_STOCK_FINANCIAL = " CREATE TABLE IF NOT EXISTS stock_financial ( " \
-                                  + StockFinancialColumn.id.name + " INTEGER PRIMARY KEY AUTOINCREMENT," \
-                                  + StockFinancialColumn.stock_id.name + " TEXT NOT NULL," \
-                                  + StockFinancialColumn.date.name + " TEXT NOT NULL," \
-                                  + StockFinancialColumn.book_value_per_share.name + " DOUBLE," \
-                                  + StockFinancialColumn.cash_flow_per_share.name + " DOUBLE," \
-                                  + StockFinancialColumn.total_share.name + " DOUBLE," \
-                                  + StockFinancialColumn.total_current_assets.name + " DOUBLE," \
-                                  + StockFinancialColumn.total_assets.name + " DOUBLE," \
-                                  + StockFinancialColumn.total_long_term_liabilities.name + " DOUBLE," \
-                                  + StockFinancialColumn.debt_to_net_assets_ratio.name + " DOUBLE," \
-                                  + StockFinancialColumn.main_business_income.name + " DOUBLE," \
-                                  + StockFinancialColumn.financial_expenses.name + " DOUBLE," \
-                                  + StockFinancialColumn.net_profit.name + " DOUBLE," \
-                                  + StockFinancialColumn.net_profit_per_share.name + " DOUBLE," \
-                                  + StockFinancialColumn.net_profit_per_share_in_year.name + " DOUBLE," \
-                                  + StockFinancialColumn.rate.name + " DOUBLE," \
-                                  + StockFinancialColumn.roi.name + " DOUBLE," \
-                                  + StockFinancialColumn.roe.name + " DOUBLE," \
-                                  + StockFinancialColumn.pe.name + " DOUBLE," \
-                                  + StockFinancialColumn.pb.name + " DOUBLE," \
-                                  + StockFinancialColumn.dividend.name + " DOUBLE," \
-                                  + StockFinancialColumn.dividend_yield.name + " DOUBLE," \
-                                  + StockFinancialColumn.dividend_ratio.name + " DOUBLE," \
-                                  + StockFinancialColumn.created.name + " TEXT," \
-                                  + StockFinancialColumn.modified.name + " TEXT" \
-                                  + "); "
+                                   + StockFinancialColumn.id.name + " INTEGER PRIMARY KEY AUTOINCREMENT," \
+                                   + StockFinancialColumn.stock_id.name + " TEXT NOT NULL," \
+                                   + StockFinancialColumn.date.name + " TEXT NOT NULL," \
+                                   + StockFinancialColumn.book_value_per_share.name + " DOUBLE," \
+                                   + StockFinancialColumn.cash_flow_per_share.name + " DOUBLE," \
+                                   + StockFinancialColumn.total_share.name + " DOUBLE," \
+                                   + StockFinancialColumn.total_current_assets.name + " DOUBLE," \
+                                   + StockFinancialColumn.total_assets.name + " DOUBLE," \
+                                   + StockFinancialColumn.total_long_term_liabilities.name + " DOUBLE," \
+                                   + StockFinancialColumn.debt_to_net_assets_ratio.name + " DOUBLE," \
+                                   + StockFinancialColumn.main_business_income.name + " DOUBLE," \
+                                   + StockFinancialColumn.financial_expenses.name + " DOUBLE," \
+                                   + StockFinancialColumn.net_profit.name + " DOUBLE," \
+                                   + StockFinancialColumn.net_profit_per_share.name + " DOUBLE," \
+                                   + StockFinancialColumn.net_profit_per_share_in_year.name + " DOUBLE," \
+                                   + StockFinancialColumn.rate.name + " DOUBLE," \
+                                   + StockFinancialColumn.roi.name + " DOUBLE," \
+                                   + StockFinancialColumn.roe.name + " DOUBLE," \
+                                   + StockFinancialColumn.pe.name + " DOUBLE," \
+                                   + StockFinancialColumn.pb.name + " DOUBLE," \
+                                   + StockFinancialColumn.dividend.name + " DOUBLE," \
+                                   + StockFinancialColumn.dividend_yield.name + " DOUBLE," \
+                                   + StockFinancialColumn.dividend_ratio.name + " DOUBLE," \
+                                   + StockFinancialColumn.created.name + " TEXT," \
+                                   + StockFinancialColumn.modified.name + " TEXT" \
+                                   + "); "
 
 
 class ShareBonusColumn(Enum):
@@ -245,5 +275,3 @@ SQL_CREATE_TABLE_TOTAL_SHARE = " CREATE TABLE IF NOT EXISTS total_share ( " \
                                + TotalShareColumn.created.name + " TEXT," \
                                + TotalShareColumn.modified.name + " TEXT" \
                                + "); "
-
-

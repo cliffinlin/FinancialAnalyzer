@@ -270,7 +270,6 @@ def write_stock_data_to_database(stock_id, stock_data_list, period=Constants.MON
                 stock_data_obj.set_high(stock_data['high'])
                 stock_data_obj.set_low(stock_data['low'])
                 stock_data_obj.set_close(stock_data['close'])
-                stock_data_obj.set_volume(stock_data['volume'])
                 stock_data_obj.set_created(now)
                 stock_data_obj.set_modified(now)
             elif isinstance(stock_data, tuple):
@@ -494,7 +493,7 @@ def write_stock_data_to_file(stock, stock_data_tuple_list, period=Constants.MONT
 
     file_name = get_stock_data_file_name(stock, period)
 
-    field_name_tuple = tuple(("date", "open", "high", "low", "close", "volume", "roi"))
+    field_name_tuple = tuple(("date", "open", "high", "low", "close", "roi"))
 
     with open(file_name, 'w', newline='') as csv_file:
         writer = csv.DictWriter(csv_file, fieldnames=field_name_tuple)
@@ -506,8 +505,7 @@ def write_stock_data_to_file(stock, stock_data_tuple_list, period=Constants.MONT
                 continue
 
             stock_data_dict = {"date": stock_data.date, "open": stock_data.open, "high": stock_data.high,
-                               "low": stock_data.low, "close": stock_data.close, "volume": stock_data.volume,
-                               "roi": stock_data.roi}
+                               "low": stock_data.low, "close": stock_data.close, "roi": stock_data.roi}
             writer.writerow(stock_data_dict)
 
 

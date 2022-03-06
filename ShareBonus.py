@@ -57,13 +57,17 @@ class ShareBonus(DatabaseTable):
 
     def to_tuple(self, include_id=False):
         if include_id:
-            result = tuple((self.id, self.stock_id, self.date,
+            result = tuple((self.id,
+                            self.stock_id, self.date,
                             self.dividend, self.r_date,
-                            self.created, self.modified))
+                            self.created, self.modified
+                            ))
         else:
-            result = tuple((self.stock_id, self.date,
+            result = tuple((
+                            self.stock_id, self.date,
                             self.dividend, self.r_date,
-                            self.created, self.modified))
+                            self.created, self.modified
+                            ))
         return result
 
     @staticmethod
@@ -73,10 +77,13 @@ class ShareBonus(DatabaseTable):
 
     @staticmethod
     def get_insert_sql():
-        insert_sql = "INSERT INTO share_bonus (stock_id, date, " \
-                     "dividend, r_date, " \
-                     "created, modified)" \
-                     " VALUES(?,?," \
+        insert_sql = "INSERT INTO share_bonus (" \
+                     "stock_id, date," \
+                     "dividend, r_date," \
+                     "created, modified" \
+                     ") VALUES (" \
                      "?,?," \
-                     "?,?)"
+                     "?,?," \
+                     "?,?" \
+                     ")"
         return insert_sql

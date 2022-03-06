@@ -712,10 +712,11 @@ class Stock(DatabaseTable):
                      "symbol, se, code, name, " \
                      "price, change, net, " \
                      "created, modified" \
-                     ") VALUES(" \
+                     ") VALUES (" \
                      "?,?,?,?," \
                      "?,?,?," \
-                     "?,?)"
+                     "?,?" \
+                     ")"
         return insert_sql
 
 

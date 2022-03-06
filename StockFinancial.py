@@ -238,7 +238,8 @@ class StockFinancial(DatabaseTable):
 
     def to_tuple(self, include_id=False):
         if include_id:
-            result = tuple((self.id, self.stock_id, self.date,
+            result = tuple((self.id,
+                            self.stock_id, self.date,
                             self.book_value_per_share, self.cash_flow_per_share,
                             self.total_share, self.total_current_assets, self.total_assets,
                             self.total_long_term_liabilities,
@@ -246,9 +247,11 @@ class StockFinancial(DatabaseTable):
                             self.net_profit, self.net_profit_per_share, self.net_profit_per_share_in_year,
                             self.rate, self.roi, self.roe, self.pe, self.pb,
                             self.dividend, self.dividend_yield, self.dividend_ratio,
-                            self.created, self.modified))
+                            self.created, self.modified
+                            ))
         else:
-            result = tuple((self.stock_id, self.date,
+            result = tuple((
+                            self.stock_id, self.date,
                             self.book_value_per_share, self.cash_flow_per_share,
                             self.total_share, self.total_current_assets, self.total_assets,
                             self.total_long_term_liabilities,
@@ -256,7 +259,8 @@ class StockFinancial(DatabaseTable):
                             self.net_profit, self.net_profit_per_share, self.net_profit_per_share_in_year,
                             self.rate, self.roi, self.roe, self.pe, self.pb,
                             self.dividend, self.dividend_yield, self.dividend_ratio,
-                            self.created, self.modified))
+                            self.created, self.modified
+                            ))
         return result
 
     def setup_net_profit_per_share(self):
@@ -281,20 +285,23 @@ class StockFinancial(DatabaseTable):
 
     @staticmethod
     def get_insert_sql():
-        insert_sql = "INSERT INTO stock_financial (stock_id, date," \
+        insert_sql = "INSERT INTO stock_financial (" \
+                     "stock_id, date," \
                      "book_value_per_share, cash_flow_per_share," \
                      "total_share, total_current_assets, total_assets, total_long_term_liabilities," \
                      "debt_to_net_assets_ratio, main_business_income, financial_expenses," \
                      "net_profit, net_profit_per_share, net_profit_per_share_in_year," \
                      "rate, roi, roe, pe, pb," \
                      "dividend, dividend_yield, dividend_ratio," \
-                     "created, modified)" \
-                     " VALUES(?,?," \
+                     "created, modified" \
+                     ") VALUES (" \
+                     "?,?," \
                      "?,?," \
                      "?,?,?,?," \
                      "?,?,?," \
                      "?,?,?," \
                      "?,?,?,?,?," \
                      "?,?,?," \
-                     "?,?)"
+                     "?,?" \
+                     ")"
         return insert_sql

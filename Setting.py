@@ -44,11 +44,15 @@ class Setting(DatabaseTable):
 
     def to_tuple(self, include_id=False):
         if include_id:
-            result = tuple((self.id, self.key, self.value,
-                            self.created, self.modified))
+            result = tuple((self.id,
+                            self.key, self.value,
+                            self.created, self.modified
+                            ))
         else:
-            result = tuple((self.key, self.value,
-                            self.created, self.modified))
+            result = tuple((
+                            self.key, self.value,
+                            self.created, self.modified
+                            ))
         return result
 
     def get_insert_tuple(self):
@@ -66,10 +70,13 @@ class Setting(DatabaseTable):
 
     @staticmethod
     def get_insert_sql():
-        sql = "INSERT INTO setting (key, value," \
-              "created, modified)" \
-              " VALUES(?,?," \
-              "?,?)"
+        sql = "INSERT INTO setting (" \
+              "key, value," \
+              "created, modified" \
+              ") VALUES (" \
+              "?,?," \
+              "?,?" \
+              ")"
         return sql
 
     @staticmethod
