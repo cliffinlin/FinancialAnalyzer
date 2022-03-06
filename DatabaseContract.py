@@ -27,38 +27,64 @@ class StockColumn(Enum):
     code = auto()
     name = auto()
     pinyin = auto()
-    mark = auto()
+    flag = auto()
     price = auto()
     change = auto()
     net = auto()
     volume = auto()
     value = auto()
-    market_value = auto()
+
+    date = auto()
+    time = auto()
+    min5 = auto()
+    min15 = auto()
+    min30 = auto()
+    min60 = auto()
+    day = auto()
+    week = auto()
+    month = auto()
+
     operation = auto()
     hold = auto()
     cost = auto()
     profit = auto()
+    bonus = auto()
+    valuation = auto()
+
+    market_value = auto()
+
     total_share = auto()
     total_assets = auto()
     total_long_term_liabilities = auto()
+
     debt_to_net_assets_ratio = auto()
+
+    main_business_income = auto()
+    main_business_income_in_year = auto()
+
     book_value_per_share = auto()
     cash_flow_per_share = auto()
+
     net_profit = auto()
+    net_profit_in_year = auto()
     net_profit_per_share = auto()
     net_profit_per_share_in_year = auto()
-    net_profit_per_share_last_year = auto()
+    net_profit_per_share_last_year = auto() #TODO remove
+    net_profit_margin = auto()
+
     rate = auto()
     roi = auto()
     roe = auto()
     pe = auto()
     pb = auto()
-    date = auto()
+
     dividend = auto()
     dividend_yield = auto()
     dividend_ratio = auto()
     r_date = auto()
+
     time_to_market = auto()
+
     created = auto()
     modified = auto()
 
@@ -70,33 +96,47 @@ SQL_CREATE_TABLE_STOCK = " CREATE TABLE IF NOT EXISTS stock ( " \
                          + StockColumn.code.name + " TEXT NOT NULL," \
                          + StockColumn.name.name + " TEXT NOT NULL," \
                          + StockColumn.pinyin.name + " TEXT," \
-                         + StockColumn.mark.name + " INTEGER," \
+                         + StockColumn.flag.name + " INTEGER," \
                          + StockColumn.price.name + " DOUBLE," \
                          + StockColumn.change.name + " DOUBLE," \
                          + StockColumn.net.name + " DOUBLE," \
                          + StockColumn.volume.name + " DOUBLE," \
                          + StockColumn.value.name + " DOUBLE," \
-                         + StockColumn.market_value.name + " DOUBLE," \
+                         + StockColumn.date.name + " TEXT," \
+                         + StockColumn.time.name + " TEXT," \
+                         + StockColumn.min5.name + " TEXT," \
+                         + StockColumn.min15.name + " TEXT," \
+                         + StockColumn.min30.name + " TEXT," \
+                         + StockColumn.min60.name + " TEXT," \
+                         + StockColumn.day.name + " TEXT," \
+                         + StockColumn.week.name + " TEXT," \
+                         + StockColumn.month.name + " TEXT," \
                          + StockColumn.operation.name + " INTEGER," \
                          + StockColumn.hold.name + " INTEGER," \
                          + StockColumn.cost.name + " DOUBLE," \
                          + StockColumn.profit.name + " DOUBLE," \
+                         + StockColumn.bonus.name + " DOUBLE," \
+                         + StockColumn.valuation.name + " DOUBLE," \
+                         + StockColumn.market_value.name + " DOUBLE," \
                          + StockColumn.total_share.name + " DOUBLE," \
                          + StockColumn.total_assets.name + " DOUBLE," \
                          + StockColumn.total_long_term_liabilities.name + " DOUBLE," \
                          + StockColumn.debt_to_net_assets_ratio.name + " DOUBLE," \
+                         + StockColumn.main_business_income.name + " DOUBLE," \
+                         + StockColumn.main_business_income_in_year.name + " DOUBLE," \
                          + StockColumn.book_value_per_share.name + " DOUBLE," \
                          + StockColumn.cash_flow_per_share.name + " DOUBLE," \
                          + StockColumn.net_profit.name + " DOUBLE," \
+                         + StockColumn.net_profit_in_year.name + " DOUBLE," \
                          + StockColumn.net_profit_per_share.name + " DOUBLE," \
                          + StockColumn.net_profit_per_share_in_year.name + " DOUBLE," \
                          + StockColumn.net_profit_per_share_last_year.name + " DOUBLE," \
+                         + StockColumn.net_profit_margin.name + " DOUBLE," \
                          + StockColumn.rate.name + " DOUBLE," \
                          + StockColumn.roi.name + " DOUBLE," \
                          + StockColumn.roe.name + " DOUBLE," \
                          + StockColumn.pe.name + " DOUBLE," \
                          + StockColumn.pb.name + " DOUBLE," \
-                         + StockColumn.date.name + " TEXT," \
                          + StockColumn.dividend.name + " DOUBLE," \
                          + StockColumn.dividend_yield.name + " DOUBLE," \
                          + StockColumn.dividend_ratio.name + " DOUBLE," \

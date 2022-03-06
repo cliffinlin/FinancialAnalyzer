@@ -451,7 +451,7 @@ def write_stock_to_file(stock_tuple_list):
     field_name_tuple = tuple(("id", "classes",
                               "se", "code", "name", "pinyin",
                               "price", "change", "net", "volume", "value", "market_value",
-                              "mark", "operation", "hold", "cost", "profit",
+                              "flag", "operation", "hold", "cost", "profit",
                               "roi", "roe", "pe", "rate", "pb",
                               "dividend", "dividend_yield", "dividend_ratio",
                               "total_share", "time_to_market", "created", "modified"))
@@ -471,7 +471,7 @@ def write_stock_to_file(stock_tuple_list):
                           "price": stock.get_price(), "change": stock.get_change(), "net": stock.get_net(),
                           "volume": stock.get_volume(),
                           "value": stock.get_value(), "market_value": stock.get_market_value(),
-                          "mark": stock.get_mark(), "operation": stock.get_operation(), "hold": stock.get_hold(),
+                          "flag": stock.get_flag(), "operation": stock.get_operation(), "hold": stock.get_hold(),
                           "cost": stock.get_cost(),
                           "profit": stock.get_profit(),
                           "roi": stock.get_roi(), "roe": stock.get_roe(), "pe": stock.get_pe(),
