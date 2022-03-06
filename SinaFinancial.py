@@ -154,7 +154,7 @@ def download_stock_data(stock, length, period=Constants.MONTH):
 
     url = "http://money.finance.sina.com.cn/quotes_service/api/json_v2.php/CN_MarketData.getKLineData?"
 
-    symbol = "&symbol=" + stock.get_symbol()
+    symbol = "&symbol=" + stock.get_se() + stock.get_code()
 
     # for day 240, week 1680, month 7200
     if period == Constants.DAY:
@@ -198,7 +198,7 @@ def download_stock_information(stock):
     if stock is None:
         return None
 
-    url = 'http://hq.sinajs.cn/list=' + stock.get_symbol() + '_i'
+    url = 'http://hq.sinajs.cn/list=' + stock.get_se() + stock.get_code() + '_i'
 
     print(url)
 

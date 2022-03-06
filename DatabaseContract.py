@@ -23,7 +23,6 @@ SQL_CREATE_TABLE_SETTING = " CREATE TABLE IF NOT EXISTS setting ( " \
 class StockColumn(Enum):
     id = 0
     classes = auto()
-    symbol = auto()
     se = auto()
     code = auto()
     name = auto()
@@ -67,7 +66,6 @@ class StockColumn(Enum):
 SQL_CREATE_TABLE_STOCK = " CREATE TABLE IF NOT EXISTS stock ( " \
                          + StockColumn.id.name + " INTEGER PRIMARY KEY AUTOINCREMENT," \
                          + StockColumn.classes.name + " TEXT," \
-                         + StockColumn.symbol.name + " TEXT," \
                          + StockColumn.se.name + " TEXT NOT NULL," \
                          + StockColumn.code.name + " TEXT NOT NULL," \
                          + StockColumn.name.name + " TEXT NOT NULL," \

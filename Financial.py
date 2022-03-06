@@ -200,7 +200,6 @@ def write_stock_list_to_database(stock_list):
 
         for stock_dict in stock_list:
             stock = Stock()
-            stock.set_symbol(stock_dict['symbol'])
             stock.set_se(stock_dict["symbol"][0:2])
             stock.set_code(stock_dict['code'])
             stock.set_name(stock_dict['name'])

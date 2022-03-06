@@ -16,7 +16,6 @@ class Stock(DatabaseTable):
         DatabaseTable.__init__(self)
 
         self.classes = ""
-        self.symbol = ""
         self.se = ""
         self.code = ""
         self.name = ""
@@ -65,7 +64,6 @@ class Stock(DatabaseTable):
                           stock_tuple[DatabaseContract.StockColumn.modified.value])
 
         self.set_classes(stock_tuple[DatabaseContract.StockColumn.classes.value])
-        self.set_symbol(stock_tuple[DatabaseContract.StockColumn.symbol.value])
         self.set_se(stock_tuple[DatabaseContract.StockColumn.se.value])
         self.set_code(stock_tuple[DatabaseContract.StockColumn.code.value])
         self.set_name(stock_tuple[DatabaseContract.StockColumn.name.value])
@@ -114,15 +112,6 @@ class Stock(DatabaseTable):
     def set_classes(self, classes):
         if classes is not None:
             self.classes = classes
-
-
-    def get_symbol(self):
-        return self.symbol
-
-
-    def set_symbol(self, symbol):
-        if symbol is not None:
-            self.symbol = symbol
 
 
     def get_se(self):
@@ -595,13 +584,13 @@ class Stock(DatabaseTable):
 
 
     def get_insert_tuple(self):
-        return tuple((self.symbol, self.se, self.code, self.name,
+        return tuple((self.se, self.code, self.name,
                       self.price, self.change, self.net,
                       self.created, self.modified))
 
 
     def get_update_tuple(self):
-        return tuple((self.symbol, self.se, self.code, self.name,
+        return tuple((self.se, self.code, self.name,
                       self.price, self.change, self.net,
                       self.modified, self.code))
 
@@ -709,11 +698,11 @@ class Stock(DatabaseTable):
     @staticmethod
     def get_insert_sql():
         insert_sql = "INSERT INTO stock (" \
-                     "symbol, se, code, name, " \
+                     "se, code, name, " \
                      "price, change, net, " \
                      "created, modified" \
                      ") VALUES (" \
-                     "?,?,?,?," \
+                     "?,?,?," \
                      "?,?,?," \
                      "?,?" \
                      ")"
@@ -723,7 +712,7 @@ class Stock(DatabaseTable):
     @staticmethod
     def get_update_sql():
         update_sql = "UPDATE stock SET " \
-                     "symbol=?, se=?, code=?, name=?, " \
+                     "se=?, code=?, name=?, " \
                      "price=?, change=?, net=?, " \
                      "modified=? " \
                      " WHERE " \
