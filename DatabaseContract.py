@@ -19,7 +19,8 @@ SQL_CREATE_TABLE_SETTING = " CREATE TABLE IF NOT EXISTS setting ( " \
                            + SettingColumn.modified.name + " TEXT" \
                            + "); "
 
-
+#CREATE TABLE stock (_id INTEGER PRIMARY KEY,classes TEXT,se TEXT,code TEXT,name TEXT,pinyin TEXT,flag INTEGER,price DOUBLE,change DOUBLE,net DOUBLE,volume INTEGER,value INTEGER,
+# date TEXT,time TEXT,min1 TEXT,min5 TEXT,min15 TEXT,min30 TEXT,min60 TEXT,day TEXT,week TEXT,month TEXT,quarter TEXT,year TEXT,operate TEXT,hold INTEGER,cost DOUBLE,profit DOUBLE,bonus DOUBLE,valuation DOUBLE,total_share DOUBLE,market_value DOUBLE,total_assets DOUBLE,total_long_term_liabilities DOUBLE,net_profit DOUBLE,main_business_income DOUBLE,main_business_income_in_year DOUBLE,net_profit_in_year DOUBLE,net_profit_margin DOUBLE,debt_to_net_assets_ratio DOUBLE,book_value_per_share DOUBLE,cash_flow_per_share DOUBLE,net_profit_per_share DOUBLE,net_profit_per_share_in_year DOUBLE,rate DOUBLE,roi DOUBLE,roe DOUBLE,pe DOUBLE,pb DOUBLE,dividend DOUBLE,yield DOUBLE,dividend_ratio DOUBLE,r_date TEXT,created TEXT,modified TEXT )
 class StockColumn(Enum):
     id = 0
     classes = auto()
@@ -36,6 +37,7 @@ class StockColumn(Enum):
 
     date = auto()
     time = auto()
+    min1 = auto()
     min5 = auto()
     min15 = auto()
     min30 = auto()
@@ -43,6 +45,8 @@ class StockColumn(Enum):
     day = auto()
     week = auto()
     month = auto()
+    quarter = auto()
+    year = auto()
 
     operation = auto()
     hold = auto()
@@ -104,6 +108,7 @@ SQL_CREATE_TABLE_STOCK = " CREATE TABLE IF NOT EXISTS stock ( " \
                          + StockColumn.value.name + " DOUBLE," \
                          + StockColumn.date.name + " TEXT," \
                          + StockColumn.time.name + " TEXT," \
+                         + StockColumn.min1.name + " TEXT," \
                          + StockColumn.min5.name + " TEXT," \
                          + StockColumn.min15.name + " TEXT," \
                          + StockColumn.min30.name + " TEXT," \
@@ -111,7 +116,9 @@ SQL_CREATE_TABLE_STOCK = " CREATE TABLE IF NOT EXISTS stock ( " \
                          + StockColumn.day.name + " TEXT," \
                          + StockColumn.week.name + " TEXT," \
                          + StockColumn.month.name + " TEXT," \
-                         + StockColumn.operation.name + " INTEGER," \
+                         + StockColumn.quarter.name + " TEXT," \
+                         + StockColumn.year.name + " TEXT," \
+                         + StockColumn.operation.name + " TEXT," \
                          + StockColumn.hold.name + " INTEGER," \
                          + StockColumn.cost.name + " DOUBLE," \
                          + StockColumn.profit.name + " DOUBLE," \

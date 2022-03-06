@@ -29,6 +29,7 @@ class Stock(DatabaseTable):
 
         self.date = ""
         self.time = ""
+        self.min1 = ""
         self.min5 = ""
         self.min15 = ""
         self.min30 = ""
@@ -36,8 +37,10 @@ class Stock(DatabaseTable):
         self.day = ""
         self.week = ""
         self.month = ""
+        self.quarter = ""
+        self.year = ""
 
-        self.operation = 0
+        self.operation = ""
         self.hold = 0
         self.cost = 0
         self.profit = 0
@@ -102,6 +105,7 @@ class Stock(DatabaseTable):
 
         self.set_date(stock_tuple[DatabaseContract.StockColumn.date.value])
         self.set_time(stock_tuple[DatabaseContract.StockColumn.time.value])
+        self.set_min1(stock_tuple[DatabaseContract.StockColumn.min1.value])
         self.set_min5(stock_tuple[DatabaseContract.StockColumn.min5.value])
         self.set_min15(stock_tuple[DatabaseContract.StockColumn.min15.value])
         self.set_min30(stock_tuple[DatabaseContract.StockColumn.min30.value])
@@ -109,6 +113,8 @@ class Stock(DatabaseTable):
         self.set_day(stock_tuple[DatabaseContract.StockColumn.day.value])
         self.set_week(stock_tuple[DatabaseContract.StockColumn.week.value])
         self.set_month(stock_tuple[DatabaseContract.StockColumn.month.value])
+        self.set_quarter(stock_tuple[DatabaseContract.StockColumn.quarter.value])
+        self.set_year(stock_tuple[DatabaseContract.StockColumn.year.value])
 
         self.set_operation(stock_tuple[DatabaseContract.StockColumn.operation.value])
         self.set_hold(stock_tuple[DatabaseContract.StockColumn.hold.value])
@@ -427,6 +433,13 @@ class Stock(DatabaseTable):
         if time is not None:
             self.time = time
 
+    def get_min1(self):
+        return self.min1
+
+    def set_min1(self, min1):
+        if min1 is not None:
+            self.min1 = min1
+
     def get_min5(self):
         return self.min5
 
@@ -475,6 +488,20 @@ class Stock(DatabaseTable):
     def set_month(self, month):
         if month is not None:
             self.month = month
+
+    def get_quarter(self):
+        return self.quarter
+
+    def set_quarter(self, quarter):
+        if quarter is not None:
+            self.quarter = quarter
+
+    def get_year(self):
+        return self.year
+
+    def set_year(self, year):
+        if year is not None:
+            self.year = year
 
     def get_dividend(self):
         return self.dividend
