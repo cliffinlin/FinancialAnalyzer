@@ -7,9 +7,9 @@ Created on Thu Mar 21 19:30:56 2019
 import glob
 import os
 
-import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt                         # pip install matplotlib
 import numpy as np
-import pandas
+import pandas                                           # pip install pandas
 from matplotlib import dates as mdates
 # from matplotlib.finance import candlestick_ohlc
 from mplfinance.original_flavor import candlestick_ohlc  # pip install --upgrade mplfinance

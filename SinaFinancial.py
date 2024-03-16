@@ -6,8 +6,8 @@ import urllib.request
 from contextlib import closing
 from datetime import datetime
 
-import requests
-from bs4 import BeautifulSoup  # pip3 install bs4
+import requests                 # pip install requests
+from bs4 import BeautifulSoup   # pip install bs4
 from requests.exceptions import RequestException
 
 import Constants
